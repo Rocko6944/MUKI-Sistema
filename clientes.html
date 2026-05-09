@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clientes | Mukialom Sistema</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="sistema.css">
+  <link rel="stylesheet" href="ventas.css">
+  <link rel="stylesheet" href="clientes.css">
+  <link rel="icon" type="image/png" href="Images/logoSinFondo.png">
+</head>
+<body class="erp-body" data-requires-auth="true">
+  <aside class="sidebar" id="sidebar">
+    <nav class="sidebar__nav">
+      <a href="modulos.html" class="sidebar__link"><img src="Images/iconoPanelGeneral.png" alt=""><span>Panel general</span></a>
+      <a href="ventas.html" class="sidebar__link"><img src="Images/iconoVentas.png" alt=""><span>Ventas</span></a>
+      <a href="operaciones.html" class="sidebar__link"><img src="Images/iconoOperaciones.png" alt=""><span>Operaciones</span></a>
+      <a href="clientes.html" class="sidebar__link active"><img src="Images/IconoClientes.png" alt=""><span>Clientes</span></a>
+      <a href="#" class="sidebar__link"><img src="Images/iconoAdministracion.png" alt=""><span>Administracion</span></a>
+    </nav>
+    <div class="sidebar__bottom">
+      <a href="#" class="sidebar__link sidebar__link--sub"><img src="Images/IconoNotificaciones.png" alt=""><span>Notificaciones</span></a>
+      <a href="#" class="sidebar__link sidebar__link--sub"><img src="Images/iconoConfiguraciones.png" alt=""><span>Configuracion</span></a>
+      <a href="#" class="sidebar__link sidebar__link--sub"><img src="Images/iconoAyuda.png" alt=""><span>Ayuda</span></a>
+      <a href="index.html" class="sidebar__link sidebar__link--sub" data-logout="true"><img src="Images/iconoCerrarSesion.png" alt=""><span>Cerrar sesion</span></a>
+    </div>
+  </aside>
+
+  <main class="erp-main">
+    <div class="clients-content">
+      <section class="clients-hub" id="clients-hub">
+        <div class="clients-header">
+          <h1 class="clients-header__title">Gestion de clientes</h1>
+          <p class="clients-header__subtitle">Reservas, clientes y fidelizacion</p>
+        </div>
+
+        <div class="clients-grid">
+          <section class="clients-card">
+            <div class="clients-card__content">
+              <h2 class="clients-card__title">Reservas</h2>
+              <p class="clients-card__desc">Gestiona reservas web y manuales, controlando horarios, mesas y disponibilidad diaria.</p>
+            </div>
+            <button class="clients-card__btn" data-module="reservas">Ingresar</button>
+          </section>
+
+          <section class="clients-card">
+            <div class="clients-card__content">
+              <h2 class="clients-card__title">Clientes</h2>
+              <p class="clients-card__desc">Consulta la base de clientes registrados mediante facturacion y reconoce recurrencia por comprobantes emitidos.</p>
+            </div>
+            <button class="clients-card__btn" data-module="clientes">Ingresar</button>
+          </section>
+
+          <section class="clients-card">
+            <div class="clients-card__content">
+              <h2 class="clients-card__title">Historial de visitas</h2>
+              <p class="clients-card__desc">Visualiza frecuencia de visitas, fechas de ultima atencion y oportunidades para fidelizacion.</p>
+            </div>
+            <button class="clients-card__btn" data-module="historial">Ingresar</button>
+          </section>
+        </div>
+      </section>
+
+      <section class="clients-workspace hidden" id="clients-workspace">
+        <div class="clients-workspace__top">
+          <button class="btn-back" id="btn-volver-clientes">Volver</button>
+          <div class="clients-tabs">
+            <button class="clients-tab active" data-tab="clientes">Clientes</button>
+            <button class="clients-tab" data-tab="reservas">Reservas</button>
+            <button class="clients-tab" data-tab="historial">Historial de visitas</button>
+          </div>
+        </div>
+
+        <div class="clients-pane" id="pane-clientes">
+          <div class="clients-toolbar">
+            <div class="clients-toolbar__field">
+              <label for="clients-search">Buscador</label>
+              <input type="text" class="clients-search" id="clients-search" placeholder="Buscar por cliente, documento o correo">
+            </div>
+            <div class="clients-toolbar__field">
+              <label for="clients-status">Estado</label>
+              <select class="clients-select" id="clients-status">
+                <option value="">Todos</option>
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+              </select>
+            </div>
+            <div class="clients-toolbar__actions">
+              <button class="btn-limpiar" id="btn-clear-clients">Limpiar filtro</button>
+              <button class="btn-gold" id="btn-new-client">+ Nuevo cliente</button>
+            </div>
+          </div>
+
+          <section class="clients-table-card">
+            <table class="clients-table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Telefono</th>
+                  <th>Correo</th>
+                  <th>Visitas</th>
+                  <th>Categoria</th>
+                  <th>Ultima visita</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="clients-tbody"></tbody>
+            </table>
+          </section>
+          <div class="clients-empty hidden" id="clients-empty">No se encontraron clientes con los filtros seleccionados.</div>
+        </div>
+
+        <div class="clients-pane hidden" id="pane-reservas">
+          <div class="clients-pane-placeholder">
+            <h3>Reservas</h3>
+            <p>Este submodulo quedo preparado para el siguiente paso. Aqui podremos mostrar reservas creadas desde web o desde recepcion, con su fecha, mesa asignada y estado de confirmacion.</p>
+          </div>
+        </div>
+
+        <div class="clients-pane hidden" id="pane-historial">
+          <div class="clients-pane-placeholder">
+            <h3>Historial de visitas</h3>
+            <p>Este espacio quedo listo para mostrar fidelizacion, frecuencia de visita y comportamiento de consumo a partir de los comprobantes emitidos y clientes reconocidos.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="clients-modal-overlay hidden" id="client-modal-overlay">
+    <div class="clients-modal-card">
+      <h3 class="clients-modal-title">Nuevo cliente</h3>
+      <p class="clients-modal-subtitle">Registra un cliente manualmente o completa su informacion para futuras facturaciones y seguimiento de visitas.</p>
+
+      <div class="clients-modal-grid">
+        <div class="clients-modal-field">
+          <label for="client-name">Nombre *</label>
+          <input type="text" id="client-name" placeholder="Nombre completo">
+        </div>
+        <div class="clients-modal-field">
+          <label for="client-phone">Telefono</label>
+          <input type="text" id="client-phone" placeholder="987654321">
+        </div>
+      </div>
+
+      <div class="clients-modal-grid">
+        <div class="clients-modal-field">
+          <label for="client-email">Correo</label>
+          <input type="email" id="client-email" placeholder="cliente@email.com">
+        </div>
+        <div class="clients-modal-field">
+          <label for="client-document">DNI / RUC</label>
+          <input type="text" id="client-document" placeholder="Documento del cliente">
+        </div>
+      </div>
+
+      <div class="clients-modal-grid">
+        <div class="clients-modal-field">
+          <label for="client-status">Estado</label>
+          <select id="client-status">
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="clients-modal-actions">
+        <button class="btn-limpiar" id="btn-cancel-client">Cancelar</button>
+        <button class="btn-gold" id="btn-save-client">Guardar cliente</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="clients-modal-overlay hidden" id="client-detail-overlay">
+    <div class="clients-modal-card">
+      <h3 class="clients-modal-title">Detalle del cliente</h3>
+      <p class="clients-modal-subtitle">Resumen del cliente reconocido por facturacion y frecuencia de visitas.</p>
+
+      <div class="client-detail-grid">
+        <div class="client-detail-item">
+          <span class="client-detail-item__label">Nombre</span>
+          <strong class="client-detail-item__value" id="detail-client-name">-</strong>
+        </div>
+        <div class="client-detail-item">
+          <span class="client-detail-item__label">Documento</span>
+          <strong class="client-detail-item__value" id="detail-client-document">-</strong>
+        </div>
+        <div class="client-detail-item">
+          <span class="client-detail-item__label">Telefono</span>
+          <strong class="client-detail-item__value" id="detail-client-phone">-</strong>
+        </div>
+        <div class="client-detail-item">
+          <span class="client-detail-item__label">Correo</span>
+          <strong class="client-detail-item__value" id="detail-client-email">-</strong>
+        </div>
+        <div class="client-detail-item">
+          <span class="client-detail-item__label">Visitas registradas</span>
+          <strong class="client-detail-item__value" id="detail-client-visits">0</strong>
+        </div>
+        <div class="client-detail-item">
+          <span class="client-detail-item__label">Categoria</span>
+          <strong class="client-detail-item__value" id="detail-client-category">-</strong>
+        </div>
+        <div class="client-detail-item">
+          <span class="client-detail-item__label">Ultima visita</span>
+          <strong class="client-detail-item__value" id="detail-client-last-visit">-</strong>
+        </div>
+        <div class="client-detail-item">
+          <span class="client-detail-item__label">Estado</span>
+          <strong class="client-detail-item__value" id="detail-client-status">-</strong>
+        </div>
+      </div>
+
+      <div class="clients-modal-actions">
+        <button class="btn-limpiar" id="btn-close-client-detail">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="clientes.js"></script>
+  <script src="auth.js"></script>
+</body>
+</html>

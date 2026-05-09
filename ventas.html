@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ventas | Mukialom Sistema</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="sistema.css">
+  <link rel="stylesheet" href="ventas.css">
+  <link rel="icon" type="image/png" href="Images/logoSinFondo.png">
+</head>
+<body class="erp-body" data-requires-auth="true">
+  <aside class="sidebar" id="sidebar">
+    <nav class="sidebar__nav">
+      <a href="modulos.html" class="sidebar__link"><img src="Images/iconoPanelGeneral.png" alt=""><span>Panel general</span></a>
+      <a href="ventas.html" class="sidebar__link active"><img src="Images/iconoVentas.png" alt=""><span>Ventas</span></a>
+      <a href="operaciones.html" class="sidebar__link"><img src="Images/iconoOperaciones.png" alt=""><span>Operaciones</span></a>
+      <a href="clientes.html" class="sidebar__link"><img src="Images/IconoClientes.png" alt=""><span>Clientes</span></a>
+      <a href="#" class="sidebar__link"><img src="Images/iconoAdministracion.png" alt=""><span>Administracion</span></a>
+    </nav>
+    <div class="sidebar__bottom">
+      <a href="#" class="sidebar__link sidebar__link--sub"><img src="Images/IconoNotificaciones.png" alt=""><span>Notificaciones</span></a>
+      <a href="#" class="sidebar__link sidebar__link--sub"><img src="Images/iconoConfiguraciones.png" alt=""><span>Configuracion</span></a>
+      <a href="#" class="sidebar__link sidebar__link--sub"><img src="Images/iconoAyuda.png" alt=""><span>Ayuda</span></a>
+      <a href="index.html" class="sidebar__link sidebar__link--sub" data-logout="true"><img src="Images/iconoCerrarSesion.png" alt=""><span>Cerrar sesion</span></a>
+    </div>
+  </aside>
+
+  <main class="erp-main">
+    <div class="erp-topbar">
+      <div class="erp-topbar__tabs">
+        <button class="erp-tab erp-tab--outlined active" id="tab-historial">Historial</button>
+        <button class="erp-tab erp-tab--outlined" id="tab-caja">Caja</button>
+      </div>
+    </div>
+
+    <div class="view" id="view-historial">
+      <div class="view__header">
+        <button class="btn-back" id="btn-volver-modulos" onclick="window.location.href='modulos.html'">Volver</button>
+        <div class="historial-filters">
+          <div class="historial-filter">
+            <label for="historial-search">Buscador de ventas</label>
+            <div class="historial-search">
+              <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+              <input type="text" id="historial-search" placeholder="Buscar por mesa o ID">
+            </div>
+          </div>
+          <div class="historial-filter historial-filter--small">
+            <label for="historial-status">Estado</label>
+            <select id="historial-status">
+              <option value="">Todos</option>
+              <option value="En proceso">En proceso</option>
+              <option value="Cobrada">Cobrada</option>
+            </select>
+          </div>
+          <div class="historial-filter historial-filter--medium">
+            <label for="historial-range">Rango de fechas</label>
+            <select id="historial-range">
+              <option value="este-mes">Este mes</option>
+              <option value="ultima-semana">Ultima semana</option>
+              <option value="hoy">Hoy</option>
+            </select>
+          </div>
+          <div class="historial-actions">
+            <button class="btn-limpiar" id="btn-limpiar-historial">Limpiar filtro</button>
+            <button class="btn-gold" id="btn-nueva-venta">Nueva venta</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="historial-layout">
+        <div class="historial-table-card">
+          <table class="historial-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Mesa</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody id="historial-tbody"></tbody>
+          </table>
+        </div>
+
+        <aside class="venta-detail hidden" id="venta-detail">
+          <div class="venta-detail__header">
+            <h3>Detalle de venta</h3>
+            <button type="button" class="venta-detail__close" id="venta-detail-close" aria-label="Cerrar detalle">×</button>
+          </div>
+          <div class="venta-detail__content" id="venta-detail-content"></div>
+          <button class="btn-gold btn-gold--full" id="btn-cerrar-venta">Cerrar venta</button>
+        </aside>
+      </div>
+    </div>
+
+    <div class="view hidden" id="view-mesas">
+      <div class="view__header view__header--stacked">
+        <button class="btn-back" id="btn-volver-historial">Volver al historial</button>
+        <h2 class="view__title">Seleccionar mesa</h2>
+        <div class="mesa-legend">
+          <span class="mesa-legend__item"><span class="dot dot--libre"></span> Libre</span>
+          <span class="mesa-legend__item"><span class="dot dot--ocupada"></span> Ocupada</span>
+          <span class="mesa-legend__item"><span class="dot dot--proceso"></span> Reservada</span>
+        </div>
+      </div>
+      <div class="mesas-layout">
+        <div class="mesas-grid" id="mesas-grid"></div>
+        <aside class="mesa-detail" id="mesa-detail">
+          <h3 class="mesa-detail__name" id="detail-name">Mesa 1</h3>
+          <p class="mesa-detail__status" id="detail-status">Estado: <span class="dot dot--libre"></span> Libre</p>
+          <button class="btn-iniciar" id="btn-iniciar-pedido">Iniciar pedido</button>
+        </aside>
+      </div>
+    </div>
+
+    <div class="view hidden" id="view-caja">
+      <div class="view__header">
+        <button class="btn-back" id="btn-volver-mesas">Volver</button>
+        <div class="caja-filters">
+          <div class="caja-search">
+            <label>Buscador de plato o bebida</label>
+            <div class="caja-search__input">
+              <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+              <input type="text" id="search-producto" placeholder="Buscar plato o bebida">
+            </div>
+          </div>
+          <div class="caja-category">
+            <label>Categoria</label>
+            <select id="filter-categoria">
+              <option value="">Plato/bebida</option>
+              <option value="platos">Platos</option>
+              <option value="bebidas">Bebidas</option>
+            </select>
+          </div>
+          <button class="btn-limpiar" id="btn-limpiar">Limpiar filtro</button>
+        </div>
+      </div>
+      <div class="caja-layout">
+        <section class="caja-productos">
+          <h3 class="caja-productos__title">Carta</h3>
+          <p class="caja-productos__subtitle" id="productos-subtitle">Todos los productos disponibles</p>
+          <div class="productos-grid" id="productos-grid"></div>
+        </section>
+        <aside class="caja-pedido">
+          <h3 class="caja-pedido__title">Pedido actual</h3>
+          <p class="caja-pedido__hint">Actualizado en tiempo real</p>
+          <p class="caja-pedido__mesa" id="pedido-mesa">Mesa 5</p>
+          <div class="pedido-items" id="pedido-items"></div>
+          <div class="pedido-total">
+            <span>Total</span>
+            <span id="pedido-total-valor">S/ 0.00</span>
+          </div>
+          <button class="btn-enviar" id="btn-enviar-cocina">Enviar pedido</button>
+        </aside>
+      </div>
+    </div>
+
+    <div class="view hidden" id="view-checkout">
+      <div class="checkout-container">
+        <div class="checkout-card">
+          <h3 class="checkout-card__title">Resumen del pedido</h3>
+          <div class="checkout-items" id="checkout-items"></div>
+          <div class="checkout-subtotals">
+            <div class="checkout-row"><span>Subtotal</span><span id="checkout-subtotal">S/0</span></div>
+            <div class="checkout-row checkout-row--muted"><span>IGV (opcional)</span><span id="checkout-igv">S/0</span></div>
+          </div>
+          <div class="checkout-total">
+            <span>Total</span>
+            <span id="checkout-total">S/0</span>
+          </div>
+          <div class="checkout-summary-actions">
+            <button class="checkout-btn checkout-btn--receipt" id="btn-eliminar-producto">Eliminar producto</button>
+            <button class="checkout-btn checkout-btn--receipt" id="btn-agregar-producto">Agregar un nuevo producto</button>
+          </div>
+        </div>
+
+        <div class="checkout-card">
+          <div class="checkout-actions">
+            <button class="checkout-btn checkout-btn--confirm" id="btn-cerrar-cuenta">Cerrar cuenta</button>
+            <button class="checkout-btn checkout-btn--receipt" id="btn-comprobante">Imprimir pre cuenta</button>
+            <button class="checkout-btn checkout-btn--receipt" id="btn-emitir-comprobante">Emitir comprobante</button>
+            <button class="checkout-btn checkout-btn--cancel" id="btn-cancelar-checkout">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view hidden" id="view-apertura">
+      <div class="apertura-container">
+        <div class="apertura-card">
+          <h2 class="apertura-card__title">Aperturar caja</h2>
+          <div class="apertura-row">
+            <div class="apertura-field">
+              <label>Monto inicial</label>
+              <input type="text" class="apertura-input apertura-input--gold" id="monto-inicial" placeholder="S/ 0.00">
+            </div>
+            <div class="apertura-field">
+              <label>Turno</label>
+              <select class="apertura-select" id="turno-select">
+                <option value="Manana">Manana</option>
+                <option value="Tarde">Tarde</option>
+                <option value="Noche">Noche</option>
+              </select>
+            </div>
+          </div>
+          <div class="apertura-row">
+            <div class="apertura-field">
+              <label>Responsable</label>
+              <p class="apertura-value" id="apertura-responsable">Juan Perez</p>
+            </div>
+            <div class="apertura-field">
+              <label>Fecha y hora</label>
+              <p class="apertura-value" id="apertura-fecha"></p>
+            </div>
+          </div>
+          <button class="apertura-btn" id="btn-abrir-caja">Abrir caja</button>
+          <ul class="apertura-notes">
+            <li>Este monto corresponde al efectivo inicial del turno</li>
+            <li>No se podran registrar ventas sin apertura de caja</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="view hidden" id="view-caja-turno">
+      <h2 class="caja-turno__title">Caja del turno</h2>
+      <div class="caja-summary-cards">
+        <div class="caja-summary-card" id="card-total-vendido">
+          <div class="caja-summary-card__info">
+            <span class="caja-summary-card__label">Total vendido</span>
+            <span class="caja-summary-card__value" id="caja-total-vendido">(S/0.00)</span>
+          </div>
+        </div>
+        <div class="caja-summary-card" id="card-efectivo">
+          <div class="caja-summary-card__info">
+            <span class="caja-summary-card__label">Efectivo</span>
+            <span class="caja-summary-card__value" id="caja-efectivo">(S/0.00)</span>
+          </div>
+        </div>
+        <div class="caja-summary-card" id="card-tarjeta">
+          <div class="caja-summary-card__info">
+            <span class="caja-summary-card__label">Tarjeta</span>
+            <span class="caja-summary-card__value" id="caja-tarjeta">(S/0.00)</span>
+          </div>
+        </div>
+        <div class="caja-summary-card" id="card-yape">
+          <div class="caja-summary-card__info">
+            <span class="caja-summary-card__label">Yape / Plin</span>
+            <span class="caja-summary-card__value" id="caja-yape">(S/0.00)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="caja-acciones">
+        <h3 class="caja-acciones__label">Acciones principales</h3>
+        <div class="caja-acciones__btns">
+          <button class="caja-action-btn caja-action-btn--ingreso" id="btn-registrar-ingreso">Registrar ingreso</button>
+          <button class="caja-action-btn caja-action-btn--egreso" id="btn-registrar-egreso">Registrar egreso</button>
+          <button class="caja-action-btn caja-action-btn--cerrar" id="btn-cerrar-caja">Cerrar caja</button>
+        </div>
+      </div>
+
+      <div class="movimientos-card">
+        <h3 class="movimientos-card__title">Movimientos</h3>
+        <table class="movimientos-table" id="movimientos-table">
+          <thead>
+            <tr><th>Hora</th><th>Tipo</th><th>Metodo</th><th>Monto</th><th>Usuario</th></tr>
+          </thead>
+          <tbody id="movimientos-tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="cash-summary" id="cash-summary">
+        <h3 class="cash-summary__title">Resumen</h3>
+        <div class="cash-summary__row"><span>Monto inicial</span><span id="cs-monto-inicial">S/0.00</span></div>
+        <div class="cash-summary__row"><span>Total ingresos</span><span id="cs-ingresos">S/0.00</span></div>
+        <div class="cash-summary__row"><span>Total egresos</span><span id="cs-egresos">S/0.00</span></div>
+        <div class="cash-summary__row cash-summary__row--total"><span>Total esperado</span><span id="cs-esperado">S/0.00</span></div>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal-overlay hidden" id="modal-overlay">
+    <div class="modal-card" id="modal-card">
+      <h3 class="modal-card__title" id="modal-title">Registrar ingreso</h3>
+      <div class="modal-field">
+        <label>Monto</label>
+        <input type="text" class="apertura-input apertura-input--gold" id="modal-monto" placeholder="S/ 0.00">
+      </div>
+      <div class="modal-field">
+        <label>Descripcion</label>
+        <input type="text" class="apertura-input" id="modal-desc" placeholder="Descripcion del movimiento">
+      </div>
+      <div class="modal-actions">
+        <button class="apertura-btn" id="modal-confirm">Confirmar</button>
+        <button class="btn-limpiar" id="modal-cancel">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="product-modal-overlay">
+    <div class="modal-card modal-card--product">
+      <h3 class="modal-card__title">Agregar producto</h3>
+      <div class="modal-field">
+        <label>Producto</label>
+        <p class="modal-product-name" id="product-modal-name">Producto</p>
+      </div>
+      <div class="modal-field">
+        <label for="product-modal-quantity">Cantidad</label>
+        <input type="number" min="1" step="1" class="apertura-input" id="product-modal-quantity" value="1">
+      </div>
+      <div class="modal-field">
+        <label for="product-modal-note">Nota opcional</label>
+        <textarea class="apertura-input modal-textarea" id="product-modal-note" placeholder="Ejemplo: bajo en sal"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="apertura-btn" id="product-modal-confirm">Agregar al pedido</button>
+        <button class="btn-limpiar" id="product-modal-cancel">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="delete-product-modal-overlay">
+    <div class="modal-card modal-card--product">
+      <h3 class="modal-card__title">Eliminar producto del pedido</h3>
+      <div class="modal-field">
+        <label for="delete-product-select">Producto</label>
+        <select id="delete-product-select" class="payment-input"></select>
+      </div>
+      <div class="modal-field">
+        <label for="delete-product-reason">Motivo de eliminacion</label>
+        <textarea id="delete-product-reason" class="payment-input modal-textarea" placeholder="Detalla por que se elimina este producto"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="apertura-btn" id="btn-delete-product-confirm">Confirmar eliminacion</button>
+        <button class="btn-limpiar" id="btn-delete-product-cancel">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="payment-modal-overlay">
+    <div class="modal-card modal-card--payment">
+      <h3 class="modal-card__title">Cerrar cuenta</h3>
+      <div class="payment-summary">
+        <div class="payment-summary__row"><span>Subtotal</span><span id="payment-subtotal">S/ 0.00</span></div>
+        <div class="payment-summary__row"><span>IGV</span><span id="payment-igv">S/ 0.00</span></div>
+        <div class="payment-summary__row">
+          <label for="payment-tip">Propina</label>
+          <input type="text" class="payment-input" id="payment-tip" placeholder="S/ 0.00">
+        </div>
+        <div class="payment-summary__row payment-summary__row--total"><span>Total final</span><span id="payment-grand-total">S/ 0.00</span></div>
+        <div class="payment-summary__row payment-summary__row--remaining"><span>Pendiente por asignar</span><span id="payment-remaining">S/ 0.00</span></div>
+      </div>
+
+      <div class="payment-split">
+        <div class="payment-split__header">
+          <h4>Pagos</h4>
+          <button class="btn-limpiar" id="btn-add-payment-line">Agregar otro pago</button>
+        </div>
+        <div class="payment-split__lines" id="payment-lines"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="apertura-btn" id="btn-confirmar-cobro">Confirmar cobro</button>
+        <button class="btn-limpiar" id="btn-cancelar-cobro">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="billing-modal-overlay">
+    <div class="modal-card modal-card--payment">
+      <h3 class="modal-card__title">Emitir comprobante</h3>
+      <div class="payment-summary">
+        <div class="payment-summary__row">
+          <label for="billing-type">Tipo de comprobante</label>
+          <select class="payment-line__method" id="billing-type">
+            <option value="boleta">Boleta</option>
+            <option value="factura">Factura</option>
+            <option value="nota_venta">Nota de venta</option>
+          </select>
+        </div>
+        <div class="payment-summary__row">
+          <label for="billing-document">DNI / RUC</label>
+          <div class="billing-lookup">
+            <input type="text" class="payment-input" id="billing-document" placeholder="Ingrese DNI o RUC">
+            <button class="btn-limpiar" id="btn-billing-search">Buscar</button>
+          </div>
+        </div>
+        <p class="billing-hint">Consulta SUNAT simulada para fines del prototipo.</p>
+      </div>
+
+      <div class="billing-result" id="billing-result">
+        <div class="payment-summary__row"><span>Cliente</span><span id="billing-name">-</span></div>
+        <div class="payment-summary__row"><span>Documento</span><span id="billing-doc">-</span></div>
+        <div class="payment-summary__row"><span>Direccion</span><span id="billing-address">-</span></div>
+      </div>
+
+      <div class="payment-summary payment-summary--compact">
+        <div class="payment-summary__row"><span>Subtotal</span><span id="billing-subtotal">S/ 0.00</span></div>
+        <div class="payment-summary__row"><span>IGV</span><span id="billing-igv">S/ 0.00</span></div>
+        <div class="payment-summary__row payment-summary__row--total"><span>Total</span><span id="billing-total">S/ 0.00</span></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="apertura-btn" id="btn-billing-confirm">Generar comprobante</button>
+        <button class="btn-limpiar" id="btn-billing-cancel">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="close-caja-modal-overlay">
+    <div class="modal-card modal-card--payment">
+      <h3 class="modal-card__title">Cerrar caja e imprimir reportes</h3>
+      <div class="modal-field">
+        <label>Selecciona los reportes a imprimir</label>
+        <div class="report-options">
+          <label class="report-option"><input type="checkbox" class="report-option__input" value="productosVendidos" checked> Productos vendidos</label>
+          <label class="report-option"><input type="checkbox" class="report-option__input" value="productosEliminados" checked> Productos eliminados</label>
+          <label class="report-option"><input type="checkbox" class="report-option__input" value="ingresos" checked> Ingresos</label>
+          <label class="report-option"><input type="checkbox" class="report-option__input" value="egresos" checked> Egresos</label>
+          <label class="report-option"><input type="checkbox" class="report-option__input" value="metodosCobro" checked> Resumen metodos de cobro</label>
+          <label class="report-option"><input type="checkbox" class="report-option__input" value="efectivoFinal" checked> Calculo de efectivo final</label>
+        </div>
+      </div>
+      <p class="billing-hint">El prototipo abrira una impresion directa con formato tipo ticket para la caja.</p>
+      <div class="modal-actions">
+        <button class="apertura-btn" id="btn-confirm-close-caja">Imprimir reportes y cerrar caja</button>
+        <button class="btn-limpiar" id="btn-cancel-close-caja">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="ventas.js"></script>
+</body>
+</html>

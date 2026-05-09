@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Operaciones | Mukialom Sistema</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="sistema.css">
+  <link rel="stylesheet" href="ventas.css">
+  <link rel="stylesheet" href="operaciones.css">
+  <link rel="icon" type="image/png" href="Images/logoSinFondo.png">
+</head>
+<body class="erp-body" data-requires-auth="true">
+  <aside class="sidebar" id="sidebar">
+    <nav class="sidebar__nav">
+      <a href="modulos.html" class="sidebar__link"><img src="Images/iconoPanelGeneral.png" alt=""><span>Panel general</span></a>
+      <a href="ventas.html" class="sidebar__link"><img src="Images/iconoVentas.png" alt=""><span>Ventas</span></a>
+      <a href="operaciones.html" class="sidebar__link active"><img src="Images/iconoOperaciones.png" alt=""><span>Operaciones</span></a>
+      <a href="clientes.html" class="sidebar__link"><img src="Images/IconoClientes.png" alt=""><span>Clientes</span></a>
+      <a href="#" class="sidebar__link"><img src="Images/iconoAdministracion.png" alt=""><span>Administracion</span></a>
+    </nav>
+    <div class="sidebar__bottom">
+      <a href="#" class="sidebar__link sidebar__link--sub"><img src="Images/IconoNotificaciones.png" alt=""><span>Notificaciones</span></a>
+      <a href="#" class="sidebar__link sidebar__link--sub"><img src="Images/iconoConfiguraciones.png" alt=""><span>Configuracion</span></a>
+      <a href="#" class="sidebar__link sidebar__link--sub"><img src="Images/iconoAyuda.png" alt=""><span>Ayuda</span></a>
+      <a href="index.html" class="sidebar__link sidebar__link--sub" data-logout="true"><img src="Images/iconoCerrarSesion.png" alt=""><span>Cerrar sesion</span></a>
+    </div>
+  </aside>
+
+  <main class="erp-main">
+    <div class="ops-content">
+      <section class="ops-hub" id="ops-hub">
+        <div class="ops-header">
+          <h1 class="ops-header__title">Gestion operativa</h1>
+          <p class="ops-header__subtitle">Control de inventario y abastecimiento</p>
+        </div>
+
+        <div class="ops-cards">
+          <article class="ops-card ops-card--active" id="card-inventario">
+            <div class="ops-card__info">
+              <h2 class="ops-card__name">Inventario</h2>
+              <p class="ops-card__desc">Supervisa el stock disponible, movimientos internos y nivel de abastecimiento de cada insumo.</p>
+            </div>
+            <button class="ops-card__btn" data-module="inventario">Ingresar</button>
+          </article>
+
+          <article class="ops-card" id="card-compras">
+            <div class="ops-card__info">
+              <h2 class="ops-card__name">Compras</h2>
+              <p class="ops-card__desc">Registra adquisiciones, seguimiento de pedidos a proveedores y control de ingreso de mercaderia.</p>
+            </div>
+            <button class="ops-card__btn" data-module="compras">Ingresar</button>
+          </article>
+
+          <article class="ops-card" id="card-insumos">
+            <div class="ops-card__info">
+              <h2 class="ops-card__name">Insumos</h2>
+              <p class="ops-card__desc">Consulta catalogo de insumos, unidades de medida, categorias y disponibilidad operativa.</p>
+            </div>
+            <button class="ops-card__btn" data-module="insumos">Ingresar</button>
+          </article>
+        </div>
+      </section>
+
+      <section class="ops-workspace hidden" id="ops-workspace">
+        <div class="ops-workspace__top">
+          <button class="btn-back" id="btn-volver-hub">Volver</button>
+          <div class="ops-tabs">
+            <button class="ops-tab active" data-tab="inventario">Inventario</button>
+            <button class="ops-tab" data-tab="compras">Compras</button>
+            <button class="ops-tab" data-tab="insumos">Insumos</button>
+          </div>
+        </div>
+
+        <div class="ops-pane" id="pane-inventario">
+          <div class="ops-toolbar">
+            <div class="ops-toolbar__main">
+              <div class="ops-search">
+                <input type="text" id="inventory-search" placeholder="Buscar insumo">
+              </div>
+              <div class="ops-filter">
+                <select id="inventory-category">
+                  <option value="">Todas las categorias</option>
+                  <option value="Verduras">Verduras</option>
+                  <option value="Carnes">Carnes</option>
+                  <option value="Bebidas">Bebidas</option>
+                  <option value="Secos">Secos</option>
+                  <option value="Limpieza">Limpieza</option>
+                </select>
+              </div>
+              <div class="ops-filter">
+                <select id="inventory-status">
+                  <option value="">Todos los estados</option>
+                  <option value="Normal">Normal</option>
+                  <option value="Bajo stock">Bajo stock</option>
+                  <option value="Sin stock">Sin stock</option>
+                </select>
+              </div>
+            </div>
+            <div class="ops-toolbar__actions">
+              <button class="btn-gold" id="btn-add-insumo">Agregar insumo</button>
+              <button class="btn-limpiar" id="btn-refresh-stock">Actualizar stock</button>
+            </div>
+          </div>
+
+          <div class="inventory-metrics" id="inventory-metrics">
+            <article class="inventory-metric">
+              <span class="inventory-metric__label">Total insumos</span>
+              <strong class="inventory-metric__value" id="metric-total">0</strong>
+            </article>
+            <article class="inventory-metric">
+              <span class="inventory-metric__label">Bajo stock</span>
+              <strong class="inventory-metric__value" id="metric-low">0</strong>
+            </article>
+            <article class="inventory-metric">
+              <span class="inventory-metric__label">Sin stock</span>
+              <strong class="inventory-metric__value" id="metric-empty">0</strong>
+            </article>
+          </div>
+
+          <div class="inventory-layout">
+            <section class="inventory-table-card">
+              <table class="inventory-table">
+                <thead>
+                  <tr>
+                    <th>Nombre del insumo</th>
+                    <th>Categoria</th>
+                    <th>Stock actual</th>
+                    <th>Unidad</th>
+                    <th>Vencimiento</th>
+                    <th>Estado</th>
+                    <th>Ultima actualizacion</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-tbody"></tbody>
+              </table>
+            </section>
+
+            <aside class="inventory-alerts">
+              <div class="inventory-alerts__header">
+                <h3>Alertas de stock</h3>
+                <p>Items que requieren atencion prioritaria.</p>
+              </div>
+              <div class="inventory-alerts__list" id="inventory-alerts-list"></div>
+            </aside>
+          </div>
+        </div>
+
+        <div class="ops-pane hidden" id="pane-compras">
+          <div class="purchases-view" id="purchases-list-view">
+            <div class="ops-toolbar">
+              <div class="ops-toolbar__main ops-toolbar__main--compras">
+                <div class="ops-search">
+                  <input type="text" id="purchases-search" placeholder="Buscar por proveedor">
+                </div>
+                <div class="ops-filter">
+                  <input type="date" class="apertura-input" id="purchases-date-from">
+                </div>
+                <div class="ops-filter">
+                  <input type="date" class="apertura-input" id="purchases-date-to">
+                </div>
+                <div class="ops-filter">
+                  <select id="purchases-payment-status">
+                    <option value="">Todos los estados de pago</option>
+                    <option value="Pagado">Pagado</option>
+                    <option value="Pendiente">Pendiente</option>
+                  </select>
+                </div>
+              </div>
+              <div class="ops-toolbar__actions">
+                <button class="btn-gold" id="btn-new-purchase">+Nueva compra</button>
+              </div>
+            </div>
+
+            <div class="purchases-metrics">
+              <article class="purchases-metric">
+                <span class="purchases-metric__label">Compras del rango</span>
+                <strong class="purchases-metric__value" id="purchases-count">0</strong>
+              </article>
+              <article class="purchases-metric">
+                <span class="purchases-metric__label">Total pagado</span>
+                <strong class="purchases-metric__value" id="purchases-total-paid">S/ 0.00</strong>
+              </article>
+              <article class="purchases-metric">
+                <span class="purchases-metric__label">Total pendiente</span>
+                <strong class="purchases-metric__value" id="purchases-total-pending">S/ 0.00</strong>
+              </article>
+            </div>
+
+            <section class="purchases-table-card">
+              <table class="purchases-table">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Proveedor</th>
+                    <th>Total</th>
+                    <th>Metodo de pago</th>
+                    <th>Estado de pago</th>
+                    <th>Usuario</th>
+                  </tr>
+                </thead>
+                <tbody id="purchases-tbody"></tbody>
+              </table>
+            </section>
+            <div class="purchases-empty hidden" id="purchases-empty">No se encontraron compras con los filtros seleccionados.</div>
+          </div>
+
+          <div class="purchases-view hidden" id="purchases-form-view">
+            <div class="purchases-form-shell">
+              <div class="purchases-form-header">
+                <h2 class="purchases-form-title">Nueva compra</h2>
+                <p class="purchases-form-date" id="purchase-form-date-label"></p>
+              </div>
+
+              <div class="purchases-form-card">
+                <div class="ops-modal-grid">
+                  <div class="modal-field">
+                    <label for="purchase-provider">Proveedor *</label>
+                    <input type="text" class="apertura-input" id="purchase-provider" placeholder="Nombre del proveedor">
+                  </div>
+                  <div class="modal-field">
+                    <label for="purchase-date">Fecha *</label>
+                    <input type="date" class="apertura-input" id="purchase-date">
+                  </div>
+                </div>
+
+                <div class="ops-modal-grid">
+                  <div class="modal-field">
+                    <label for="purchase-payment-method">Metodo de pago *</label>
+                    <select class="apertura-select" id="purchase-payment-method">
+                      <option value="Transferencia">Transferencia</option>
+                      <option value="Efectivo">Efectivo</option>
+                      <option value="Tarjeta">Tarjeta</option>
+                      <option value="Yape / Plin">Yape / Plin</option>
+                    </select>
+                  </div>
+                  <div class="modal-field">
+                    <label for="purchase-payment-status">Estado de pago *</label>
+                    <select class="apertura-select" id="purchase-payment-status">
+                      <option value="Pagado">Pagado</option>
+                      <option value="Pendiente">Pendiente</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="purchases-form-layout">
+                <section class="purchases-form-card purchases-form-card--table">
+                  <h3 class="purchases-form-card__title">Insumos comprados</h3>
+                  <table class="purchases-items-table">
+                    <thead>
+                      <tr>
+                        <th>Insumo</th>
+                        <th>Cantidad</th>
+                        <th>Unidad</th>
+                        <th>Precio unitario</th>
+                        <th>Subtotal</th>
+                        <th>Accion</th>
+                      </tr>
+                    </thead>
+                    <tbody id="purchase-items-tbody"></tbody>
+                  </table>
+                  <button class="btn-limpiar purchases-add-item-btn" id="btn-add-purchase-item">Agregar insumo</button>
+                </section>
+
+                <aside class="purchases-summary-card">
+                  <div class="purchases-summary-row"><span>Subtotal:</span><strong id="purchase-subtotal">S/ 0.00</strong></div>
+                  <div class="purchases-summary-row purchases-summary-row--total"><span>Total:</span><strong id="purchase-total">S/ 0.00</strong></div>
+                </aside>
+              </div>
+
+              <div class="purchases-form-actions">
+                <button class="btn-gold" id="btn-submit-purchase">Registrar compra</button>
+                <button class="btn-limpiar" id="btn-cancel-purchase">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ops-pane hidden" id="pane-insumos">
+          <div class="recipes-view" id="recipes-list-view">
+            <div class="ops-toolbar">
+              <div class="ops-toolbar__main ops-toolbar__main--recipes">
+                <div class="ops-search">
+                  <input type="text" id="recipes-search" placeholder="Buscar receta">
+                </div>
+                <div class="ops-filter">
+                  <select id="recipes-type-filter">
+                    <option value="">Todos los tipos</option>
+                    <option value="Plato">Platos</option>
+                    <option value="Bebida">Bebidas</option>
+                  </select>
+                </div>
+                <div class="ops-filter">
+                  <select id="recipes-category-filter">
+                    <option value="">Todas las categorias</option>
+                    <option value="Marino">Marino</option>
+                    <option value="Criollo">Criollo</option>
+                    <option value="Entradas">Entradas</option>
+                    <option value="Cocteles">Cocteles</option>
+                    <option value="Gaseosas">Gaseosas</option>
+                  </select>
+                </div>
+              </div>
+              <div class="ops-toolbar__actions">
+                <button class="btn-gold" id="btn-new-recipe">Nueva receta</button>
+              </div>
+            </div>
+
+            <div class="recipes-metrics">
+              <article class="recipes-metric">
+                <span class="recipes-metric__label">Recetas activas</span>
+                <strong class="recipes-metric__value" id="recipes-active-count">0</strong>
+              </article>
+              <article class="recipes-metric">
+                <span class="recipes-metric__label">Platos configurados</span>
+                <strong class="recipes-metric__value" id="recipes-plates-count">0</strong>
+              </article>
+              <article class="recipes-metric">
+                <span class="recipes-metric__label">Bebidas configuradas</span>
+                <strong class="recipes-metric__value" id="recipes-drinks-count">0</strong>
+              </article>
+            </div>
+
+            <div class="recipes-layout">
+              <section class="recipes-table-card">
+                <table class="recipes-table">
+                  <thead>
+                    <tr>
+                      <th>Nombre de la receta</th>
+                      <th>Tipo</th>
+                      <th>Categoria</th>
+                      <th>Costo estimado</th>
+                      <th>Estado</th>
+                      <th>Ingredientes</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recipes-tbody"></tbody>
+                </table>
+              </section>
+
+              <aside class="recipes-summary-card">
+                <h3>Resumen de recetas</h3>
+                <p>Las recetas registradas permiten descontar insumos automaticamente durante la venta.</p>
+                <div class="recipes-summary-list" id="recipes-summary-list"></div>
+              </aside>
+            </div>
+            <div class="recipes-empty hidden" id="recipes-empty">No se encontraron recetas con los filtros seleccionados.</div>
+          </div>
+
+          <div class="recipes-view hidden" id="recipes-form-view">
+            <div class="recipes-form-shell">
+              <div class="recipes-form-header">
+                <h2 class="recipes-form-title" id="recipe-form-title">Nueva receta</h2>
+                <p class="recipes-form-subtitle" id="recipe-form-subtitle">Define los insumos y cantidades que se descontaran automaticamente en cada venta.</p>
+              </div>
+
+              <div class="recipes-form-card">
+                <div class="ops-modal-grid">
+                  <div class="modal-field">
+                    <label for="recipe-name">Nombre de la receta *</label>
+                    <input type="text" class="apertura-input" id="recipe-name" placeholder="Ejemplo: Ceviche a lo Muki">
+                  </div>
+                  <div class="modal-field">
+                    <label for="recipe-type">Tipo *</label>
+                    <select class="apertura-select" id="recipe-type">
+                      <option value="Plato">Plato</option>
+                      <option value="Bebida">Bebida</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="ops-modal-grid">
+                  <div class="modal-field">
+                    <label for="recipe-category">Categoria *</label>
+                    <select class="apertura-select" id="recipe-category">
+                      <option value="Marino">Marino</option>
+                      <option value="Criollo">Criollo</option>
+                      <option value="Entradas">Entradas</option>
+                      <option value="Cocteles">Cocteles</option>
+                      <option value="Gaseosas">Gaseosas</option>
+                    </select>
+                  </div>
+                  <div class="modal-field">
+                    <label for="recipe-status">Estado *</label>
+                    <select class="apertura-select" id="recipe-status">
+                      <option value="Activo">Activo</option>
+                      <option value="Inactivo">Inactivo</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="modal-field">
+                  <label for="recipe-notes">Observacion (opcional)</label>
+                  <textarea class="apertura-input modal-textarea" id="recipe-notes" placeholder="Detalle operativo o consideraciones para esta receta"></textarea>
+                </div>
+              </div>
+
+              <div class="recipes-form-layout">
+                <section class="recipes-form-card recipes-form-card--table">
+                  <h3 class="recipes-form-card__title">Ingredientes de la receta</h3>
+                  <table class="recipes-items-table">
+                    <thead>
+                      <tr>
+                        <th>Insumo</th>
+                        <th>Cantidad</th>
+                        <th>Unidad</th>
+                        <th>Costo estimado</th>
+                        <th>Accion</th>
+                      </tr>
+                    </thead>
+                    <tbody id="recipe-items-tbody"></tbody>
+                  </table>
+                  <button class="btn-limpiar recipes-add-item-btn" id="btn-add-recipe-item">Agregar insumo</button>
+                </section>
+
+                <aside class="recipes-summary-panel">
+                  <div class="recipes-summary-row"><span>Costo estimado:</span><strong id="recipe-cost-total">S/ 0.00</strong></div>
+                  <div class="recipes-summary-row"><span>Ingredientes:</span><strong id="recipe-ingredient-count">0</strong></div>
+                  <div class="recipes-summary-row recipes-summary-row--hint">Este costo es referencial y se calcula segun el precio configurado en cada insumo.</div>
+                </aside>
+              </div>
+
+              <div class="recipes-form-actions">
+                <button class="btn-gold" id="btn-save-recipe">Guardar receta</button>
+                <button class="btn-limpiar" id="btn-cancel-recipe">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="modal-overlay hidden" id="inventory-modal-overlay">
+    <div class="modal-card modal-card--inventory">
+      <h3 class="modal-card__title" id="inventory-modal-title">Agregar insumo</h3>
+      <p class="ops-modal-subtitle" id="inventory-modal-subtitle">Registrar nuevo producto en inventario</p>
+      <div class="ops-modal-grid">
+        <div class="modal-field">
+          <label for="insumo-name">Nombre del insumo *</label>
+          <input type="text" class="apertura-input" id="insumo-name" placeholder="Ejemplo: Tomate">
+        </div>
+        <div class="modal-field">
+          <label for="insumo-category">Categoria *</label>
+          <select class="apertura-select" id="insumo-category">
+            <option value="Verduras">Verduras</option>
+            <option value="Carnes">Carnes</option>
+            <option value="Bebidas">Bebidas</option>
+            <option value="Secos">Insumos generales</option>
+            <option value="Limpieza">Limpieza</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="ops-modal-grid">
+        <div class="modal-field">
+          <label for="insumo-unit">Unidad *</label>
+          <select class="apertura-select" id="insumo-unit">
+            <option value="kg">kg</option>
+            <option value="L">L</option>
+            <option value="unid">unidades</option>
+            <option value="paq">paq</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label for="insumo-stock">Stock inicial *</label>
+          <input type="number" min="0" step="0.1" class="apertura-input" id="insumo-stock" placeholder="0">
+        </div>
+      </div>
+
+      <div class="ops-modal-grid">
+        <div class="modal-field">
+          <label for="insumo-min-stock">Stock minimo *</label>
+          <input type="number" min="0" step="0.1" class="apertura-input" id="insumo-min-stock" placeholder="Ej: 5">
+        </div>
+        <div class="modal-field">
+          <label for="insumo-price">Precio referencial (opcional)</label>
+          <input type="number" min="0" step="0.01" class="apertura-input" id="insumo-price" placeholder="0.00">
+        </div>
+      </div>
+
+      <div class="modal-field">
+        <label for="insumo-expiration">Fecha de vencimiento (opcional)</label>
+        <input type="date" class="apertura-input" id="insumo-expiration">
+        <p class="ops-modal-field-hint">Deja este campo vacio si el insumo no requiere fecha de vencimiento.</p>
+      </div>
+
+      <div class="modal-field">
+        <label for="insumo-observation">Observacion (opcional)</label>
+        <textarea class="apertura-input modal-textarea" id="insumo-observation" placeholder="Detalle adicional para el equipo operativo"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-limpiar" id="btn-cancel-insumo">Cancelar</button>
+        <button class="apertura-btn" id="btn-save-insumo">Guardar insumo</button>
+      </div>
+      <button type="button" class="inventory-delete-btn hidden" id="btn-delete-insumo">Eliminar insumo</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="stock-adjustment-modal-overlay">
+    <div class="modal-card modal-card--stock-adjustment">
+      <div class="stock-adjustment">
+        <div class="stock-adjustment__main">
+          <h3 class="modal-card__title">Actualizar stock</h3>
+          <p class="ops-modal-subtitle">Registra consumos operativos, mermas o productos malogrados que deben descontarse manualmente del inventario.</p>
+
+          <div class="ops-modal-grid">
+            <div class="modal-field">
+              <label for="stock-adjustment-type">Tipo de ajuste *</label>
+              <select class="apertura-select" id="stock-adjustment-type">
+                <option value="Consumo operativo">Consumo operativo</option>
+                <option value="Merma">Merma</option>
+                <option value="Producto malogrado">Producto malogrado</option>
+              </select>
+            </div>
+            <div class="modal-field">
+              <label for="stock-adjustment-item">Insumo *</label>
+              <select class="apertura-select" id="stock-adjustment-item"></select>
+            </div>
+          </div>
+
+          <div class="ops-modal-grid">
+            <div class="modal-field">
+              <label for="stock-adjustment-quantity">Cantidad a descontar *</label>
+              <input type="number" min="0.1" step="0.1" class="apertura-input" id="stock-adjustment-quantity" placeholder="0.0">
+            </div>
+            <div class="modal-field">
+              <label for="stock-adjustment-area">Area o referencia *</label>
+              <input type="text" class="apertura-input" id="stock-adjustment-area" placeholder="Ejemplo: frituras, barra, almacen">
+            </div>
+          </div>
+
+          <div class="modal-field">
+            <label for="stock-adjustment-note">Detalle del ajuste *</label>
+            <textarea class="apertura-input modal-textarea" id="stock-adjustment-note" placeholder="Explica brevemente por que se descuenta este insumo"></textarea>
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn-limpiar" id="btn-cancel-stock-adjustment">Cancelar</button>
+            <button class="apertura-btn" id="btn-save-stock-adjustment">Registrar ajuste</button>
+          </div>
+        </div>
+
+        <aside class="stock-adjustment__side">
+          <div class="stock-adjustment__side-header">
+            <h4>Ultimos ajustes</h4>
+            <p>Seguimiento rapido de movimientos manuales.</p>
+          </div>
+          <div class="stock-adjustment__history" id="stock-adjustment-history"></div>
+        </aside>
+      </div>
+    </div>
+  </div>
+  <script src="operaciones.js"></script>
+  <script src="auth.js"></script>
+</body>
+</html>

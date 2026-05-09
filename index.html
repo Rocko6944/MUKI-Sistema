@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesion | Mukialom Sistema</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="sistema.css">
+  <link rel="icon" type="image/png" href="Images/logoLoging.png">
+</head>
+<body class="login-body">
+  <div class="login-wrapper">
+    <div class="login-logo">
+      <img src="Images/logoLoging.png" alt="Mukialom Restaurante">
+    </div>
+
+    <div class="login-card">
+      <form class="login-form" id="login-form" novalidate>
+        <div class="login-field" data-field="username">
+          <div class="login-field__icon" aria-hidden="true">
+            <img src="Images/IconoUsuario.png" alt="">
+          </div>
+          <input type="text" id="login-username" name="username" placeholder="MUKI" autocomplete="username" required>
+        </div>
+
+        <div class="login-field" data-field="password">
+          <div class="login-field__icon" aria-hidden="true">
+            <img src="Images/iconoContrasena.png" alt="">
+          </div>
+          <input type="password" id="login-password" name="password" placeholder="prototipo" autocomplete="current-password" required>
+          <button type="button" class="login-field__toggle" id="toggle-password" aria-label="Mostrar contrasena">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+
+        <button type="submit" class="login-submit" id="login-submit">Ingresar</button>
+      </form>
+
+      <p id="login-error" class="login-error" hidden>Usuario o contrasena incorrectos.</p>
+      <a href="#" class="login-forgot">Olvidaste tu contrasena?</a>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+</html>

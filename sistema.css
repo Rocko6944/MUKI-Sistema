@@ -1,0 +1,414 @@
+/* ============================================
+   MUKIÁLOM - Sistema (Login + Módulos) Styles
+   ============================================ */
+
+:root {
+  --color-gold: #D4A017;
+  --color-gold-light: #E8C547;
+  --color-gold-dark: #B8860B;
+  --color-black: #0A0A0A;
+  --color-black-soft: #1A1A1A;
+  --color-white: #FFFFFF;
+  --color-gray-bg: #F5F5F5;
+  --color-gray-border: #E0E0E0;
+  --color-gray-text: #888;
+  --color-dark-btn: #1E1E2A;
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+  --transition: 0.3s ease;
+  --radius: 12px;
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================
+   LOGIN PAGE
+   ============================================ */
+
+.login-body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
+
+.login-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+  width: 100%;
+  max-width: 480px;
+}
+
+.login-logo {
+  text-align: center;
+}
+
+.login-logo img {
+  height: 140px;
+  width: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Login Card */
+.login-card {
+  background: var(--color-white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 2.5rem 2rem 2rem;
+  width: 100%;
+  text-align: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* Input Fields */
+.login-field {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  border: 1.5px solid var(--color-gray-border);
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  background: var(--color-white);
+}
+
+.login-field:focus-within {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(212,160,23,0.1);
+}
+
+.login-field.error {
+  border-color: #C41E2A;
+  animation: fieldShake 0.4s ease;
+}
+
+@keyframes fieldShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+.login-field__icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  color: var(--color-gold);
+}
+
+.login-field__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.login-field__icon img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: block;
+}
+
+.login-field input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  color: var(--color-black);
+  background: transparent;
+}
+
+.login-field input::placeholder {
+  color: var(--color-gray-text);
+}
+
+.login-field__toggle {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-gray-text);
+  transition: color var(--transition);
+  padding: 0;
+}
+
+.login-field__toggle:hover {
+  color: var(--color-gold);
+}
+
+.login-field__toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Submit Button */
+.login-submit {
+  width: 100%;
+  padding: 0.9rem;
+  background: var(--color-dark-btn);
+  color: var(--color-white);
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all var(--transition);
+  letter-spacing: 0.02em;
+  margin-top: 0.5rem;
+}
+
+.login-submit:hover {
+  background: var(--color-black);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+.login-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Login Error */
+.login-error {
+  color: #C41E2A;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background: rgba(196, 30, 42, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(196, 30, 42, 0.2);
+}
+
+/* Forgot Password */
+.login-forgot {
+  display: inline-block;
+  margin-top: 1.2rem;
+  font-size: 0.88rem;
+  color: var(--color-gray-text);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.login-forgot:hover {
+  color: var(--color-gold);
+}
+
+/* ============================================
+   MÓDULOS PAGE
+   ============================================ */
+
+.modulos-body {
+  min-height: 100vh;
+  background: var(--color-gray-bg);
+}
+
+/* Top Bar */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 2rem;
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-border);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.topbar__logo img {
+  height: 46px;
+  width: auto;
+}
+
+.topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.topbar__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition);
+  position: relative;
+  color: var(--color-black);
+}
+
+.topbar__icon:hover {
+  background: rgba(0,0,0,0.06);
+}
+
+.topbar__icon svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--color-black);
+}
+
+.topbar__icon img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.topbar__badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 16px;
+  height: 16px;
+  background: #C41E2A;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flag-icon {
+  font-size: 1.4rem;
+}
+
+/* Modules Grid */
+.modulos-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 65px);
+  padding: 2rem;
+}
+
+.modulos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  max-width: 700px;
+  width: 100%;
+}
+
+/* Module Card */
+.modulo-card {
+  background: var(--color-white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 2rem 1.5rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  transition: all var(--transition);
+  border: 1px solid transparent;
+}
+
+.modulo-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  border-color: var(--color-gold-dark);
+}
+
+.modulo-card.clicked {
+  transform: scale(0.97);
+}
+
+.modulo-card__title {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-black);
+}
+
+.modulo-card__icon {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-black);
+}
+
+.modulo-card__icon svg {
+  width: 56px;
+  height: 56px;
+}
+
+.modulo-card__icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.modulo-card__btn {
+  display: block;
+  width: 100%;
+  padding: 0.7rem;
+  background: var(--color-dark-btn);
+  color: var(--color-white);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  transition: all var(--transition);
+  letter-spacing: 0.02em;
+}
+
+.modulo-card__btn:hover {
+  background: var(--color-black);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .modulos-grid {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+  }
+
+  .topbar {
+    padding: 0.6rem 1rem;
+  }
+
+  .topbar__right {
+    gap: 0.5rem;
+  }
+
+  .login-logo img {
+    height: 100px;
+  }
+
+  .login-card {
+    padding: 2rem 1.2rem 1.5rem;
+  }
+}
