@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notificaciones | Mukialom Sistema</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="sistema.css">
+  <link rel="stylesheet" href="ventas.css">
+  <link rel="stylesheet" href="notificaciones.css">
+  <link rel="icon" type="image/png" href="Images/logoSinFondo.png">
+</head>
+<body class="erp-body" data-requires-auth="true">
+  <aside class="sidebar" id="sidebar">
+    <nav class="sidebar__nav">
+      <a href="modulos.html" class="sidebar__link"><img src="Images/iconoPanelGeneral.png" alt=""><span>Panel general</span></a>
+      <a href="ventas.html" class="sidebar__link"><img src="Images/iconoVentas.png" alt=""><span>Ventas</span></a>
+      <a href="operaciones.html" class="sidebar__link"><img src="Images/iconoOperaciones.png" alt=""><span>Operaciones</span></a>
+      <a href="clientes.html" class="sidebar__link"><img src="Images/IconoClientes.png" alt=""><span>Clientes</span></a>
+      <a href="administracion.html" class="sidebar__link"><img src="Images/iconoAdministracion.png" alt=""><span>Administracion</span></a>
+    </nav>
+    <div class="sidebar__bottom">
+      <a href="notificaciones.html" class="sidebar__link sidebar__link--sub active" data-nav="notifications"><img src="Images/IconoNotificaciones.png" alt=""><span>Notificaciones</span></a>
+      <a href="configuracion.html" class="sidebar__link sidebar__link--sub" data-nav="settings"><img src="Images/iconoConfiguraciones.png" alt=""><span>Configuracion</span></a>
+      <a href="ayuda.html" class="sidebar__link sidebar__link--sub" data-nav="help"><img src="Images/iconoAyuda.png" alt=""><span>Ayuda</span></a>
+      <a href="index.html" class="sidebar__link sidebar__link--sub" data-logout="true"><img src="Images/iconoCerrarSesion.png" alt=""><span>Cerrar sesion</span></a>
+    </div>
+  </aside>
+
+  <main class="erp-main">
+    <section class="notifications-page">
+      <div class="notifications-page__top">
+        <button class="btn-back" type="button" onclick="window.history.back()">Volver</button>
+      </div>
+
+      <div class="notifications-header">
+        <div>
+          <h1 class="notifications-title">Notificaciones del sistema</h1>
+          <p class="notifications-subtitle">Alertas operativas y del sistema</p>
+        </div>
+        <button class="notifications-mark-read" id="mark-all-read" type="button">Marcar como leidas</button>
+      </div>
+
+      <section class="notifications-filters">
+        <div class="notifications-filters__group" id="notification-filter-chips">
+          <button class="notifications-chip active" type="button" data-filter="all">Todas</button>
+          <button class="notifications-chip" type="button" data-filter="alerta">Alertas</button>
+          <button class="notifications-chip" type="button" data-filter="sistema">Sistema</button>
+        </div>
+      </section>
+
+      <section class="notifications-section">
+        <div class="notifications-section__header">
+          <h2>Lista de notificaciones</h2>
+        </div>
+        <div class="notifications-list" id="notifications-list"></div>
+        <div class="notifications-empty hidden" id="notifications-empty">
+          No hay notificaciones para este filtro.
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div class="notifications-modal hidden" id="notification-detail-modal" aria-hidden="true">
+    <div class="notifications-modal__backdrop" data-close-detail="true"></div>
+    <div class="notifications-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="notification-detail-title">
+      <div class="notifications-modal__header">
+        <div>
+          <p class="notifications-modal__eyebrow">Detalle de notificacion</p>
+          <h2 class="notifications-modal__title" id="notification-detail-title">Notificacion</h2>
+        </div>
+        <button class="notifications-modal__close" id="notification-detail-close" type="button">Cerrar</button>
+      </div>
+
+      <div class="notifications-modal__content">
+        <div class="notifications-modal__row">
+          <span class="notifications-modal__label">Tipo</span>
+          <span class="notifications-modal__value" id="notification-detail-type">-</span>
+        </div>
+        <div class="notifications-modal__row">
+          <span class="notifications-modal__label">Prioridad</span>
+          <span class="notifications-modal__value" id="notification-detail-severity">-</span>
+        </div>
+        <div class="notifications-modal__row">
+          <span class="notifications-modal__label">Fecha relativa</span>
+          <span class="notifications-modal__value" id="notification-detail-time">-</span>
+        </div>
+        <div class="notifications-modal__block">
+          <span class="notifications-modal__label">Descripcion</span>
+          <p class="notifications-modal__description" id="notification-detail-description">-</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="notificaciones.js"></script>
+</body>
+</html>

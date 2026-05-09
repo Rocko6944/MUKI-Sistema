@@ -19,12 +19,12 @@
       <a href="ventas.html" class="sidebar__link"><img src="Images/iconoVentas.png" alt=""><span>Ventas</span></a>
       <a href="operaciones.html" class="sidebar__link"><img src="Images/iconoOperaciones.png" alt=""><span>Operaciones</span></a>
       <a href="clientes.html" class="sidebar__link active"><img src="Images/IconoClientes.png" alt=""><span>Clientes</span></a>
-      <a href="#" class="sidebar__link"><img src="Images/iconoAdministracion.png" alt=""><span>Administracion</span></a>
+      <a href="administracion.html" class="sidebar__link"><img src="Images/iconoAdministracion.png" alt=""><span>Administracion</span></a>
     </nav>
     <div class="sidebar__bottom">
-      <a href="#" class="sidebar__link sidebar__link--sub"><img src="Images/IconoNotificaciones.png" alt=""><span>Notificaciones</span></a>
-      <a href="#" class="sidebar__link sidebar__link--sub"><img src="Images/iconoConfiguraciones.png" alt=""><span>Configuracion</span></a>
-      <a href="#" class="sidebar__link sidebar__link--sub"><img src="Images/iconoAyuda.png" alt=""><span>Ayuda</span></a>
+      <a href="notificaciones.html" class="sidebar__link sidebar__link--sub" data-nav="notifications"><img src="Images/IconoNotificaciones.png" alt=""><span>Notificaciones</span></a>
+      <a href="configuracion.html" class="sidebar__link sidebar__link--sub" data-nav="settings"><img src="Images/iconoConfiguraciones.png" alt=""><span>Configuracion</span></a>
+      <a href="ayuda.html" class="sidebar__link sidebar__link--sub" data-nav="help"><img src="Images/iconoAyuda.png" alt=""><span>Ayuda</span></a>
       <a href="index.html" class="sidebar__link sidebar__link--sub" data-logout="true"><img src="Images/iconoCerrarSesion.png" alt=""><span>Cerrar sesion</span></a>
     </div>
   </aside>
@@ -40,14 +40,6 @@
         <div class="clients-grid">
           <section class="clients-card">
             <div class="clients-card__content">
-              <h2 class="clients-card__title">Reservas</h2>
-              <p class="clients-card__desc">Gestiona reservas web y manuales, controlando horarios, mesas y disponibilidad diaria.</p>
-            </div>
-            <button class="clients-card__btn" data-module="reservas">Ingresar</button>
-          </section>
-
-          <section class="clients-card">
-            <div class="clients-card__content">
               <h2 class="clients-card__title">Clientes</h2>
               <p class="clients-card__desc">Consulta la base de clientes registrados mediante facturacion y reconoce recurrencia por comprobantes emitidos.</p>
             </div>
@@ -56,10 +48,10 @@
 
           <section class="clients-card">
             <div class="clients-card__content">
-              <h2 class="clients-card__title">Historial de visitas</h2>
-              <p class="clients-card__desc">Visualiza frecuencia de visitas, fechas de ultima atencion y oportunidades para fidelizacion.</p>
+              <h2 class="clients-card__title">Reservas</h2>
+              <p class="clients-card__desc">Gestiona reservas web y manuales, controlando horarios, mesas y disponibilidad diaria.</p>
             </div>
-            <button class="clients-card__btn" data-module="historial">Ingresar</button>
+            <button class="clients-card__btn" data-module="reservas">Ingresar</button>
           </section>
         </div>
       </section>
@@ -70,7 +62,6 @@
           <div class="clients-tabs">
             <button class="clients-tab active" data-tab="clientes">Clientes</button>
             <button class="clients-tab" data-tab="reservas">Reservas</button>
-            <button class="clients-tab" data-tab="historial">Historial de visitas</button>
           </div>
         </div>
 
@@ -81,11 +72,12 @@
               <input type="text" class="clients-search" id="clients-search" placeholder="Buscar por cliente, documento o correo">
             </div>
             <div class="clients-toolbar__field">
-              <label for="clients-status">Estado</label>
-              <select class="clients-select" id="clients-status">
+              <label for="clients-category-filter">Categoria</label>
+              <select class="clients-select" id="clients-category-filter">
                 <option value="">Todos</option>
-                <option value="Activo">Activo</option>
-                <option value="Inactivo">Inactivo</option>
+                <option value="Cobre">Cobre</option>
+                <option value="Plata">Plata</option>
+                <option value="Oro">Oro</option>
               </select>
             </div>
             <div class="clients-toolbar__actions">
@@ -103,6 +95,7 @@
                   <th>Correo</th>
                   <th>Visitas</th>
                   <th>Categoria</th>
+                  <th>Recompensa</th>
                   <th>Ultima visita</th>
                   <th>Estado</th>
                 </tr>
@@ -114,18 +107,47 @@
         </div>
 
         <div class="clients-pane hidden" id="pane-reservas">
-          <div class="clients-pane-placeholder">
-            <h3>Reservas</h3>
-            <p>Este submodulo quedo preparado para el siguiente paso. Aqui podremos mostrar reservas creadas desde web o desde recepcion, con su fecha, mesa asignada y estado de confirmacion.</p>
+          <div class="clients-toolbar">
+            <div class="clients-toolbar__field">
+              <label for="reservations-search">Buscador</label>
+              <input type="text" class="clients-search" id="reservations-search" placeholder="Buscar por cliente, telefono o correo">
+            </div>
+            <div class="clients-toolbar__field">
+              <label for="reservations-status-filter">Estado</label>
+              <select class="clients-select" id="reservations-status-filter">
+                <option value="">Todos</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Confirmada">Confirmada</option>
+                <option value="Atendida">Atendida</option>
+                <option value="Cancelada">Cancelada</option>
+              </select>
+            </div>
+            <div class="clients-toolbar__actions">
+              <button class="btn-limpiar" id="btn-clear-reservations">Limpiar filtro</button>
+              <button class="btn-gold" id="btn-new-reservation">+ Nueva reserva</button>
+            </div>
           </div>
+
+          <section class="clients-table-card">
+            <table class="clients-table">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Telefono</th>
+                  <th>Correo</th>
+                  <th>Fecha</th>
+                  <th>Hora</th>
+                  <th>Personas</th>
+                  <th>Estado</th>
+                  <th>Origen</th>
+                </tr>
+              </thead>
+              <tbody id="reservations-tbody"></tbody>
+            </table>
+          </section>
+          <div class="clients-empty hidden" id="reservations-empty">No se encontraron reservas con los filtros seleccionados.</div>
         </div>
 
-        <div class="clients-pane hidden" id="pane-historial">
-          <div class="clients-pane-placeholder">
-            <h3>Historial de visitas</h3>
-            <p>Este espacio quedo listo para mostrar fidelizacion, frecuencia de visita y comportamiento de consumo a partir de los comprobantes emitidos y clientes reconocidos.</p>
-          </div>
-        </div>
       </section>
     </div>
   </main>
@@ -204,6 +226,17 @@
           <span class="client-detail-item__label">Categoria</span>
           <strong class="client-detail-item__value" id="detail-client-category">-</strong>
         </div>
+        <div class="client-detail-item client-detail-item--full">
+          <span class="client-detail-item__label">Recompensa activa</span>
+          <div class="reward-editor">
+            <input type="text" id="detail-client-reward-input" placeholder="Ejemplo: Cafe gratis">
+            <div class="reward-editor__actions">
+              <button class="btn-gold btn-gold--small" id="btn-save-client-reward">Guardar recompensa</button>
+              <button class="btn-limpiar" id="btn-deliver-client-reward">Marcar como entregada</button>
+            </div>
+            <p class="reward-editor__hint" id="detail-client-reward-hint">Solo los clientes en categoria Oro pueden recibir una recompensa activa.</p>
+          </div>
+        </div>
         <div class="client-detail-item">
           <span class="client-detail-item__label">Ultima visita</span>
           <strong class="client-detail-item__value" id="detail-client-last-visit">-</strong>
@@ -212,10 +245,121 @@
           <span class="client-detail-item__label">Estado</span>
           <strong class="client-detail-item__value" id="detail-client-status">-</strong>
         </div>
+        <div class="client-detail-item client-detail-item--full">
+          <span class="client-detail-item__label">Historial de recompensas</span>
+          <div class="reward-history" id="detail-client-reward-history"></div>
+        </div>
       </div>
 
       <div class="clients-modal-actions">
+        <button class="btn-delete-client" id="btn-delete-client-detail">Eliminar cliente</button>
         <button class="btn-limpiar" id="btn-close-client-detail">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="clients-modal-overlay hidden" id="reservation-modal-overlay">
+    <div class="clients-modal-card">
+      <h3 class="clients-modal-title">Nueva reserva</h3>
+      <p class="clients-modal-subtitle">Registra una reserva manual para clientes que llamaron o escribieron directamente al restaurante.</p>
+
+      <div class="clients-modal-grid">
+        <div class="clients-modal-field">
+          <label for="reservation-client-name">Cliente *</label>
+          <input type="text" id="reservation-client-name" placeholder="Nombre del cliente">
+        </div>
+        <div class="clients-modal-field">
+          <label for="reservation-phone">Telefono *</label>
+          <input type="text" id="reservation-phone" placeholder="987654321">
+        </div>
+      </div>
+
+      <div class="clients-modal-grid">
+        <div class="clients-modal-field">
+          <label for="reservation-email">Correo</label>
+          <input type="email" id="reservation-email" placeholder="cliente@email.com">
+        </div>
+        <div class="clients-modal-field">
+          <label for="reservation-date">Fecha *</label>
+          <input type="date" id="reservation-date">
+        </div>
+      </div>
+
+      <div class="clients-modal-grid">
+        <div class="clients-modal-field">
+          <label for="reservation-time">Hora *</label>
+          <input type="time" id="reservation-time">
+        </div>
+        <div class="clients-modal-field">
+          <label for="reservation-people">Personas *</label>
+          <input type="number" min="1" id="reservation-people" placeholder="2">
+        </div>
+      </div>
+
+      <div class="clients-modal-field">
+        <label for="reservation-notes">Detalle de la reserva</label>
+        <input type="text" id="reservation-notes" placeholder="Ejemplo: aniversario de novios">
+      </div>
+
+      <div class="clients-modal-actions">
+        <button class="btn-limpiar" id="btn-cancel-reservation">Cancelar</button>
+        <button class="btn-gold" id="btn-save-reservation">Guardar reserva</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="clients-modal-overlay hidden" id="reservation-detail-overlay">
+    <div class="clients-modal-card">
+      <h3 class="clients-modal-title">Detalle de reserva</h3>
+      <p class="clients-modal-subtitle">Actualiza manualmente el estado despues de confirmar o contactar al cliente por telefono o correo.</p>
+
+      <div class="client-detail-grid">
+        <div class="client-detail-item">
+          <span class="client-detail-item__label">Cliente</span>
+          <strong class="client-detail-item__value" id="detail-reservation-name">-</strong>
+        </div>
+        <div class="client-detail-item">
+          <span class="client-detail-item__label">Telefono</span>
+          <strong class="client-detail-item__value" id="detail-reservation-phone">-</strong>
+        </div>
+        <div class="client-detail-item">
+          <span class="client-detail-item__label">Correo</span>
+          <strong class="client-detail-item__value" id="detail-reservation-email">-</strong>
+        </div>
+        <div class="client-detail-item">
+          <span class="client-detail-item__label">Origen</span>
+          <strong class="client-detail-item__value" id="detail-reservation-origin">-</strong>
+        </div>
+        <div class="client-detail-item">
+          <span class="client-detail-item__label">Fecha</span>
+          <strong class="client-detail-item__value" id="detail-reservation-date">-</strong>
+        </div>
+        <div class="client-detail-item">
+          <span class="client-detail-item__label">Hora</span>
+          <strong class="client-detail-item__value" id="detail-reservation-time">-</strong>
+        </div>
+        <div class="client-detail-item">
+          <span class="client-detail-item__label">Personas</span>
+          <strong class="client-detail-item__value" id="detail-reservation-people">-</strong>
+        </div>
+        <div class="client-detail-item client-detail-item--full">
+          <span class="client-detail-item__label">Detalle de la reserva</span>
+          <strong class="client-detail-item__value" id="detail-reservation-notes">-</strong>
+        </div>
+        <div class="clients-modal-field">
+          <label for="detail-reservation-status">Estado de la reserva</label>
+          <select id="detail-reservation-status">
+            <option value="Pendiente">Pendiente</option>
+            <option value="Confirmada">Confirmada</option>
+            <option value="Atendida">Atendida</option>
+            <option value="Cancelada">Cancelada</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="clients-modal-actions">
+        <button class="btn-limpiar" id="btn-close-reservation-detail">Cerrar</button>
+        <button class="btn-gold" id="btn-save-reservation-status">Guardar cambios</button>
       </div>
     </div>
   </div>

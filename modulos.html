@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -20,16 +19,27 @@
     </div>
 
     <div class="topbar__right">
-      <button class="topbar__icon" aria-label="Configuracion" title="Configuracion">
+      <button class="topbar__icon" aria-label="Configuracion" title="Configuracion" data-nav="settings" type="button">
         <img src="Images/iconoConfiguraciones.png" alt="Configuracion">
       </button>
-      <button class="topbar__icon topbar__icon--bell" aria-label="Notificaciones" title="Notificaciones">
+      <button class="topbar__icon topbar__icon--bell" aria-label="Notificaciones" title="Notificaciones" data-nav="notifications" type="button">
         <img src="Images/IconoNotificaciones.png" alt="Notificaciones">
         <span class="topbar__badge">3</span>
       </button>
-      <button class="topbar__icon topbar__icon--user" aria-label="Perfil" title="Perfil">
+      <button class="topbar__icon topbar__icon--user" aria-label="Perfil" title="Perfil" id="topbar-user-btn" type="button" aria-expanded="false">
         <img src="Images/IconoUsuario.png" alt="Perfil">
       </button>
+      <div class="topbar-user-card hidden" id="topbar-user-card">
+        <div class="topbar-user-card__header">
+          <strong id="topbar-user-name">Usuario</strong>
+          <span id="topbar-user-role">Rol</span>
+        </div>
+        <div class="topbar-user-card__body">
+          <p><span>Usuario:</span><strong id="topbar-user-username">-</strong></p>
+          <p><span>Estado:</span><strong>Sesion activa</strong></p>
+          <p><span>Acceso:</span><strong>Web interna</strong></p>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -56,7 +66,7 @@
         <div class="modulo-card__icon">
           <img src="Images/iconoAdministracion.png" alt="Administracion">
         </div>
-        <a href="#" class="modulo-card__btn">Ingresar</a>
+        <a href="administracion.html" class="modulo-card__btn">Ingresar</a>
       </section>
 
       <section class="modulo-card">
@@ -64,7 +74,7 @@
         <div class="modulo-card__icon">
           <img src="Images/IconoClientes.png" alt="Clientes">
         </div>
-        <a href="#" class="modulo-card__btn">Ingresar</a>
+        <a href="clientes.html" class="modulo-card__btn">Ingresar</a>
       </section>
     </div>
   </main>

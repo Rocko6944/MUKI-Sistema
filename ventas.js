@@ -154,6 +154,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let modalType = 'ingreso';
   let selectedProduct = null;
   let currentVentaId = null;
+  let currentOrderMode = 'salon';
+  let currentTakeawayMode = 'Recojo en tienda';
 
   const viewHistorial = document.getElementById('view-historial');
   const viewMesas = document.getElementById('view-mesas');
@@ -170,6 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const historialStatus = document.getElementById('historial-status');
   const historialRange = document.getElementById('historial-range');
   const btnLimpiarHistorial = document.getElementById('btn-limpiar-historial');
+  const btnParaLlevar = document.getElementById('btn-para-llevar');
   const btnNuevaVenta = document.getElementById('btn-nueva-venta');
   const ventaDetail = document.getElementById('venta-detail');
   const ventaDetailContent = document.getElementById('venta-detail-content');
@@ -217,6 +220,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const productModalNote = document.getElementById('product-modal-note');
   const productModalConfirm = document.getElementById('product-modal-confirm');
   const productModalCancel = document.getElementById('product-modal-cancel');
+  const takeawayModalOverlay = document.getElementById('takeaway-modal-overlay');
+  const takeawayModalCancel = document.getElementById('takeaway-modal-cancel');
+  const takeawayOptions = Array.from(document.querySelectorAll('.takeaway-option'));
 
   const deleteProductModalOverlay = document.getElementById('delete-product-modal-overlay');
   const deleteProductSelect = document.getElementById('delete-product-select');
@@ -305,16 +311,27 @@ document.addEventListener('DOMContentLoaded', () => {
       qty: item.cantidad,
       note: item.nota || ''
     }));
-    pedidoMesa.textContent = `Mesa ${venta.mesa}`;
+    currentOrderMode = venta.mesa === 'Para llevar' ? 'llevar' : 'salon';
+    currentTakeawayMode = venta.canal || 'Recojo en tienda';
+    pedidoMesa.textContent = venta.mesa === 'Para llevar'
+      ? `Pedido para llevar - ${currentTakeawayMode}`
+      : `Mesa ${venta.mesa}`;
     currentVentaId = venta.id;
     renderPedido();
+  }
+
+  function getPedidoReference() {
+    return currentOrderMode === 'llevar'
+      ? 'Para llevar'
+      : normalizeMesaCode(pedidoMesa.textContent);
   }
 
   function syncVentaFromPedido() {
     const subtotal = getPedidoSubtotal();
     const now = new Date();
     const ventaPayload = {
-      mesa: normalizeMesaCode(pedidoMesa.textContent),
+      mesa: getPedidoReference(),
+      canal: currentOrderMode === 'llevar' ? currentTakeawayMode : 'Salon',
       total: subtotal,
       estado: 'En proceso',
       fecha: `${now.toLocaleDateString('es-PE')} ${now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}`,
@@ -709,6 +726,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderVentaDetail(venta) {
     const subtotal = venta.items.reduce((acc, item) => acc + (item.cantidad * item.precio), 0);
+    const isTakeaway = venta.mesa === 'Para llevar';
+    const headerLabel = isTakeaway ? 'Pedido para llevar' : `Mesa ${venta.mesa}`;
     const itemsHtml = venta.items.map((item) => `
       <div class="venta-detail__item">
         <div>
@@ -721,8 +740,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     ventaDetailContent.innerHTML = `
       <div class="venta-detail__summary">
-        <h4>${venta.id} - Mesa ${venta.mesa}</h4>
-        <p>Mesa: ${venta.mesa}</p>
+        <h4>${venta.id} - ${headerLabel}</h4>
+        <p>${isTakeaway ? 'Tipo de pedido' : 'Mesa'}: ${isTakeaway ? 'Para llevar' : venta.mesa}</p>
+        ${isTakeaway ? `<p>Canal: ${venta.canal || 'Recojo en tienda'}</p>` : ''}
         <p>Comensales: ${venta.comensales}</p>
         <p>Estado: ${venta.estado}</p>
       </div>
@@ -982,8 +1002,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   btnNuevaVenta.addEventListener('click', () => {
+    currentOrderMode = 'salon';
     hideAllViews();
     viewMesas.classList.remove('hidden');
+  });
+
+  btnParaLlevar.addEventListener('click', () => {
+    takeawayModalOverlay.classList.remove('hidden');
   });
 
   ventaDetailClose.addEventListener('click', () => {
@@ -1003,6 +1028,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   btnIniciar.addEventListener('click', () => {
     if (!selectedMesa || selectedMesa.status === 'ocupada') return;
+    currentOrderMode = 'salon';
     pedidoMesa.textContent = selectedMesa.name;
     currentVentaId = null;
     pedido = [];
@@ -1014,7 +1040,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   btnVolverMesas.addEventListener('click', () => {
     hideAllViews();
-    viewMesas.classList.remove('hidden');
+    if (currentOrderMode === 'llevar') {
+      viewHistorial.classList.remove('hidden');
+    } else {
+      viewMesas.classList.remove('hidden');
+    }
   });
 
   searchInput.addEventListener('input', () => renderProductos(searchInput.value, filterCat.value));
@@ -1028,6 +1058,27 @@ document.addEventListener('DOMContentLoaded', () => {
   productModalCancel.addEventListener('click', () => {
     productModalOverlay.classList.add('hidden');
     selectedProduct = null;
+  });
+
+  takeawayModalCancel.addEventListener('click', () => {
+    takeawayModalOverlay.classList.add('hidden');
+  });
+
+  takeawayOptions.forEach((button) => {
+    button.addEventListener('click', () => {
+      currentOrderMode = 'llevar';
+      currentTakeawayMode = button.dataset.mode || 'Recojo en tienda';
+      currentVentaId = null;
+      pedido = [];
+      pedidoMesa.textContent = `Pedido para llevar - ${currentTakeawayMode}`;
+      searchInput.value = '';
+      filterCat.value = '';
+      renderPedido();
+      takeawayModalOverlay.classList.add('hidden');
+      hideAllViews();
+      viewCaja.classList.remove('hidden');
+      renderProductos();
+    });
   });
 
   productModalConfirm.addEventListener('click', () => {

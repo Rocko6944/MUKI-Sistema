@@ -1,0 +1,168 @@
+.help-page {
+  min-height: 100vh;
+  padding: 2rem 1.75rem 2.5rem;
+  background: #ffffff;
+  font-family: 'Inter', sans-serif;
+}
+
+.help-page__top {
+  margin-bottom: 1.25rem;
+}
+
+.help-header {
+  max-width: 880px;
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #efe7cf;
+}
+
+.help-header__title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #171717;
+  margin: 0 0 0.45rem;
+}
+
+.help-header__subtitle {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #6f6f6f;
+  margin: 0;
+}
+
+.help-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.help-quick-card,
+.help-card {
+  background: #ffffff;
+  border: 1px solid #ececec;
+  border-radius: 22px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+}
+
+.help-quick-card {
+  padding: 1.35rem;
+}
+
+.help-quick-card__eyebrow {
+  display: inline-block;
+  margin-bottom: 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #a18323;
+}
+
+.help-quick-card h2 {
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: #1b1b1b;
+  margin: 0 0 0.55rem;
+}
+
+.help-quick-card p,
+.help-module p,
+.help-faq__item p,
+.help-card__header p {
+  font-size: 0.93rem;
+  line-height: 1.65;
+  color: #656565;
+  margin: 0;
+}
+
+.help-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  gap: 1rem;
+}
+
+.help-card__header {
+  padding: 1.3rem 1.35rem 1rem;
+  border-bottom: 1px solid #f3f3f3;
+}
+
+.help-card__header h2 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #191919;
+  margin: 0 0 0.35rem;
+}
+
+.help-module-list,
+.help-faq,
+.help-checklist {
+  padding: 1.35rem;
+}
+
+.help-module {
+  padding-bottom: 1.2rem;
+  margin-bottom: 1.2rem;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.help-module:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.help-module h3,
+.help-faq__item h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #202020;
+  margin: 0 0 0.45rem;
+}
+
+.help-module ul,
+.help-checklist {
+  margin: 0.85rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.help-module li,
+.help-checklist li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #4c4c4c;
+  margin-bottom: 0.45rem;
+}
+
+.help-checklist {
+  list-style: disc;
+}
+
+.help-faq {
+  display: grid;
+  gap: 0.95rem;
+}
+
+.help-faq__item {
+  border: 1px solid #f0f0f0;
+  border-radius: 18px;
+  padding: 1rem 1.05rem;
+  background: #fffdfa;
+}
+
+@media (max-width: 1180px) {
+  .help-quick-grid,
+  .help-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .help-page {
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  .help-header__title {
+    font-size: 1.7rem;
+  }
+}

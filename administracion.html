@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administracion | Mukialom Sistema</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="sistema.css">
+  <link rel="stylesheet" href="ventas.css">
+  <link rel="stylesheet" href="administracion.css">
+  <link rel="icon" type="image/png" href="Images/logoSinFondo.png">
+</head>
+<body class="erp-body" data-requires-auth="true">
+  <aside class="sidebar" id="sidebar">
+    <nav class="sidebar__nav">
+      <a href="modulos.html" class="sidebar__link"><img src="Images/iconoPanelGeneral.png" alt=""><span>Panel general</span></a>
+      <a href="ventas.html" class="sidebar__link"><img src="Images/iconoVentas.png" alt=""><span>Ventas</span></a>
+      <a href="operaciones.html" class="sidebar__link"><img src="Images/iconoOperaciones.png" alt=""><span>Operaciones</span></a>
+      <a href="clientes.html" class="sidebar__link"><img src="Images/IconoClientes.png" alt=""><span>Clientes</span></a>
+      <a href="administracion.html" class="sidebar__link active"><img src="Images/iconoAdministracion.png" alt=""><span>Administracion</span></a>
+    </nav>
+    <div class="sidebar__bottom">
+      <a href="notificaciones.html" class="sidebar__link sidebar__link--sub" data-nav="notifications"><img src="Images/IconoNotificaciones.png" alt=""><span>Notificaciones</span></a>
+      <a href="configuracion.html" class="sidebar__link sidebar__link--sub" data-nav="settings"><img src="Images/iconoConfiguraciones.png" alt=""><span>Configuracion</span></a>
+      <a href="ayuda.html" class="sidebar__link sidebar__link--sub" data-nav="help"><img src="Images/iconoAyuda.png" alt=""><span>Ayuda</span></a>
+      <a href="index.html" class="sidebar__link sidebar__link--sub" data-logout="true"><img src="Images/iconoCerrarSesion.png" alt=""><span>Cerrar sesion</span></a>
+    </div>
+  </aside>
+
+  <main class="erp-main">
+    <div class="admin-content">
+      <section class="admin-hub" id="admin-hub">
+        <div class="admin-header">
+          <h1 class="admin-header__title">Administracion</h1>
+          <p class="admin-header__subtitle">Reportes y control del negocio</p>
+        </div>
+
+        <div class="admin-grid">
+          <section class="admin-card admin-card--wide">
+            <div class="admin-card__content">
+              <h2 class="admin-card__title">Ventas</h2>
+              <p class="admin-card__desc">Analisis de ventas por dia, mes, producto y estado de atencion para tomar mejores decisiones comerciales.</p>
+            </div>
+            <button class="admin-card__btn" data-module="ventas">Ver reportes</button>
+          </section>
+
+          <section class="admin-card admin-card--wide">
+            <div class="admin-card__content">
+              <h2 class="admin-card__title">Caja</h2>
+              <p class="admin-card__desc">Revision de ingresos, egresos, cierres de caja y comportamiento de los distintos medios de cobro.</p>
+            </div>
+            <button class="admin-card__btn" data-module="caja">Ver reportes</button>
+          </section>
+
+          <section class="admin-card">
+            <div class="admin-card__content">
+              <h2 class="admin-card__title">Inventario</h2>
+              <p class="admin-card__desc">Stock, consumo, productos criticos y movimientos que impactan la operacion diaria.</p>
+            </div>
+            <button class="admin-card__btn" data-module="inventario">Ver reportes</button>
+          </section>
+
+          <section class="admin-card">
+            <div class="admin-card__content">
+              <h2 class="admin-card__title">Compras</h2>
+              <p class="admin-card__desc">Historial de compras, proveedores, pagos y evolucion del gasto operativo del negocio.</p>
+            </div>
+            <button class="admin-card__btn" data-module="compras">Ver reportes</button>
+          </section>
+
+          <section class="admin-card">
+            <div class="admin-card__content">
+              <h2 class="admin-card__title">Clientes</h2>
+              <p class="admin-card__desc">Frecuencia de visita, clientes recurrentes, recompensas y comportamiento de fidelizacion.</p>
+            </div>
+            <button class="admin-card__btn" data-module="clientes">Ver reportes</button>
+          </section>
+        </div>
+      </section>
+
+      <section class="admin-workspace hidden" id="admin-workspace">
+        <div class="admin-workspace__top">
+          <button class="btn-back" id="btn-volver-admin">Volver</button>
+          <div class="admin-tabs">
+            <button class="admin-tab active" data-tab="ventas">Ventas</button>
+            <button class="admin-tab" data-tab="caja">Caja</button>
+            <button class="admin-tab" data-tab="inventario">Inventario</button>
+            <button class="admin-tab" data-tab="compras">Compras</button>
+            <button class="admin-tab" data-tab="clientes">Clientes</button>
+          </div>
+        </div>
+
+        <div class="admin-pane" id="pane-ventas">
+          <div class="admin-report-header">
+            <div>
+              <h2 class="admin-report-title">Reporte de ventas</h2>
+              <p class="admin-report-subtitle">Analisis de ingresos, tickets y comportamiento por producto con una estructura simple para backend.</p>
+            </div>
+          </div>
+
+          <div class="admin-filters">
+            <div class="admin-filter-group">
+              <label>Rango de fechas</label>
+              <div class="admin-filter-inline">
+                <input type="date" class="admin-input" id="sales-date-from">
+                <input type="date" class="admin-input" id="sales-date-to">
+              </div>
+            </div>
+
+            <div class="admin-filter-group">
+              <label>Tipo</label>
+              <div class="admin-chip-group" id="sales-type-chips">
+                <button class="admin-chip active" type="button" data-type="">Todos</button>
+                <button class="admin-chip" type="button" data-type="plato">Platos</button>
+                <button class="admin-chip" type="button" data-type="bebida">Bebidas</button>
+              </div>
+            </div>
+
+            <div class="admin-filter-group">
+              <label>Metodo de pago</label>
+              <div class="admin-chip-group" id="sales-payment-chips">
+                <button class="admin-chip active" type="button" data-payment="">Todos</button>
+                <button class="admin-chip" type="button" data-payment="Efectivo">Efectivo</button>
+                <button class="admin-chip" type="button" data-payment="Tarjeta">Tarjeta</button>
+                <button class="admin-chip" type="button" data-payment="Yape / Plin">Yape / Plin</button>
+                <button class="admin-chip" type="button" data-payment="Transferencia">Transferencia</button>
+              </div>
+            </div>
+
+            <div class="admin-filter-actions">
+              <button class="btn-limpiar" id="btn-apply-sales-filters">Aplicar filtros</button>
+              <button class="btn-gold" id="btn-export-sales-report">Exportar</button>
+            </div>
+          </div>
+
+          <div class="admin-metrics">
+            <article class="admin-metric">
+              <span class="admin-metric__label">Total ventas</span>
+              <strong class="admin-metric__value" id="metric-sales-total">0</strong>
+            </article>
+            <article class="admin-metric">
+              <span class="admin-metric__label">Ingresos totales</span>
+              <strong class="admin-metric__value admin-metric__value--gold" id="metric-sales-income">S/ 0.00</strong>
+            </article>
+          </div>
+
+          <div class="admin-charts">
+            <section class="admin-chart-card">
+              <div class="admin-chart-card__header">
+                <h3>Ventas por dia</h3>
+                <span id="sales-best-day">Dia con mayor venta: -</span>
+              </div>
+              <svg class="sales-line-chart" id="sales-line-chart" viewBox="0 0 520 210" preserveAspectRatio="none"></svg>
+              <div class="sales-line-labels" id="sales-line-labels"></div>
+            </section>
+
+            <section class="admin-chart-card">
+              <div class="admin-chart-card__header">
+                <h3>Ventas por producto</h3>
+                <span id="sales-top-product">Producto mas vendido: -</span>
+              </div>
+              <div class="sales-bars" id="sales-bars"></div>
+            </section>
+          </div>
+
+          <section class="admin-table-card">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Producto</th>
+                  <th>Categoria</th>
+                  <th>Cantidad</th>
+                  <th>Total</th>
+                  <th>Metodo de pago</th>
+                </tr>
+              </thead>
+              <tbody id="sales-report-tbody"></tbody>
+            </table>
+          </section>
+          <div class="admin-empty hidden" id="sales-report-empty">No se encontraron ventas con los filtros seleccionados.</div>
+        </div>
+
+        <div class="admin-pane hidden" id="pane-caja">
+          <div class="admin-report-header">
+            <div>
+              <h2 class="admin-report-title">Reporte de caja</h2>
+              <p class="admin-report-subtitle">Control diario de ingresos, egresos y balance del negocio con una estructura simple de movimientos para backend.</p>
+            </div>
+          </div>
+
+          <div class="admin-filters admin-filters--cash">
+            <div class="admin-filter-group">
+              <label>Rango de fechas</label>
+              <div class="admin-filter-inline">
+                <input type="date" class="admin-input" id="cash-date-from">
+                <input type="date" class="admin-input" id="cash-date-to">
+              </div>
+            </div>
+
+            <div class="admin-filter-group">
+              <label>Turno</label>
+              <div class="admin-chip-group" id="cash-shift-chips">
+                <button class="admin-chip active" type="button" data-shift="">Todos</button>
+                <button class="admin-chip" type="button" data-shift="Manana">Mañana</button>
+                <button class="admin-chip" type="button" data-shift="Tarde">Tarde</button>
+                <button class="admin-chip" type="button" data-shift="Noche">Noche</button>
+              </div>
+            </div>
+
+            <div class="admin-filter-group">
+              <label for="cash-user-filter">Usuario</label>
+              <select class="admin-input" id="cash-user-filter">
+                <option value="">Todos los cajeros</option>
+                <option value="Cajero 1">Cajero 1</option>
+                <option value="Cajero 2">Cajero 2</option>
+                <option value="Cajero 3">Cajero 3</option>
+              </select>
+            </div>
+
+            <div class="admin-filter-actions">
+              <button class="btn-limpiar" id="btn-apply-cash-filters">Aplicar filtros</button>
+              <button class="btn-gold" id="btn-export-cash-report">Exportar</button>
+            </div>
+          </div>
+
+          <div class="admin-metrics">
+            <article class="admin-metric">
+              <span class="admin-metric__label">Ingresos</span>
+              <strong class="admin-metric__value admin-metric__value--green" id="metric-cash-income">S/ 0.00</strong>
+            </article>
+            <article class="admin-metric">
+              <span class="admin-metric__label">Egresos</span>
+              <strong class="admin-metric__value admin-metric__value--red" id="metric-cash-expense">S/ 0.00</strong>
+            </article>
+            <article class="admin-metric">
+              <span class="admin-metric__label">Balance</span>
+              <strong class="admin-metric__value admin-metric__value--gold" id="metric-cash-balance">S/ 0.00</strong>
+            </article>
+            <article class="admin-metric">
+              <span class="admin-metric__label">Movimientos</span>
+              <strong class="admin-metric__value" id="metric-cash-movements">0</strong>
+            </article>
+          </div>
+
+          <section class="admin-chart-card">
+            <div class="admin-chart-card__header">
+              <h3>Flujo de caja</h3>
+              <span id="cash-peak-day">Dia con mayor ingreso: -</span>
+            </div>
+            <div class="admin-chart-legend">
+              <span class="admin-chart-legend__item">
+                <span class="admin-chart-legend__dot admin-chart-legend__dot--income"></span>
+                Ingresos totales
+              </span>
+              <span class="admin-chart-legend__item">
+                <span class="admin-chart-legend__dot admin-chart-legend__dot--expense"></span>
+                Egresos totales
+              </span>
+            </div>
+            <svg class="sales-line-chart" id="cash-line-chart" viewBox="0 0 520 230" preserveAspectRatio="none"></svg>
+            <div class="sales-line-labels" id="cash-line-labels"></div>
+          </section>
+
+          <section class="admin-table-card">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Tipo</th>
+                  <th>Metodo</th>
+                  <th>Monto</th>
+                  <th>Turno</th>
+                  <th>Usuario</th>
+                </tr>
+              </thead>
+              <tbody id="cash-report-tbody"></tbody>
+            </table>
+          </section>
+          <div class="admin-empty hidden" id="cash-report-empty">No se encontraron movimientos de caja con los filtros seleccionados.</div>
+        </div>
+
+        <div class="admin-pane hidden" id="pane-inventario">
+          <div class="admin-report-header">
+            <div>
+              <h2 class="admin-report-title">Reporte de inventario</h2>
+              <p class="admin-report-subtitle">Control de stock, consumo y alertas usando una estructura simple que luego puede venir directo de inventario y movimientos.</p>
+            </div>
+          </div>
+
+          <div class="admin-filters admin-filters--inventory">
+            <div class="admin-filter-group">
+              <label>Categoria</label>
+              <div class="admin-chip-group" id="inventory-category-chips">
+                <button class="admin-chip active" type="button" data-category="">Todos</button>
+                <button class="admin-chip" type="button" data-category="Verduras">Verduras</button>
+                <button class="admin-chip" type="button" data-category="Carnes">Carnes</button>
+                <button class="admin-chip" type="button" data-category="Bebidas">Bebidas</button>
+                <button class="admin-chip" type="button" data-category="Secos">Insumos</button>
+                <button class="admin-chip" type="button" data-category="Limpieza">Limpieza</button>
+              </div>
+            </div>
+
+            <div class="admin-filter-group">
+              <label>Estado</label>
+              <div class="admin-chip-group" id="inventory-status-chips">
+                <button class="admin-chip active" type="button" data-status="">Todos</button>
+                <button class="admin-chip" type="button" data-status="Normal">Normal</button>
+                <button class="admin-chip" type="button" data-status="Bajo stock">Bajo stock</button>
+                <button class="admin-chip" type="button" data-status="Sin stock">Sin stock</button>
+              </div>
+            </div>
+
+            <div class="admin-filter-group">
+              <label>Rango de fechas (consumo)</label>
+              <div class="admin-filter-inline">
+                <input type="date" class="admin-input" id="inventory-date-from">
+                <input type="date" class="admin-input" id="inventory-date-to">
+              </div>
+            </div>
+
+            <div class="admin-filter-actions">
+              <button class="btn-limpiar" id="btn-apply-inventory-filters">Aplicar filtros</button>
+              <button class="btn-gold" id="btn-export-inventory-report">Exportar</button>
+            </div>
+          </div>
+
+          <div class="admin-metrics admin-metrics--inventory">
+            <article class="admin-metric">
+              <span class="admin-metric__label">Total insumos</span>
+              <strong class="admin-metric__value" id="metric-inventory-total">0</strong>
+            </article>
+            <article class="admin-metric">
+              <span class="admin-metric__label">Bajo stock</span>
+              <strong class="admin-metric__value admin-metric__value--gold" id="metric-inventory-low">0</strong>
+            </article>
+            <article class="admin-metric">
+              <span class="admin-metric__label">Sin stock</span>
+              <strong class="admin-metric__value admin-metric__value--red" id="metric-inventory-empty">0</strong>
+            </article>
+            <article class="admin-metric">
+              <span class="admin-metric__label">Consumo total</span>
+              <strong class="admin-metric__value" id="metric-inventory-consumption">0 unidades</strong>
+            </article>
+          </div>
+
+          <section class="admin-chart-card">
+            <div class="admin-chart-card__header">
+              <h3>Consumo de insumos</h3>
+              <span id="inventory-peak-day">Dia con mayor consumo: -</span>
+            </div>
+            <svg class="sales-line-chart" id="inventory-line-chart" viewBox="0 0 520 210" preserveAspectRatio="none"></svg>
+            <div class="sales-line-labels" id="inventory-line-labels"></div>
+          </section>
+
+          <section class="admin-table-card">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Insumo</th>
+                  <th>Categoria</th>
+                  <th>Stock actual</th>
+                  <th>Stock minimo</th>
+                  <th>Consumo</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-report-tbody"></tbody>
+            </table>
+          </section>
+          <div class="admin-empty hidden" id="inventory-report-empty">No se encontraron insumos con los filtros seleccionados.</div>
+        </div>
+
+        <div class="admin-pane hidden" id="pane-compras">
+          <div class="admin-report-header">
+            <div>
+              <h2 class="admin-report-title">Reporte de compras</h2>
+              <p class="admin-report-subtitle">Control de compras por proveedor, metodo de pago y responsable, manteniendo una estructura simple para integracion futura.</p>
+            </div>
+          </div>
+
+          <div class="admin-filters admin-filters--purchases">
+            <div class="admin-filter-group">
+              <label>Fecha</label>
+              <div class="admin-filter-inline">
+                <input type="date" class="admin-input" id="purchases-report-date-from">
+                <input type="date" class="admin-input" id="purchases-report-date-to">
+              </div>
+            </div>
+
+            <div class="admin-filter-group">
+              <label for="purchases-report-provider">Proveedor</label>
+              <select class="admin-input" id="purchases-report-provider">
+                <option value="">Todos los proveedores</option>
+                <option value="Distribuidora Sol">Distribuidora Sol</option>
+                <option value="Mercado Central">Mercado Central</option>
+                <option value="Carnes del Sur">Carnes del Sur</option>
+                <option value="Bebidas SA">Bebidas SA</option>
+                <option value="Abarrotes del Sur">Abarrotes del Sur</option>
+              </select>
+            </div>
+
+            <div class="admin-filter-group">
+              <label for="purchases-report-method">Metodo de pago</label>
+              <select class="admin-input" id="purchases-report-method">
+                <option value="">Todos los metodos</option>
+                <option value="Transferencia">Transferencia</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta de Credito">Tarjeta de Credito</option>
+                <option value="Yape / Plin">Yape / Plin</option>
+              </select>
+            </div>
+
+            <div class="admin-filter-actions">
+              <button class="btn-limpiar" id="btn-apply-purchases-filters">Aplicar filtros</button>
+              <button class="btn-gold" id="btn-export-purchases-report">Exportar</button>
+            </div>
+          </div>
+
+          <div class="admin-metrics admin-metrics--purchases">
+            <article class="admin-metric">
+              <span class="admin-metric__label">Total compras</span>
+              <strong class="admin-metric__value" id="metric-purchases-count">0 pedidos</strong>
+            </article>
+            <article class="admin-metric">
+              <span class="admin-metric__label">Gasto total</span>
+              <strong class="admin-metric__value admin-metric__value--gold" id="metric-purchases-total">S/ 0.00</strong>
+            </article>
+            <article class="admin-metric">
+              <span class="admin-metric__label">Promedio por compra</span>
+              <strong class="admin-metric__value" id="metric-purchases-average">S/ 0.00</strong>
+            </article>
+            <article class="admin-metric">
+              <span class="admin-metric__label">Proveedor con mayor gasto</span>
+              <strong class="admin-metric__value admin-metric__value--small" id="metric-purchases-top-provider">-</strong>
+            </article>
+          </div>
+
+          <section class="admin-table-card">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Proveedor</th>
+                  <th>Total</th>
+                  <th>Metodo de pago</th>
+                  <th>Usuario</th>
+                </tr>
+              </thead>
+              <tbody id="purchases-report-tbody"></tbody>
+            </table>
+          </section>
+          <div class="admin-empty hidden" id="purchases-report-empty">No se encontraron compras con los filtros seleccionados.</div>
+        </div>
+
+        <div class="admin-pane hidden" id="pane-clientes">
+          <div class="admin-report-header">
+            <div>
+              <h2 class="admin-report-title">Reporte de clientes</h2>
+              <p class="admin-report-subtitle">Analisis de comportamiento, categorias y recompensas para seguimiento de fidelizacion.</p>
+            </div>
+          </div>
+
+          <div class="admin-filters admin-filters--clients">
+            <div class="admin-filter-group">
+              <label>Categoria</label>
+              <div class="admin-chip-group" id="clients-report-category-chips">
+                <button class="admin-chip active" type="button" data-category="">Todos</button>
+                <button class="admin-chip" type="button" data-category="Oro">Oro</button>
+                <button class="admin-chip" type="button" data-category="Plata">Plata</button>
+                <button class="admin-chip" type="button" data-category="Cobre">Cobre</button>
+              </div>
+            </div>
+
+            <div class="admin-filter-group">
+              <label>Recompensa</label>
+              <div class="admin-chip-group" id="clients-report-reward-chips">
+                <button class="admin-chip active" type="button" data-reward="">Todos</button>
+                <button class="admin-chip" type="button" data-reward="con">Con recompensa</button>
+                <button class="admin-chip" type="button" data-reward="sin">Sin recompensa</button>
+              </div>
+            </div>
+
+            <div class="admin-filter-group">
+              <label>Rango de fechas</label>
+              <div class="admin-filter-inline">
+                <input type="date" class="admin-input" id="clients-report-date-from">
+                <input type="date" class="admin-input" id="clients-report-date-to">
+              </div>
+            </div>
+
+            <div class="admin-filter-actions">
+              <button class="btn-limpiar" id="btn-apply-clients-filters">Aplicar filtros</button>
+              <button class="btn-gold" id="btn-export-clients-report">Exportar</button>
+            </div>
+          </div>
+
+          <div class="admin-metrics admin-metrics--clients">
+            <article class="admin-metric">
+              <span class="admin-metric__label">Total clientes</span>
+              <strong class="admin-metric__value" id="metric-clients-total">0</strong>
+            </article>
+            <article class="admin-metric">
+              <span class="admin-metric__label">Clientes frecuentes</span>
+              <strong class="admin-metric__value admin-metric__value--gold" id="metric-clients-frequent">0</strong>
+            </article>
+            <article class="admin-metric">
+              <span class="admin-metric__label">Recompensas activas</span>
+              <strong class="admin-metric__value admin-metric__value--gold" id="metric-clients-rewards">0</strong>
+            </article>
+          </div>
+
+          <section class="admin-table-card">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Telefono</th>
+                  <th>Categoria</th>
+                  <th>Visitas</th>
+                  <th>Ultima visita</th>
+                  <th>Recompensa</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="clients-report-tbody"></tbody>
+            </table>
+          </section>
+          <div class="admin-empty hidden" id="clients-report-empty">No se encontraron clientes con los filtros seleccionados.</div>
+          <p class="admin-report-footnote" id="clients-report-summary">Top clientes: -</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="administracion.js"></script>
+  <script src="auth.js"></script>
+
+  <div class="admin-modal-overlay hidden" id="export-modal-overlay">
+    <div class="admin-modal-card">
+      <h3 class="admin-modal-title">Exportar reporte de ventas</h3>
+      <p class="admin-modal-subtitle">Revisa los filtros aplicados y elige el formato de salida para este reporte.</p>
+
+      <div class="admin-export-summary">
+        <div class="admin-export-row"><span>Rango de fechas</span><strong id="export-summary-range">-</strong></div>
+        <div class="admin-export-row"><span>Tipo</span><strong id="export-summary-type">Todos</strong></div>
+        <div class="admin-export-row"><span>Metodo de pago</span><strong id="export-summary-payment">Todos</strong></div>
+      </div>
+
+      <div class="admin-export-format">
+        <span class="admin-export-format__label">Formato</span>
+        <div class="admin-chip-group" id="export-format-chips">
+          <button class="admin-chip active" type="button" data-format="Excel">Excel</button>
+          <button class="admin-chip" type="button" data-format="PDF">PDF</button>
+        </div>
+      </div>
+
+      <div class="clients-modal-actions">
+        <button class="btn-limpiar" id="btn-cancel-export">Cancelar</button>
+        <button class="btn-gold" id="btn-confirm-export">Generar archivo</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-modal-overlay hidden" id="cash-export-modal-overlay">
+    <div class="admin-modal-card">
+      <h3 class="admin-modal-title">Exportar reporte de caja</h3>
+      <p class="admin-modal-subtitle">Revisa los filtros aplicados y elige el formato de salida para este reporte.</p>
+
+      <div class="admin-export-summary">
+        <div class="admin-export-row"><span>Rango de fechas</span><strong id="cash-export-summary-range">-</strong></div>
+        <div class="admin-export-row"><span>Turno</span><strong id="cash-export-summary-shift">Todos</strong></div>
+        <div class="admin-export-row"><span>Usuario</span><strong id="cash-export-summary-user">Todos</strong></div>
+      </div>
+
+      <div class="admin-export-format">
+        <span class="admin-export-format__label">Formato</span>
+        <div class="admin-chip-group" id="cash-export-format-chips">
+          <button class="admin-chip active" type="button" data-format="Excel">Excel</button>
+          <button class="admin-chip" type="button" data-format="PDF">PDF</button>
+        </div>
+      </div>
+
+      <div class="clients-modal-actions">
+        <button class="btn-limpiar" id="btn-cancel-cash-export">Cancelar</button>
+        <button class="btn-gold" id="btn-confirm-cash-export">Generar archivo</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-modal-overlay hidden" id="inventory-export-modal-overlay">
+    <div class="admin-modal-card">
+      <h3 class="admin-modal-title">Exportar reporte de inventario</h3>
+      <p class="admin-modal-subtitle">Revisa los filtros aplicados y elige el formato de salida para este reporte.</p>
+
+      <div class="admin-export-summary">
+        <div class="admin-export-row"><span>Categoria</span><strong id="inventory-export-summary-category">Todos</strong></div>
+        <div class="admin-export-row"><span>Estado</span><strong id="inventory-export-summary-status">Todos</strong></div>
+        <div class="admin-export-row"><span>Rango de fechas</span><strong id="inventory-export-summary-range">-</strong></div>
+      </div>
+
+      <div class="admin-export-format">
+        <span class="admin-export-format__label">Formato</span>
+        <div class="admin-chip-group" id="inventory-export-format-chips">
+          <button class="admin-chip active" type="button" data-format="Excel">Excel</button>
+          <button class="admin-chip" type="button" data-format="PDF">PDF</button>
+        </div>
+      </div>
+
+      <div class="clients-modal-actions">
+        <button class="btn-limpiar" id="btn-cancel-inventory-export">Cancelar</button>
+        <button class="btn-gold" id="btn-confirm-inventory-export">Generar archivo</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-modal-overlay hidden" id="purchases-export-modal-overlay">
+    <div class="admin-modal-card">
+      <h3 class="admin-modal-title">Exportar reporte de compras</h3>
+      <p class="admin-modal-subtitle">Revisa los filtros aplicados y elige el formato de salida para este reporte.</p>
+
+      <div class="admin-export-summary">
+        <div class="admin-export-row"><span>Fecha</span><strong id="purchases-export-summary-range">-</strong></div>
+        <div class="admin-export-row"><span>Proveedor</span><strong id="purchases-export-summary-provider">Todos</strong></div>
+        <div class="admin-export-row"><span>Metodo de pago</span><strong id="purchases-export-summary-method">Todos</strong></div>
+      </div>
+
+      <div class="admin-export-format">
+        <span class="admin-export-format__label">Formato</span>
+        <div class="admin-chip-group" id="purchases-export-format-chips">
+          <button class="admin-chip active" type="button" data-format="Excel">Excel</button>
+          <button class="admin-chip" type="button" data-format="PDF">PDF</button>
+        </div>
+      </div>
+
+      <div class="clients-modal-actions">
+        <button class="btn-limpiar" id="btn-cancel-purchases-export">Cancelar</button>
+        <button class="btn-gold" id="btn-confirm-purchases-export">Generar archivo</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-modal-overlay hidden" id="clients-export-modal-overlay">
+    <div class="admin-modal-card">
+      <h3 class="admin-modal-title">Exportar reporte de clientes</h3>
+      <p class="admin-modal-subtitle">Revisa los filtros aplicados y elige el formato de salida para este reporte.</p>
+
+      <div class="admin-export-summary">
+        <div class="admin-export-row"><span>Categoria</span><strong id="clients-export-summary-category">Todos</strong></div>
+        <div class="admin-export-row"><span>Recompensa</span><strong id="clients-export-summary-reward">Todos</strong></div>
+        <div class="admin-export-row"><span>Rango de fechas</span><strong id="clients-export-summary-range">-</strong></div>
+      </div>
+
+      <div class="admin-export-format">
+        <span class="admin-export-format__label">Formato</span>
+        <div class="admin-chip-group" id="clients-export-format-chips">
+          <button class="admin-chip active" type="button" data-format="Excel">Excel</button>
+          <button class="admin-chip" type="button" data-format="PDF">PDF</button>
+        </div>
+      </div>
+
+      <div class="clients-modal-actions">
+        <button class="btn-limpiar" id="btn-cancel-clients-export">Cancelar</button>
+        <button class="btn-gold" id="btn-confirm-clients-export">Generar archivo</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

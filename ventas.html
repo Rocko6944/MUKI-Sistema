@@ -18,12 +18,12 @@
       <a href="ventas.html" class="sidebar__link active"><img src="Images/iconoVentas.png" alt=""><span>Ventas</span></a>
       <a href="operaciones.html" class="sidebar__link"><img src="Images/iconoOperaciones.png" alt=""><span>Operaciones</span></a>
       <a href="clientes.html" class="sidebar__link"><img src="Images/IconoClientes.png" alt=""><span>Clientes</span></a>
-      <a href="#" class="sidebar__link"><img src="Images/iconoAdministracion.png" alt=""><span>Administracion</span></a>
+      <a href="administracion.html" class="sidebar__link"><img src="Images/iconoAdministracion.png" alt=""><span>Administracion</span></a>
     </nav>
     <div class="sidebar__bottom">
-      <a href="#" class="sidebar__link sidebar__link--sub"><img src="Images/IconoNotificaciones.png" alt=""><span>Notificaciones</span></a>
-      <a href="#" class="sidebar__link sidebar__link--sub"><img src="Images/iconoConfiguraciones.png" alt=""><span>Configuracion</span></a>
-      <a href="#" class="sidebar__link sidebar__link--sub"><img src="Images/iconoAyuda.png" alt=""><span>Ayuda</span></a>
+      <a href="notificaciones.html" class="sidebar__link sidebar__link--sub" data-nav="notifications"><img src="Images/IconoNotificaciones.png" alt=""><span>Notificaciones</span></a>
+      <a href="configuracion.html" class="sidebar__link sidebar__link--sub" data-nav="settings"><img src="Images/iconoConfiguraciones.png" alt=""><span>Configuracion</span></a>
+      <a href="ayuda.html" class="sidebar__link sidebar__link--sub" data-nav="help"><img src="Images/iconoAyuda.png" alt=""><span>Ayuda</span></a>
       <a href="index.html" class="sidebar__link sidebar__link--sub" data-logout="true"><img src="Images/iconoCerrarSesion.png" alt=""><span>Cerrar sesion</span></a>
     </div>
   </aside>
@@ -65,6 +65,7 @@
           </div>
           <div class="historial-actions">
             <button class="btn-limpiar" id="btn-limpiar-historial">Limpiar filtro</button>
+            <button class="btn-limpiar" id="btn-para-llevar">Para llevar</button>
             <button class="btn-gold" id="btn-nueva-venta">Nueva venta</button>
           </div>
         </div>
@@ -320,6 +321,23 @@
       <div class="modal-actions">
         <button class="apertura-btn" id="product-modal-confirm">Agregar al pedido</button>
         <button class="btn-limpiar" id="product-modal-cancel">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="takeaway-modal-overlay">
+    <div class="modal-card modal-card--product">
+      <h3 class="modal-card__title">Pedido para llevar</h3>
+      <div class="modal-field">
+        <label>Selecciona el tipo de atencion</label>
+        <div class="takeaway-options">
+          <button type="button" class="takeaway-option" data-mode="Recojo en tienda">Recojo en tienda</button>
+          <button type="button" class="takeaway-option" data-mode="Delivery">Delivery</button>
+        </div>
+      </div>
+      <p class="billing-hint">Usa delivery cuando el motorizado del restaurante llevara el pedido al cliente.</p>
+      <div class="modal-actions">
+        <button class="btn-limpiar" id="takeaway-modal-cancel">Cancelar</button>
       </div>
     </div>
   </div>

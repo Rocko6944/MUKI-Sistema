@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuracion | Mukialom Sistema</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="sistema.css">
+  <link rel="stylesheet" href="ventas.css">
+  <link rel="stylesheet" href="configuracion.css">
+  <link rel="icon" type="image/png" href="Images/logoSinFondo.png">
+</head>
+<body class="erp-body" data-requires-auth="true">
+  <aside class="sidebar" id="sidebar">
+    <nav class="sidebar__nav">
+      <a href="modulos.html" class="sidebar__link"><img src="Images/iconoPanelGeneral.png" alt=""><span>Panel general</span></a>
+      <a href="ventas.html" class="sidebar__link"><img src="Images/iconoVentas.png" alt=""><span>Ventas</span></a>
+      <a href="operaciones.html" class="sidebar__link"><img src="Images/iconoOperaciones.png" alt=""><span>Operaciones</span></a>
+      <a href="clientes.html" class="sidebar__link"><img src="Images/IconoClientes.png" alt=""><span>Clientes</span></a>
+      <a href="administracion.html" class="sidebar__link"><img src="Images/iconoAdministracion.png" alt=""><span>Administracion</span></a>
+    </nav>
+    <div class="sidebar__bottom">
+      <a href="notificaciones.html" class="sidebar__link sidebar__link--sub" data-nav="notifications"><img src="Images/IconoNotificaciones.png" alt=""><span>Notificaciones</span></a>
+      <a href="configuracion.html" class="sidebar__link sidebar__link--sub active" data-nav="settings"><img src="Images/iconoConfiguraciones.png" alt=""><span>Configuracion</span></a>
+      <a href="ayuda.html" class="sidebar__link sidebar__link--sub" data-nav="help"><img src="Images/iconoAyuda.png" alt=""><span>Ayuda</span></a>
+      <a href="index.html" class="sidebar__link sidebar__link--sub" data-logout="true"><img src="Images/iconoCerrarSesion.png" alt=""><span>Cerrar sesion</span></a>
+    </div>
+  </aside>
+
+  <main class="erp-main">
+    <section class="settings-page">
+      <div class="settings-page__top">
+        <button class="btn-back" type="button" onclick="window.history.back()">Volver</button>
+      </div>
+
+      <div class="settings-header">
+        <div>
+          <h1 class="settings-header__title">Configuracion del sistema</h1>
+          <p class="settings-header__subtitle">Gestiona usuarios, credenciales, permisos y la distribucion del mapa de mesas del local.</p>
+        </div>
+      </div>
+
+      <div class="settings-tabs" id="settings-tabs">
+        <button class="settings-tab active" type="button" data-tab="usuarios">Usuarios y permisos</button>
+        <button class="settings-tab" type="button" data-tab="mesas">Mapa de mesas</button>
+        <button class="settings-tab" type="button" data-tab="categorias">Categorias</button>
+      </div>
+
+      <section class="settings-pane" id="settings-pane-usuarios">
+        <div class="settings-toolbar">
+          <div class="settings-toolbar__field">
+            <label for="settings-user-search">Buscar usuario</label>
+            <input class="settings-input" id="settings-user-search" type="text" placeholder="Buscar por nombre, rol o usuario">
+          </div>
+          <div class="settings-toolbar__field">
+            <label for="settings-role-filter">Rol</label>
+            <select class="settings-select" id="settings-role-filter">
+              <option value="">Todos</option>
+              <option value="Administrador">Administrador</option>
+              <option value="Cajero">Cajero</option>
+              <option value="Mozo">Mozo</option>
+              <option value="Operaciones">Operaciones</option>
+            </select>
+          </div>
+          <div class="settings-toolbar__field">
+            <label for="settings-status-filter">Estado</label>
+            <select class="settings-select" id="settings-status-filter">
+              <option value="">Todos</option>
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+            </select>
+          </div>
+          <div class="settings-toolbar__actions">
+            <button class="btn-limpiar" type="button" id="settings-clear-filters">Limpiar filtro</button>
+            <button class="btn-gold" type="button" id="settings-new-user">Nuevo usuario</button>
+          </div>
+        </div>
+
+        <div class="settings-users-layout">
+          <section class="settings-card settings-users-list">
+            <div class="settings-card__header">
+              <h2>Usuarios registrados</h2>
+              <p>Selecciona una fila para editar datos, credenciales y permisos.</p>
+            </div>
+            <div class="settings-table-wrap">
+              <table class="settings-table">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Rol</th>
+                    <th>Usuario</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="settings-users-tbody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="settings-card settings-user-editor">
+            <div class="settings-card__header">
+              <h2 id="settings-editor-title">Nuevo usuario</h2>
+              <p>Configura credenciales y define exactamente a que modulos y acciones puede acceder este usuario.</p>
+            </div>
+
+            <div class="settings-helper">
+              <strong>Alta de usuario</strong>
+              <span>Desde este formulario puedes crear un nuevo usuario con sus credenciales, rol, estado y permisos personalizados.</span>
+            </div>
+
+            <form class="settings-form" id="settings-user-form">
+              <input type="hidden" id="settings-user-id">
+
+              <div class="settings-form__grid">
+                <label class="settings-field">
+                  <span>Nombre completo</span>
+                  <input class="settings-input" id="settings-name" type="text" placeholder="Ej: Camila Perez" required>
+                </label>
+                <label class="settings-field">
+                  <span>Rol</span>
+                  <select class="settings-select" id="settings-role" required>
+                    <option value="Administrador">Administrador</option>
+                    <option value="Cajero">Cajero</option>
+                    <option value="Mozo">Mozo</option>
+                    <option value="Operaciones">Operaciones</option>
+                  </select>
+                </label>
+                <label class="settings-field">
+                  <span>Usuario</span>
+                  <input class="settings-input" id="settings-username" type="text" placeholder="usuario.sistema" required>
+                </label>
+                <label class="settings-field">
+                  <span>Contrasena</span>
+                  <input class="settings-input" id="settings-password" type="text" placeholder="Credencial temporal" required>
+                </label>
+                <label class="settings-field">
+                  <span>Telefono</span>
+                  <input class="settings-input" id="settings-phone" type="text" placeholder="987654321">
+                </label>
+                <label class="settings-field">
+                  <span>Estado</span>
+                  <select class="settings-select" id="settings-user-status">
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="settings-permissions">
+                <div class="settings-card__header settings-card__header--compact">
+                  <h3>Permisos y funcionalidades</h3>
+                  <p>Se cargan segun el rol, pero puedes afinarlos manualmente.</p>
+                </div>
+                <div class="settings-permissions__grid" id="settings-permissions-grid"></div>
+              </div>
+
+              <div class="settings-form__actions">
+                <button class="btn-limpiar" type="button" id="settings-reset-user">Cancelar</button>
+                <button class="btn-gold" type="submit">Guardar usuario</button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </section>
+
+      <section class="settings-pane hidden" id="settings-pane-mesas">
+        <div class="settings-map-toolbar">
+          <div class="settings-toolbar__field">
+            <label for="settings-floor-count-display">Cantidad de pisos</label>
+            <input class="settings-input" id="settings-floor-count-display" type="text" value="1 piso" readonly>
+          </div>
+          <div class="settings-toolbar__field settings-toolbar__field--wide">
+            <label>Pisos configurados</label>
+            <div class="settings-floor-tabs" id="settings-floor-tabs"></div>
+          </div>
+          <div class="settings-toolbar__actions">
+            <button class="btn-limpiar" type="button" id="settings-reset-map">Restablecer</button>
+            <button class="btn-limpiar" type="button" id="settings-add-floor">Agregar piso</button>
+            <button class="btn-gold" type="button" id="settings-add-table">Agregar mesa</button>
+          </div>
+        </div>
+
+        <div class="settings-map-layout">
+          <section class="settings-card settings-map-card">
+            <div class="settings-card__header">
+              <h2>Distribucion del salon</h2>
+              <p>Arrastra las mesas para reubicarlas y deja definido el mapa real por piso.</p>
+            </div>
+            <div class="settings-map-canvas" id="settings-map-canvas"></div>
+          </section>
+
+          <section class="settings-card settings-map-editor">
+            <div class="settings-card__header">
+              <h2>Detalle de mesa</h2>
+              <p>Selecciona una mesa del plano para actualizar sus datos y su ubicacion.</p>
+            </div>
+
+            <form class="settings-form" id="settings-table-form">
+              <input type="hidden" id="settings-table-id">
+              <label class="settings-field">
+                <span>Nombre de mesa</span>
+                <input class="settings-input" id="settings-table-name" type="text" placeholder="Mesa 1">
+              </label>
+              <label class="settings-field">
+                <span>Capacidad</span>
+                <input class="settings-input" id="settings-table-capacity" type="number" min="1" max="20" placeholder="4">
+              </label>
+              <label class="settings-field">
+                <span>Piso</span>
+                <select class="settings-select" id="settings-table-floor"></select>
+              </label>
+              <label class="settings-field">
+                <span>Estado base</span>
+                <select class="settings-select" id="settings-table-status">
+                  <option value="Libre">Libre</option>
+                  <option value="Reservada">Reservada</option>
+                  <option value="Ocupada">Ocupada</option>
+                </select>
+              </label>
+              <div class="settings-position-grid">
+                <label class="settings-field">
+                  <span>Posicion X</span>
+                  <input class="settings-input" id="settings-table-x" type="number" min="0" max="100">
+                </label>
+                <label class="settings-field">
+                  <span>Posicion Y</span>
+                  <input class="settings-input" id="settings-table-y" type="number" min="0" max="100">
+                </label>
+              </div>
+              <div class="settings-form__actions">
+                <button class="btn-limpiar" type="button" id="settings-delete-table">Eliminar mesa</button>
+                <button class="btn-gold" type="submit">Guardar distribucion</button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </section>
+
+      <section class="settings-pane hidden" id="settings-pane-categorias">
+        <div class="settings-toolbar settings-toolbar--categories">
+          <div class="settings-toolbar__field">
+            <label for="settings-category-search">Buscar categoria</label>
+            <input class="settings-input" id="settings-category-search" type="text" placeholder="Buscar por nombre o tipo">
+          </div>
+          <div class="settings-toolbar__field">
+            <label for="settings-category-type-filter">Tipo</label>
+            <select class="settings-select" id="settings-category-type-filter">
+              <option value="">Todos</option>
+              <option value="Producto">Producto</option>
+              <option value="Insumo">Insumo</option>
+            </select>
+          </div>
+          <div class="settings-toolbar__actions">
+            <button class="btn-limpiar" type="button" id="settings-clear-categories">Limpiar filtro</button>
+            <button class="btn-gold" type="button" id="settings-new-category">Nueva categoria</button>
+          </div>
+        </div>
+
+        <div class="settings-categories-layout">
+          <section class="settings-card">
+            <div class="settings-card__header">
+              <h2>Categorias registradas</h2>
+              <p>Organiza productos e insumos para facilitar filtros, recetas, inventario y compras.</p>
+            </div>
+            <div class="settings-table-wrap">
+              <table class="settings-table">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Descripcion</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="settings-categories-tbody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="settings-card">
+            <div class="settings-card__header">
+              <h2 id="settings-category-editor-title">Nueva categoria</h2>
+              <p>Usa este formulario para crear o editar categorias que luego veras en operaciones.</p>
+            </div>
+
+            <form class="settings-form" id="settings-category-form">
+              <input type="hidden" id="settings-category-id">
+              <label class="settings-field">
+                <span>Nombre de la categoria</span>
+                <input class="settings-input" id="settings-category-name" type="text" placeholder="Ej: Cocteles de autor" required>
+              </label>
+              <label class="settings-field">
+                <span>Tipo</span>
+                <select class="settings-select" id="settings-category-type">
+                  <option value="Producto">Producto</option>
+                  <option value="Insumo">Insumo</option>
+                </select>
+              </label>
+              <label class="settings-field">
+                <span>Descripcion</span>
+                <input class="settings-input" id="settings-category-description" type="text" placeholder="Describe para que se usara esta categoria">
+              </label>
+              <label class="settings-field">
+                <span>Estado</span>
+                <select class="settings-select" id="settings-category-status">
+                  <option value="Activa">Activa</option>
+                  <option value="Inactiva">Inactiva</option>
+                </select>
+              </label>
+              <div class="settings-form__actions">
+                <button class="btn-limpiar" type="button" id="settings-reset-category">Cancelar</button>
+                <button class="btn-gold" type="submit">Guardar categoria</button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="auth.js"></script>
+  <script src="configuracion.js"></script>
+</body>
+</html>

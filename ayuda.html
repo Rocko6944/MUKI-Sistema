@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ayuda | Mukialom Sistema</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="sistema.css">
+  <link rel="stylesheet" href="ventas.css">
+  <link rel="stylesheet" href="ayuda.css">
+  <link rel="icon" type="image/png" href="Images/logoSinFondo.png">
+</head>
+<body class="erp-body" data-requires-auth="true">
+  <aside class="sidebar" id="sidebar">
+    <nav class="sidebar__nav">
+      <a href="modulos.html" class="sidebar__link"><img src="Images/iconoPanelGeneral.png" alt=""><span>Panel general</span></a>
+      <a href="ventas.html" class="sidebar__link"><img src="Images/iconoVentas.png" alt=""><span>Ventas</span></a>
+      <a href="operaciones.html" class="sidebar__link"><img src="Images/iconoOperaciones.png" alt=""><span>Operaciones</span></a>
+      <a href="clientes.html" class="sidebar__link"><img src="Images/IconoClientes.png" alt=""><span>Clientes</span></a>
+      <a href="administracion.html" class="sidebar__link"><img src="Images/iconoAdministracion.png" alt=""><span>Administracion</span></a>
+    </nav>
+    <div class="sidebar__bottom">
+      <a href="notificaciones.html" class="sidebar__link sidebar__link--sub" data-nav="notifications"><img src="Images/IconoNotificaciones.png" alt=""><span>Notificaciones</span></a>
+      <a href="configuracion.html" class="sidebar__link sidebar__link--sub" data-nav="settings"><img src="Images/iconoConfiguraciones.png" alt=""><span>Configuracion</span></a>
+      <a href="ayuda.html" class="sidebar__link sidebar__link--sub active" data-nav="help"><img src="Images/iconoAyuda.png" alt=""><span>Ayuda</span></a>
+      <a href="index.html" class="sidebar__link sidebar__link--sub" data-logout="true"><img src="Images/iconoCerrarSesion.png" alt=""><span>Cerrar sesion</span></a>
+    </div>
+  </aside>
+
+  <main class="erp-main">
+    <section class="help-page">
+      <div class="help-page__top">
+        <button class="btn-back" type="button" onclick="window.history.back()">Volver</button>
+      </div>
+
+      <div class="help-header">
+        <div>
+          <h1 class="help-header__title">Centro de ayuda</h1>
+          <p class="help-header__subtitle">Informacion general para entender como funciona el sistema y que hacer en cada modulo.</p>
+        </div>
+      </div>
+
+      <div class="help-quick-grid">
+        <article class="help-quick-card">
+          <span class="help-quick-card__eyebrow">Inicio rapido</span>
+          <h2>Flujo general del sistema</h2>
+          <p>Primero ingresas con tus credenciales, luego eliges el modulo segun tu rol y desde ahi gestionas ventas, operaciones, clientes, reportes o configuracion.</p>
+        </article>
+        <article class="help-quick-card">
+          <span class="help-quick-card__eyebrow">Credenciales</span>
+          <h2>Acceso y permisos</h2>
+          <p>Cada usuario entra con un usuario y contrasena propios. Los permisos pueden cambiar segun el rol asignado desde configuracion.</p>
+        </article>
+        <article class="help-quick-card">
+          <span class="help-quick-card__eyebrow">Soporte operativo</span>
+          <h2>Uso de la barra lateral</h2>
+          <p>La barra lateral te acompana en todo momento y te permite saltar rapidamente a notificaciones, configuracion, ayuda o cerrar sesion.</p>
+        </article>
+      </div>
+
+      <div class="help-layout">
+        <section class="help-card">
+          <div class="help-card__header">
+            <h2>Guias por modulo</h2>
+            <p>Resumen corto de que hace cada modulo y en que momento conviene usarlo.</p>
+          </div>
+          <div class="help-module-list">
+            <article class="help-module">
+              <h3>Ventas</h3>
+              <p>Registra pedidos en salon, para llevar y checkout. Desde aqui tambien se emiten comprobantes, se registran cobros y se trabaja el historial de ventas.</p>
+              <ul>
+                <li>`Nueva venta` inicia pedidos por mesa.</li>
+                <li>`Para llevar` separa recojo en tienda y delivery.</li>
+                <li>`Caja` controla apertura, movimientos y cierre del turno.</li>
+              </ul>
+            </article>
+
+            <article class="help-module">
+              <h3>Operaciones</h3>
+              <p>Centraliza inventario, compras e insumos. Sirve para abastecimiento, registro de recetas y control de consumo de stock.</p>
+              <ul>
+                <li>`Inventario` muestra stock, alertas y ajustes internos.</li>
+                <li>`Compras` registra ingreso de mercaderia y pagos a proveedores.</li>
+                <li>`Insumos` define recetas para descontar stock automaticamente.</li>
+              </ul>
+            </article>
+
+            <article class="help-module">
+              <h3>Clientes</h3>
+              <p>Reune el padrón de clientes facturados y la gestion de reservas web o manuales.</p>
+              <ul>
+                <li>Las visitas se acumulan cuando se emite boleta o factura.</li>
+                <li>Las categorias `Cobre`, `Plata` y `Oro` ayudan a fidelizar.</li>
+                <li>Las recompensas se configuran manualmente para clientes `Oro`.</li>
+              </ul>
+            </article>
+
+            <article class="help-module">
+              <h3>Administracion</h3>
+              <p>Concentra reportes de ventas, caja, inventario, compras y clientes para tener una vista ejecutiva del negocio.</p>
+              <ul>
+                <li>Permite aplicar filtros por fecha, metodo, categoria o usuario.</li>
+                <li>La opcion `Exportar` resume filtros antes de generar Excel o PDF.</li>
+              </ul>
+            </article>
+
+            <article class="help-module">
+              <h3>Configuracion</h3>
+              <p>Sirve para crear usuarios, definir permisos, ordenar el mapa de mesas y administrar categorias de productos e insumos.</p>
+              <ul>
+                <li>Los roles cargan permisos base, pero pueden ajustarse manualmente.</li>
+                <li>El mapa de mesas permite agregar pisos y mover mesas libremente.</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <aside class="help-side">
+          <section class="help-card">
+            <div class="help-card__header">
+              <h2>Buenas practicas</h2>
+            </div>
+            <ul class="help-checklist">
+              <li>Abrir caja antes de registrar ventas del turno.</li>
+              <li>Verificar reservas antes de cambiar su estado.</li>
+              <li>Registrar compras y ajustes para mantener inventario confiable.</li>
+              <li>Emitir comprobantes para que las visitas de clientes se contabilicen.</li>
+              <li>Revisar notificaciones para atender alertas de stock o sistema.</li>
+            </ul>
+          </section>
+
+          <section class="help-card">
+            <div class="help-card__header">
+              <h2>Preguntas frecuentes</h2>
+            </div>
+            <div class="help-faq">
+              <article class="help-faq__item">
+                <h3>Que pasa si un cliente quiere dividir su pago?</h3>
+                <p>En `Cerrar cuenta` puedes repartir el monto entre efectivo, tarjeta, transferencia, Yape o Plin en dos o mas partes.</p>
+              </article>
+              <article class="help-faq__item">
+                <h3>Como se descuentan insumos del stock?</h3>
+                <p>Las recetas configuradas en `Insumos` son la base para automatizar ese descuento cuando se conecte el backend.</p>
+              </article>
+              <article class="help-faq__item">
+                <h3>Quien puede entrar a caja?</h3>
+                <p>Eso depende del rol y de los permisos configurados en `Configuracion`.</p>
+              </article>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script src="auth.js"></script>
+</body>
+</html>
