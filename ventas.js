@@ -336,7 +336,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const billingIgv = document.getElementById('billing-igv');
   const billingTotal = document.getElementById('billing-total');
   const billingRemaining = document.getElementById('billing-remaining');
-  const billingCloseRemaining = document.getElementById('billing-close-remaining');
   const btnBillingConfirm = document.getElementById('btn-billing-confirm');
   const btnBillingCancel = document.getElementById('btn-billing-cancel');
   const closeCajaModalOverlay = document.getElementById('close-caja-modal-overlay');
@@ -666,17 +665,14 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateBillingSummary() {
     Array.from(billingSplitLines.querySelectorAll('.billing-split-line')).forEach(updateBillingLineDetails);
     const assigned = getBillingAssignedTotal();
-    const generated = getBillingGeneratedTotal();
     const selectedLine = getSelectedBillingLine();
     const selectedValues = selectedLine ? getBillingLineValues(selectedLine) : { total: 0 };
     const remaining = currentTotal - assigned;
-    const closeRemaining = Math.max(0, currentTotal - generated);
 
     billingSubtotal.textContent = formatCurrency(currentSubtotal);
     billingIgv.textContent = formatCurrency(currentIgv);
     billingTotal.textContent = formatCurrency(currentTotal);
     billingRemaining.textContent = formatCurrency(remaining);
-    billingCloseRemaining.textContent = formatCurrency(closeRemaining);
     btnBillingConfirm.disabled = !selectedLine || selectedLine.classList.contains('generated') || selectedValues.total <= 0;
   }
 

@@ -513,7 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function showRecipesListView() {
     recipesFormView.classList.add('hidden');
     recipesListView.classList.remove('hidden');
-    btnVolverHub.textContent = 'Volver';
+    btnVolverHub.textContent = '←';
   }
 
   function createRecipeDraftItem() {
@@ -613,7 +613,7 @@ document.addEventListener('DOMContentLoaded', () => {
     recipeDraftItems = [createRecipeDraftItem()];
     recipesListView.classList.add('hidden');
     recipesFormView.classList.remove('hidden');
-    btnVolverHub.textContent = 'Volver';
+    btnVolverHub.textContent = '←';
     renderRecipeDraft();
   }
 
@@ -634,14 +634,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
     recipesListView.classList.add('hidden');
     recipesFormView.classList.remove('hidden');
-    btnVolverHub.textContent = 'Volver';
+    btnVolverHub.textContent = '←';
     renderRecipeDraft();
   }
 
   function showPurchaseListView() {
     purchasesFormView.classList.add('hidden');
     purchasesListView.classList.remove('hidden');
-    btnVolverHub.textContent = 'Volver';
+    btnVolverHub.textContent = '←';
   }
 
   function createPurchaseDraftItem() {
@@ -747,7 +747,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function openNewPurchaseView() {
     purchasesListView.classList.add('hidden');
     purchasesFormView.classList.remove('hidden');
-    btnVolverHub.textContent = 'Volver';
+    btnVolverHub.textContent = '←';
     purchaseProvider.value = '';
     purchaseDate.value = '2026-05-09';
     purchasePaymentMethod.value = 'Transferencia';
@@ -763,7 +763,7 @@ document.addEventListener('DOMContentLoaded', () => {
     opsWorkspace.classList.remove('hidden');
     tabs.forEach((tab) => tab.classList.toggle('active', tab.dataset.tab === tabName));
     panes.forEach((pane) => pane.classList.toggle('hidden', pane.id !== `pane-${tabName}`));
-    btnVolverHub.textContent = 'Volver';
+    btnVolverHub.textContent = '←';
     if (tabName !== 'compras') {
       showPurchaseListView();
     }

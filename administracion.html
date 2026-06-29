@@ -89,7 +89,7 @@
 
       <section class="admin-workspace hidden" id="admin-workspace">
         <div class="admin-workspace__top">
-          <button class="btn-back" id="btn-volver-admin">Volver</button>
+          <button class="btn-back" id="btn-volver-admin" aria-label="Volver" title="Volver">&larr;</button>
           <div class="admin-tabs">
             <button class="admin-tab active" data-tab="ventas">Ventas</button>
             <button class="admin-tab" data-tab="caja">Caja</button>
@@ -148,47 +148,6 @@
             </div>
           </div>
 
-          <section class="admin-balance-card">
-            <div class="admin-chart-card__header">
-              <div>
-                <h3>Balance general</h3>
-              </div>
-            </div>
-            <div class="admin-balance-grid">
-              <article class="admin-balance-block admin-balance-block--income">
-                <div class="admin-balance-block__header">
-                  <span>Ingresos</span>
-                  <strong id="metric-balance-income">S/ 0.00</strong>
-                </div>
-                <div class="admin-balance-methods">
-                  <div><span>Efectivo</span><strong id="metric-balance-income-cash">S/ 0.00</strong></div>
-                  <div><span>Tarjeta</span><strong id="metric-balance-income-card">S/ 0.00</strong></div>
-                  <div><span>Yape / Plin</span><strong id="metric-balance-income-yape">S/ 0.00</strong></div>
-                  <div><span>Transferencia</span><strong id="metric-balance-income-transfer">S/ 0.00</strong></div>
-                </div>
-              </article>
-
-              <article class="admin-balance-block admin-balance-block--expense">
-                <div class="admin-balance-block__header">
-                  <span>Egresos</span>
-                  <strong id="metric-balance-expenses">S/ 0.00</strong>
-                </div>
-                <div class="admin-balance-methods">
-                  <div><span>Efectivo</span><strong id="metric-balance-expense-cash">S/ 0.00</strong></div>
-                  <div><span>Tarjeta</span><strong id="metric-balance-expense-card">S/ 0.00</strong></div>
-                  <div><span>Yape / Plin</span><strong id="metric-balance-expense-yape">S/ 0.00</strong></div>
-                  <div><span>Transferencia</span><strong id="metric-balance-expense-transfer">S/ 0.00</strong></div>
-                </div>
-              </article>
-
-              <article class="admin-balance-block admin-balance-block--profit">
-                <div class="admin-balance-block__header">
-                  <span>Ganancias</span>
-                  <strong id="metric-balance-profit">S/ 0.00</strong>
-                </div>
-              </article>
-            </div>
-          </section>
           <div class="admin-charts">
             <section class="admin-chart-card">
               <div class="admin-chart-card__header">
@@ -245,13 +204,13 @@
             </div>
 
             <div class="admin-filter-group">
-              <label>Turno</label>
-              <div class="admin-chip-group" id="cash-shift-chips">
-                <button class="admin-chip active" type="button" data-shift="">Todos</button>
-                <button class="admin-chip" type="button" data-shift="Manana">Mañana</button>
-                <button class="admin-chip" type="button" data-shift="Tarde">Tarde</button>
-                <button class="admin-chip" type="button" data-shift="Noche">Noche</button>
-              </div>
+              <label for="cash-shift-filter">Turno</label>
+              <select class="admin-input" id="cash-shift-filter">
+                <option value="">Todos los turnos</option>
+                <option value="Manana">Manana</option>
+                <option value="Tarde">Tarde</option>
+                <option value="Noche">Noche</option>
+              </select>
             </div>
 
             <div class="admin-filter-group">
@@ -270,25 +229,48 @@
             </div>
           </div>
 
-          <div class="admin-metrics">
-            <article class="admin-metric">
-              <span class="admin-metric__label">Ingresos</span>
-              <strong class="admin-metric__value admin-metric__value--green" id="metric-cash-income">S/ 0.00</strong>
-            </article>
-            <article class="admin-metric">
-              <span class="admin-metric__label">Egresos</span>
-              <strong class="admin-metric__value admin-metric__value--red" id="metric-cash-expense">S/ 0.00</strong>
-            </article>
-            <article class="admin-metric">
-              <span class="admin-metric__label">Balance</span>
-              <strong class="admin-metric__value admin-metric__value--gold" id="metric-cash-balance">S/ 0.00</strong>
-            </article>
-            <article class="admin-metric">
-              <span class="admin-metric__label">Movimientos</span>
-              <strong class="admin-metric__value" id="metric-cash-movements">0</strong>
-            </article>
-          </div>
 
+          <section class="admin-balance-card">
+            <div class="admin-chart-card__header">
+              <div>
+                <h3>Balance general</h3>
+              </div>
+            </div>
+            <div class="admin-balance-grid">
+              <article class="admin-balance-block admin-balance-block--income">
+                <div class="admin-balance-block__header">
+                  <span>Ingresos</span>
+                  <strong id="metric-balance-income">S/ 0.00</strong>
+                </div>
+                <div class="admin-balance-methods">
+                  <div><span>Efectivo</span><strong id="metric-balance-income-cash">S/ 0.00</strong></div>
+                  <div><span>Tarjeta</span><strong id="metric-balance-income-card">S/ 0.00</strong></div>
+                  <div><span>Yape / Plin</span><strong id="metric-balance-income-yape">S/ 0.00</strong></div>
+                  <div><span>Transferencia</span><strong id="metric-balance-income-transfer">S/ 0.00</strong></div>
+                </div>
+              </article>
+
+              <article class="admin-balance-block admin-balance-block--expense">
+                <div class="admin-balance-block__header">
+                  <span>Egresos</span>
+                  <strong id="metric-balance-expenses">S/ 0.00</strong>
+                </div>
+                <div class="admin-balance-methods">
+                  <div><span>Efectivo</span><strong id="metric-balance-expense-cash">S/ 0.00</strong></div>
+                  <div><span>Tarjeta</span><strong id="metric-balance-expense-card">S/ 0.00</strong></div>
+                  <div><span>Yape / Plin</span><strong id="metric-balance-expense-yape">S/ 0.00</strong></div>
+                  <div><span>Transferencia</span><strong id="metric-balance-expense-transfer">S/ 0.00</strong></div>
+                </div>
+              </article>
+
+              <article class="admin-balance-block admin-balance-block--profit">
+                <div class="admin-balance-block__header">
+                  <span>Ganancias</span>
+                  <strong id="metric-balance-profit">S/ 0.00</strong>
+                </div>
+              </article>
+            </div>
+          </section>
           <section class="admin-chart-card">
             <div class="admin-chart-card__header">
               <h3>Flujo de caja</h3>
@@ -336,25 +318,25 @@
 
           <div class="admin-filters admin-filters--inventory">
             <div class="admin-filter-group">
-              <label>Categoria</label>
-              <div class="admin-chip-group" id="inventory-category-chips">
-                <button class="admin-chip active" type="button" data-category="">Todos</button>
-                <button class="admin-chip" type="button" data-category="Verduras">Verduras</button>
-                <button class="admin-chip" type="button" data-category="Carnes">Carnes</button>
-                <button class="admin-chip" type="button" data-category="Bebidas">Bebidas</button>
-                <button class="admin-chip" type="button" data-category="Secos">Insumos</button>
-                <button class="admin-chip" type="button" data-category="Limpieza">Limpieza</button>
-              </div>
+              <label for="inventory-category-filter">Categoria</label>
+              <select class="admin-input" id="inventory-category-filter">
+                <option value="">Todos</option>
+                <option value="Verduras">Verduras</option>
+                <option value="Carnes">Carnes</option>
+                <option value="Bebidas">Bebidas</option>
+                <option value="Secos">Insumos</option>
+                <option value="Limpieza">Limpieza</option>
+              </select>
             </div>
 
             <div class="admin-filter-group">
-              <label>Estado</label>
-              <div class="admin-chip-group" id="inventory-status-chips">
-                <button class="admin-chip active" type="button" data-status="">Todos</button>
-                <button class="admin-chip" type="button" data-status="Normal">Normal</button>
-                <button class="admin-chip" type="button" data-status="Bajo stock">Bajo stock</button>
-                <button class="admin-chip" type="button" data-status="Sin stock">Sin stock</button>
-              </div>
+              <label for="inventory-status-filter">Estado</label>
+              <select class="admin-input" id="inventory-status-filter">
+                <option value="">Todos</option>
+                <option value="Normal">Normal</option>
+                <option value="Bajo stock">Bajo stock</option>
+                <option value="Sin stock">Sin stock</option>
+              </select>
             </div>
 
             <div class="admin-filter-group">
@@ -509,22 +491,22 @@
 
           <div class="admin-filters admin-filters--clients">
             <div class="admin-filter-group">
-              <label>Categoria</label>
-              <div class="admin-chip-group" id="clients-report-category-chips">
-                <button class="admin-chip active" type="button" data-category="">Todos</button>
-                <button class="admin-chip" type="button" data-category="Oro">Oro</button>
-                <button class="admin-chip" type="button" data-category="Plata">Plata</button>
-                <button class="admin-chip" type="button" data-category="Cobre">Cobre</button>
-              </div>
+              <label for="clients-report-category-filter">Categoria</label>
+              <select class="admin-input" id="clients-report-category-filter">
+                <option value="">Todos</option>
+                <option value="Oro">Oro</option>
+                <option value="Plata">Plata</option>
+                <option value="Cobre">Cobre</option>
+              </select>
             </div>
 
             <div class="admin-filter-group">
-              <label>Recompensa</label>
-              <div class="admin-chip-group" id="clients-report-reward-chips">
-                <button class="admin-chip active" type="button" data-reward="">Todos</button>
-                <button class="admin-chip" type="button" data-reward="con">Con recompensa</button>
-                <button class="admin-chip" type="button" data-reward="sin">Sin recompensa</button>
-              </div>
+              <label for="clients-report-reward-filter">Recompensa</label>
+              <select class="admin-input" id="clients-report-reward-filter">
+                <option value="">Todos</option>
+                <option value="con">Con recompensa</option>
+                <option value="sin">Sin recompensa</option>
+              </select>
             </div>
 
             <div class="admin-filter-group">
@@ -745,8 +727,10 @@
         <div class="admin-menu-form__grid">
           <div class="admin-filter-group">
             <label for="menu-item-category">Categoria</label>
-            <input type="text" class="admin-input" id="menu-item-category" list="menu-category-list" placeholder="Ejemplo: Platos marinos" required>
-            <datalist id="menu-category-list"></datalist>
+            <select class="admin-input" id="menu-item-category" required>
+              <option value="Platos">Platos</option>
+              <option value="Bebidas">Bebidas</option>
+            </select>
           </div>
           <div class="admin-filter-group">
             <label for="menu-item-name">Nombre</label>
@@ -758,7 +742,8 @@
           </div>
           <div class="admin-filter-group">
             <label for="menu-item-photo">Fotografia</label>
-            <input type="text" class="admin-input" id="menu-item-photo" placeholder="URL o ruta de imagen">
+            <input type="file" class="admin-input" id="menu-item-photo" accept="image/*">
+            <div class="admin-menu-photo-preview" id="menu-item-photo-preview">Sin imagen adjunta</div>
           </div>
         </div>
 
@@ -767,10 +752,6 @@
           <textarea class="admin-input admin-textarea" id="menu-item-description" placeholder="Descripcion breve para la landing"></textarea>
         </div>
 
-        <div class="admin-filter-group">
-          <label for="menu-item-ingredients">Insumos</label>
-          <textarea class="admin-input admin-textarea" id="menu-item-ingredients" placeholder="Ejemplo: pescado, limon, camote, cancha"></textarea>
-        </div>
 
         <div class="clients-modal-actions">
           <button class="btn-limpiar" type="button" id="btn-cancel-menu-item">Cancelar</button>

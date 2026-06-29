@@ -789,6 +789,27 @@
   min-width: 110px;
 }
 
+.admin-menu-photo-preview {
+  min-height: 74px;
+  margin-top: 0.55rem;
+  border: 1px dashed #d8d8d8;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #fafafa;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #777777;
+}
+
+.admin-menu-photo-preview img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
 .admin-modal-card--menu {
   width: min(100%, 720px);
 }

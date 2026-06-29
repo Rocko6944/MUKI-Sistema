@@ -7,9 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // --------- Landing Menu from Administration ---------
   const landingMenuTarget = document.getElementById('landing-menu-grid') || document.querySelector('[data-landing-menu]');
   const defaultLandingMenu = [
-    { categoria: 'Platos marinos', nombre: 'Ceviche a lo Muki', precio: 45, fotografia: 'Images/logoSinFondo.png', descripcion: 'Pesca fresca, leche de tigre de la casa, camote y cancha.', insumos: 'pescado, limon, cebolla, camote, cancha' },
-    { categoria: 'Fondos', nombre: 'Lomo Saltado', precio: 39, fotografia: 'Images/logoSinFondo.png', descripcion: 'Lomo salteado al wok con papas doradas y arroz.', insumos: 'lomo, cebolla, tomate, papa, arroz' },
-    { categoria: 'Bebidas', nombre: 'Pisco Sour', precio: 23, fotografia: 'Images/logoSinFondo.png', descripcion: 'Coctel clasico preparado al momento.', insumos: 'pisco, limon, jarabe de goma, clara de huevo' }
+    { categoria: 'Platos', nombre: 'Ceviche a lo Muki', precio: 45, fotografia: 'Images/logoSinFondo.png', descripcion: 'Pesca fresca, leche de tigre de la casa, camote y cancha.' },
+    { categoria: 'Platos', nombre: 'Lomo Saltado', precio: 39, fotografia: 'Images/logoSinFondo.png', descripcion: 'Lomo salteado al wok con papas doradas y arroz.' },
+    { categoria: 'Bebidas', nombre: 'Pisco Sour', precio: 23, fotografia: 'Images/logoSinFondo.png', descripcion: 'Coctel clasico preparado al momento.' }
   ];
 
   const escapeLandingHtml = (value) => String(value ?? '')
@@ -19,10 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 
+  const normalizeLandingMenuCategory = (category) => (category === 'Bebidas' || category === 'Bebida' ? 'Bebidas' : 'Platos');
   const readLandingMenu = () => {
     try {
       const stored = JSON.parse(localStorage.getItem('muki_carta_landing') || 'null');
-      return Array.isArray(stored) && stored.length ? stored : defaultLandingMenu;
+      return Array.isArray(stored) && stored.length ? stored.map((item) => ({ ...item, categoria: normalizeLandingMenuCategory(item.categoria) })) : defaultLandingMenu;
     } catch (error) {
       return defaultLandingMenu;
     }
@@ -31,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const renderLandingMenu = () => {
     if (!landingMenuTarget) return;
     const grouped = readLandingMenu().reduce((acc, item) => {
-      const category = item.categoria || 'Carta';
+      const category = normalizeLandingMenuCategory(item.categoria);
       acc[category] = acc[category] || [];
       acc[category].push(item);
       return acc;
@@ -50,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
                   <strong>S/ ${(Number(item.precio) || 0).toFixed(2)}</strong>
                 </div>
                 <p>${escapeLandingHtml(item.descripcion || '')}</p>
-                <small>${escapeLandingHtml(item.insumos || '')}</small>
               </div>
             </article>
           `).join('')}

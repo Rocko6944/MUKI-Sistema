@@ -1,12 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
   const CLIENTS_STORAGE_KEY = 'muki_clientes_registrados';
   const MENU_STORAGE_KEY = 'muki_carta_landing';
+  const menuCategories = ['Platos', 'Bebidas'];
   const defaultMenuItems = [
-    { id: 'menu-001', categoria: 'Platos marinos', nombre: 'Ceviche a lo Muki', precio: 45, fotografia: 'Images/logoSinFondo.png', descripcion: 'Pesca fresca, leche de tigre de la casa, camote y cancha.', insumos: 'pescado, limon, cebolla, camote, cancha' },
-    { id: 'menu-002', categoria: 'Fondos', nombre: 'Lomo Saltado', precio: 39, fotografia: 'Images/logoSinFondo.png', descripcion: 'Lomo salteado al wok con papas doradas y arroz.', insumos: 'lomo, cebolla, tomate, papa, arroz' },
-    { id: 'menu-003', categoria: 'Fondos', nombre: 'Chaufa a lo Muki', precio: 38, fotografia: 'Images/logoSinFondo.png', descripcion: 'Arroz chaufa con toque de la casa y verduras salteadas.', insumos: 'arroz, pollo, huevo, cebolla china, sillao' },
-    { id: 'menu-004', categoria: 'Bebidas', nombre: 'Pisco Sour', precio: 23, fotografia: 'Images/logoSinFondo.png', descripcion: 'Coctel clasico preparado al momento.', insumos: 'pisco, limon, jarabe de goma, clara de huevo' },
-    { id: 'menu-005', categoria: 'Bebidas', nombre: 'Chicha morada', precio: 8, fotografia: 'Images/logoSinFondo.png', descripcion: 'Refresco natural de maiz morado y especias.', insumos: 'maiz morado, pina, canela, clavo' }
+    { id: 'menu-001', categoria: 'Platos', nombre: 'Ceviche a lo Muki', precio: 45, fotografia: 'Images/logoSinFondo.png', descripcion: 'Pesca fresca, leche de tigre de la casa, camote y cancha.' },
+    { id: 'menu-002', categoria: 'Platos', nombre: 'Lomo Saltado', precio: 39, fotografia: 'Images/logoSinFondo.png', descripcion: 'Lomo salteado al wok con papas doradas y arroz.' },
+    { id: 'menu-003', categoria: 'Platos', nombre: 'Chaufa a lo Muki', precio: 38, fotografia: 'Images/logoSinFondo.png', descripcion: 'Arroz chaufa con toque de la casa y verduras salteadas.' },
+    { id: 'menu-004', categoria: 'Bebidas', nombre: 'Pisco Sour', precio: 23, fotografia: 'Images/logoSinFondo.png', descripcion: 'Coctel clasico preparado al momento.' },
+    { id: 'menu-005', categoria: 'Bebidas', nombre: 'Chicha morada', precio: 8, fotografia: 'Images/logoSinFondo.png', descripcion: 'Refresco natural de maiz morado y especias.' }
   ];
   const salesTransactions = [
     { ventaId: 'V001', fecha: '2026-04-10', producto: 'Ceviche a lo Muki', categoria: 'Plato', tipo: 'plato', cantidad: 2, total: 90, metodoPago: 'Efectivo', mozo: 'Juan Perez' },
@@ -123,14 +124,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const metricBalanceProfit = document.getElementById('metric-balance-profit');
   const cashDateFrom = document.getElementById('cash-date-from');
   const cashDateTo = document.getElementById('cash-date-to');
-  const cashShiftChips = document.getElementById('cash-shift-chips');
+  const cashShiftFilter = document.getElementById('cash-shift-filter');
   const cashUserFilter = document.getElementById('cash-user-filter');
   const btnApplyCashFilters = document.getElementById('btn-apply-cash-filters');
   const btnExportCashReport = document.getElementById('btn-export-cash-report');
-  const metricCashIncome = document.getElementById('metric-cash-income');
-  const metricCashExpense = document.getElementById('metric-cash-expense');
-  const metricCashBalance = document.getElementById('metric-cash-balance');
-  const metricCashMovements = document.getElementById('metric-cash-movements');
   const cashLineChart = document.getElementById('cash-line-chart');
   const cashLineLabels = document.getElementById('cash-line-labels');
   const cashPeakDay = document.getElementById('cash-peak-day');
@@ -151,8 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const cashExportFormatChips = document.getElementById('cash-export-format-chips');
   const btnCancelCashExport = document.getElementById('btn-cancel-cash-export');
   const btnConfirmCashExport = document.getElementById('btn-confirm-cash-export');
-  const inventoryCategoryChips = document.getElementById('inventory-category-chips');
-  const inventoryStatusChips = document.getElementById('inventory-status-chips');
+  const inventoryCategoryFilter = document.getElementById('inventory-category-filter');
+  const inventoryStatusFilter = document.getElementById('inventory-status-filter');
   const inventoryDateFrom = document.getElementById('inventory-date-from');
   const inventoryDateTo = document.getElementById('inventory-date-to');
   const btnApplyInventoryFilters = document.getElementById('btn-apply-inventory-filters');
@@ -192,8 +189,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const purchasesExportFormatChips = document.getElementById('purchases-export-format-chips');
   const btnCancelPurchasesExport = document.getElementById('btn-cancel-purchases-export');
   const btnConfirmPurchasesExport = document.getElementById('btn-confirm-purchases-export');
-  const clientsReportCategoryChips = document.getElementById('clients-report-category-chips');
-  const clientsReportRewardChips = document.getElementById('clients-report-reward-chips');
+  const clientsReportCategoryFilter = document.getElementById('clients-report-category-filter');
+  const clientsReportRewardFilter = document.getElementById('clients-report-reward-filter');
   const clientsReportDateFrom = document.getElementById('clients-report-date-from');
   const clientsReportDateTo = document.getElementById('clients-report-date-to');
   const btnApplyClientsFilters = document.getElementById('btn-apply-clients-filters');
@@ -223,16 +220,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const menuItemName = document.getElementById('menu-item-name');
   const menuItemPrice = document.getElementById('menu-item-price');
   const menuItemPhoto = document.getElementById('menu-item-photo');
+  const menuItemPhotoPreview = document.getElementById('menu-item-photo-preview');
   const menuItemDescription = document.getElementById('menu-item-description');
-  const menuItemIngredients = document.getElementById('menu-item-ingredients');
-  const menuCategoryList = document.getElementById('menu-category-list');
   const btnCancelMenuItem = document.getElementById('btn-cancel-menu-item');
 
   let currentAdminTab = 'ventas';
   let selectedType = '';
   let selectedPayment = '';
   let selectedExportFormat = 'Excel';
-  let selectedCashShift = '';
   let selectedCashExportFormat = 'Excel';
   let selectedInventoryCategory = '';
   let selectedInventoryStatus = '';
@@ -243,6 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let selectedMenuCategory = '';
   let selectedClientsExportFormat = 'Excel';
   let menuItems = readMenuItems();
+  let currentMenuPhoto = '';
 
   function escapeHtml(value) {
     return String(value ?? '')
@@ -253,12 +249,26 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/'/g, '&#39;');
   }
 
+  function normalizeMenuCategory(category) {
+    return category === 'Bebidas' || category === 'Bebida' ? 'Bebidas' : 'Platos';
+  }
+
+  function normalizeMenuItem(item) {
+    return {
+      id: item.id || `menu-${Date.now()}`,
+      categoria: normalizeMenuCategory(item.categoria),
+      nombre: item.nombre || '',
+      precio: Number(item.precio) || 0,
+      fotografia: item.fotografia || '',
+      descripcion: item.descripcion || ''
+    };
+  }
   function readMenuItems() {
     try {
       const stored = JSON.parse(localStorage.getItem(MENU_STORAGE_KEY) || 'null');
-      return Array.isArray(stored) && stored.length ? stored : [...defaultMenuItems];
+      return Array.isArray(stored) && stored.length ? stored.map(normalizeMenuItem) : defaultMenuItems.map(normalizeMenuItem);
     } catch (error) {
-      return [...defaultMenuItems];
+      return defaultMenuItems.map(normalizeMenuItem);
     }
   }
 
@@ -356,18 +366,18 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  function isWithinSalesDateRange(item) {
-    const matchesFrom = !salesDateFrom.value || item.fecha >= salesDateFrom.value;
-    const matchesTo = !salesDateTo.value || item.fecha <= salesDateTo.value;
+  function isWithinBalanceDateRange(item) {
+    const matchesFrom = !cashDateFrom.value || item.fecha >= cashDateFrom.value;
+    const matchesTo = !cashDateTo.value || item.fecha <= cashDateTo.value;
     return matchesFrom && matchesTo;
   }
 
   function getBalanceSales() {
-    return salesTransactions.filter(isWithinSalesDateRange);
+    return salesTransactions.filter(isWithinBalanceDateRange);
   }
 
   function getBalancePurchases() {
-    return purchaseRecords.filter(isWithinSalesDateRange);
+    return purchaseRecords.filter(isWithinBalanceDateRange);
   }
 
   function normalizePaymentMethod(method) {
@@ -412,7 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  function renderSalesBalanceReport() {
+  function renderCashBalanceReport() {
     const metrics = getBalanceMetrics();
     metricBalanceIncomeCash.textContent = formatCurrency(metrics.income.cash);
     metricBalanceIncomeCard.textContent = formatCurrency(metrics.income.card);
@@ -458,7 +468,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderSalesLineChart(filtered);
     renderSalesBars(filtered);
     renderSalesTable(filtered);
-    renderSalesBalanceReport();
   }
 
   function getFilteredCashMovements() {
@@ -466,25 +475,10 @@ document.addEventListener('DOMContentLoaded', () => {
     return cashMovements.filter((item) => {
       const matchesFrom = !cashDateFrom.value || item.fecha >= cashDateFrom.value;
       const matchesTo = !cashDateTo.value || item.fecha <= cashDateTo.value;
-      const matchesShift = !selectedCashShift || item.turno === selectedCashShift;
+      const matchesShift = !cashShiftFilter.value || item.turno === cashShiftFilter.value;
       const matchesUser = !selectedUser || item.usuario === selectedUser;
       return matchesFrom && matchesTo && matchesShift && matchesUser;
     });
-  }
-
-  function renderCashMetrics(filtered) {
-    const ingresos = filtered
-      .filter((item) => item.tipo === 'Venta' || item.tipo === 'Ingreso')
-      .reduce((sum, item) => sum + item.monto, 0);
-    const egresos = filtered
-      .filter((item) => item.tipo === 'Egreso')
-      .reduce((sum, item) => sum + item.monto, 0);
-    const balance = ingresos - egresos;
-
-    metricCashIncome.textContent = formatCurrency(ingresos);
-    metricCashExpense.textContent = formatCurrency(egresos);
-    metricCashBalance.textContent = formatCurrency(balance);
-    metricCashMovements.textContent = `${filtered.length}`;
   }
 
   function renderCashLineChart(filtered) {
@@ -562,7 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderCashReport() {
     const filtered = getFilteredCashMovements();
-    renderCashMetrics(filtered);
+    renderCashBalanceReport();
     renderCashLineChart(filtered);
     renderCashTable(filtered);
   }
@@ -762,7 +756,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getMenuCategories() {
-    return [...new Set(menuItems.map((item) => item.categoria).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    return menuCategories;
   }
 
   function renderMenuCategoryControls() {
@@ -770,7 +764,6 @@ document.addEventListener('DOMContentLoaded', () => {
     menuCategoryChips.innerHTML = '<button class="admin-chip" type="button" data-category="">Todas</button>' + categories.map((category) => (
       `<button class="admin-chip" type="button" data-category="${escapeHtml(category)}">${escapeHtml(category)}</button>`
     )).join('');
-    menuCategoryList.innerHTML = categories.map((category) => `<option value="${escapeHtml(category)}"></option>`).join('');
     setActiveChip(menuCategoryChips, selectedMenuCategory, 'category');
   }
 
@@ -813,7 +806,6 @@ document.addEventListener('DOMContentLoaded', () => {
                   <span>${formatCurrency(Number(item.precio) || 0)}</span>
                 </div>
                 <p>${escapeHtml(item.descripcion || 'Sin descripcion')}</p>
-                <small>Insumos: ${escapeHtml(item.insumos || '-')}</small>
               </div>
               <button class="btn-limpiar admin-menu-item__edit" type="button" data-menu-id="${escapeHtml(item.id)}">Editar</button>
             </div>
@@ -827,12 +819,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const isEditing = Boolean(item);
     menuItemModalTitle.textContent = isEditing ? 'Editar producto' : 'Agregar producto';
     menuItemId.value = item?.id || '';
-    menuItemCategory.value = item?.categoria || selectedMenuCategory || '';
+    menuItemCategory.value = normalizeMenuCategory(item?.categoria || selectedMenuCategory || 'Platos');
     menuItemName.value = item?.nombre || '';
     menuItemPrice.value = item?.precio ?? '';
-    menuItemPhoto.value = item?.fotografia || '';
+    currentMenuPhoto = item?.fotografia || '';
+    menuItemPhoto.value = '';
+    menuItemPhotoPreview.innerHTML = currentMenuPhoto ? `<img src="${escapeHtml(currentMenuPhoto)}" alt="Imagen del producto">` : 'Sin imagen adjunta';
     menuItemDescription.value = item?.descripcion || '';
-    menuItemIngredients.value = item?.insumos || '';
     renderMenuCategoryControls();
     menuItemModalOverlay.classList.remove('hidden');
     menuItemName.focus();
@@ -851,9 +844,8 @@ document.addEventListener('DOMContentLoaded', () => {
       categoria: menuItemCategory.value.trim() || 'Sin categoria',
       nombre: menuItemName.value.trim(),
       precio: parseFloat(menuItemPrice.value) || 0,
-      fotografia: menuItemPhoto.value.trim(),
-      descripcion: menuItemDescription.value.trim(),
-      insumos: menuItemIngredients.value.trim()
+      fotografia: currentMenuPhoto,
+      descripcion: menuItemDescription.value.trim()
     };
 
     if (!payload.nombre) {
@@ -895,7 +887,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const from = cashDateFrom.value ? formatShortDate(cashDateFrom.value) : '-';
     const to = cashDateTo.value ? formatShortDate(cashDateTo.value) : '-';
     cashExportSummaryRange.textContent = `${from} - ${to}`;
-    cashExportSummaryShift.textContent = selectedCashShift || 'Todos';
+    cashExportSummaryShift.textContent = cashShiftFilter.value || 'Todos';
     cashExportSummaryUser.textContent = cashUserFilter.value || 'Todos';
     selectedCashExportFormat = 'Excel';
     setActiveChip(cashExportFormatChips, selectedCashExportFormat, 'format');
@@ -1005,46 +997,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
   btnExportSalesReport.addEventListener('click', openExportModal);
 
-  cashShiftChips.addEventListener('click', (event) => {
-    const chip = event.target.closest('.admin-chip');
-    if (!chip) return;
-    selectedCashShift = chip.dataset.shift;
-    setActiveChip(cashShiftChips, selectedCashShift, 'shift');
-  });
 
+  cashShiftFilter.addEventListener('change', renderCashReport);
+  cashUserFilter.addEventListener('change', renderCashReport);
   btnApplyCashFilters.addEventListener('click', renderCashReport);
   btnExportCashReport.addEventListener('click', openCashExportModal);
-
-  inventoryCategoryChips.addEventListener('click', (event) => {
-    const chip = event.target.closest('.admin-chip');
-    if (!chip) return;
-    selectedInventoryCategory = chip.dataset.category;
-    setActiveChip(inventoryCategoryChips, selectedInventoryCategory, 'category');
+  inventoryCategoryFilter.addEventListener('change', () => {
+    selectedInventoryCategory = inventoryCategoryFilter.value;
   });
 
-  inventoryStatusChips.addEventListener('click', (event) => {
-    const chip = event.target.closest('.admin-chip');
-    if (!chip) return;
-    selectedInventoryStatus = chip.dataset.status;
-    setActiveChip(inventoryStatusChips, selectedInventoryStatus, 'status');
+  inventoryStatusFilter.addEventListener('change', () => {
+    selectedInventoryStatus = inventoryStatusFilter.value;
   });
 
   btnApplyInventoryFilters.addEventListener('click', renderInventoryReport);
   btnExportInventoryReport.addEventListener('click', openInventoryExportModal);
   btnApplyPurchasesFilters.addEventListener('click', renderPurchasesReport);
   btnExportPurchasesReport.addEventListener('click', openPurchasesExportModal);
-  clientsReportCategoryChips.addEventListener('click', (event) => {
-    const chip = event.target.closest('.admin-chip');
-    if (!chip) return;
-    selectedClientsCategory = chip.dataset.category;
-    setActiveChip(clientsReportCategoryChips, selectedClientsCategory, 'category');
+  clientsReportCategoryFilter.addEventListener('change', () => {
+    selectedClientsCategory = clientsReportCategoryFilter.value;
   });
 
-  clientsReportRewardChips.addEventListener('click', (event) => {
-    const chip = event.target.closest('.admin-chip');
-    if (!chip) return;
-    selectedClientsReward = chip.dataset.reward;
-    setActiveChip(clientsReportRewardChips, selectedClientsReward, 'reward');
+  clientsReportRewardFilter.addEventListener('change', () => {
+    selectedClientsReward = clientsReportRewardFilter.value;
   });
 
   btnApplyClientsFilters.addEventListener('click', renderClientsReport);
@@ -1064,6 +1039,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (item) openMenuItemModal(item);
   });
 
+
+  menuItemPhoto.addEventListener('change', () => {
+    const file = menuItemPhoto.files && menuItemPhoto.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.addEventListener('load', () => {
+      currentMenuPhoto = String(reader.result || '');
+      menuItemPhotoPreview.innerHTML = currentMenuPhoto ? `<img src="${escapeHtml(currentMenuPhoto)}" alt="Imagen del producto">` : 'Sin imagen adjunta';
+    });
+    reader.readAsDataURL(file);
+  });
   btnAddMenuItem.addEventListener('click', () => openMenuItemModal());
   btnCancelMenuItem.addEventListener('click', closeMenuItemModal);
   menuItemForm.addEventListener('submit', (event) => {

@@ -133,12 +133,18 @@
 }
 
 .btn-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
   background: #ffffff;
   border: 1px solid #dddddd;
-  font-size: 0.9rem;
+  font-size: 1.35rem;
+  line-height: 1;
   color: #555555;
   cursor: pointer;
-  padding: 0.55rem 0.9rem;
+  padding: 0;
   border-radius: 12px;
   transition: border-color 0.2s ease, background 0.2s ease;
   font-family: var(--font-body);
@@ -1220,7 +1226,7 @@
 }
 
 .modal-card--payment {
-  width: min(720px, 100%);
+  width: min(860px, 100%);
 }
 
 .modal-card__title {
@@ -1373,14 +1379,21 @@
 
 .billing-split-line {
   display: grid;
-  grid-template-columns: minmax(120px, 0.9fr) minmax(110px, 1fr) auto minmax(118px, 0.85fr) minmax(86px, 0.7fr) minmax(92px, 0.75fr) minmax(130px, 1fr) minmax(82px, 0.65fr) auto;
-  gap: 0.7rem;
-  align-items: flex-start;
+  grid-template-columns: minmax(120px, 1.05fr) minmax(120px, 1fr) minmax(88px, 0.7fr) minmax(120px, 0.9fr) minmax(76px, 0.55fr) minmax(76px, 0.55fr);
+  gap: 0.65rem;
+  align-items: stretch;
   padding: 0.8rem;
   border: 1px solid #eeeeee;
   border-radius: 14px;
   background: #ffffff;
   cursor: pointer;
+}
+
+.billing-split-line .payment-line__method,
+.billing-split-line .payment-input,
+.billing-split-line .btn-limpiar {
+  width: 100%;
+  min-width: 0;
 }
 
 .billing-split-line.selected {
@@ -1396,6 +1409,7 @@
 .billing-split__detail {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 0.2rem;
   min-width: 0;
 }
@@ -1421,6 +1435,23 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.billing-split__client {
+  grid-column: 1 / span 3;
+  align-self: center;
+}
+
+.billing-split__status {
+  grid-column: 4 / span 1;
+  align-self: center;
+  white-space: normal;
+}
+
+.billing-split__remove {
+  grid-column: 5 / span 2;
+  align-self: center;
+  justify-self: stretch;
 }
 
 .billing-split-line.generated .billing-split__status {
@@ -1523,6 +1554,18 @@
 
   .productos-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 980px) {
+  .billing-split-line {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .billing-split__client,
+  .billing-split__status,
+  .billing-split__remove {
+    grid-column: auto;
   }
 }
 

@@ -38,7 +38,7 @@
 
     <div class="view" id="view-historial">
       <div class="view__header">
-        <button class="btn-back" id="btn-volver-modulos" onclick="window.location.href='modulos.html'">Volver</button>
+        <button class="btn-back" id="btn-volver-modulos" onclick="window.location.href='modulos.html'" aria-label="Volver" title="Volver">&larr;</button>
         <div class="historial-filters">
           <div class="historial-filter">
             <label for="historial-search">Buscador de ventas</label>
@@ -101,7 +101,7 @@
 
     <div class="view hidden" id="view-mesas">
       <div class="view__header view__header--stacked">
-        <button class="btn-back" id="btn-volver-historial">Volver al historial</button>
+        <button class="btn-back" id="btn-volver-historial" aria-label="Volver al historial" title="Volver al historial">&larr;</button>
         <h2 class="view__title">Seleccionar ambiente</h2>
         <div class="ambiente-selector" id="ambiente-selector"></div>
         <div class="mesa-legend">
@@ -123,7 +123,7 @@
 
     <div class="view hidden" id="view-caja">
       <div class="view__header">
-        <button class="btn-back" id="btn-volver-mesas">Volver</button>
+        <button class="btn-back" id="btn-volver-mesas" aria-label="Volver" title="Volver">&larr;</button>
         <div class="caja-filters">
           <div class="caja-search">
             <label>Buscador de plato o bebida</label>
@@ -442,7 +442,6 @@
         <div class="payment-summary__row"><span>IGV general</span><span id="billing-igv">S/ 0.00</span></div>
         <div class="payment-summary__row payment-summary__row--total"><span>Total general</span><span id="billing-total">S/ 0.00</span></div>
         <div class="payment-summary__row payment-summary__row--remaining"><span>Pendiente por asignar</span><span id="billing-remaining">S/ 0.00</span></div>
-        <div class="payment-summary__row payment-summary__row--remaining"><span>Falta para cerrar mesa</span><span id="billing-close-remaining">S/ 0.00</span></div>
       </div>
 
       <div class="modal-actions">
