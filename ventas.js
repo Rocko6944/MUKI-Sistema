@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const CLIENTS_STORAGE_KEY = 'muki_clientes_registrados';
+  const TABLE_MAP_STORAGE_KEY = 'mukiSettingsTableMap';
   const ventasData = [
     {
       id: '#MK1001',
@@ -8,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
       estado: 'En proceso',
       fecha: '24/10/24 20:30',
       comensales: 2,
+      mozo: 'Camila Rojas',
       items: [
         { nombre: 'Ceviche a lo Muki', cantidad: 1, precio: 45, nota: '' },
         { nombre: 'Chaufa a lo Muki', cantidad: 1, precio: 38, nota: '' },
@@ -21,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
       estado: 'Cobrada',
       fecha: '24/10/24 20:15',
       comensales: 2,
+      mozo: 'Camila Rojas',
       items: [
         { nombre: 'Arroz con mariscos', cantidad: 1, precio: 25, nota: '' },
         { nombre: 'Pisco Sour', cantidad: 1, precio: 23, nota: '' }
@@ -33,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
       estado: 'En proceso',
       fecha: '24/10/24 19:55',
       comensales: 3,
+      mozo: 'Camila Rojas',
       items: [
         { nombre: 'Lomo Saltado', cantidad: 1, precio: 39, nota: '' },
         { nombre: 'Chicha morada', cantidad: 1, precio: 8, nota: '' },
@@ -41,18 +45,75 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   ];
 
-  const mesasData = [
-    { id: 1, name: 'Mesa 1', status: 'libre' },
-    { id: 2, name: 'Mesa 2', status: 'ocupada' },
-    { id: 3, name: 'Mesa 3', status: 'ocupada' },
-    { id: 4, name: 'Mesa 4', status: 'libre' },
-    { id: 5, name: 'Mesa 5', status: 'proceso' },
-    { id: 6, name: 'Mesa 6', status: 'libre' },
-    { id: 7, name: 'Mesa 7', status: 'proceso' },
-    { id: 8, name: 'Mesa 8', status: 'libre' },
-    { id: 9, name: 'Mesa 9', status: 'ocupada' },
-    { id: 10, name: 'Mesa 10', status: 'libre' }
-  ];
+  const defaultTableMap = {
+    floors: [
+      { id: 1, name: 'Balcon' },
+      { id: 2, name: 'Terraza' },
+      { id: 3, name: 'Salon 1' },
+      { id: 4, name: 'Salon 2' }
+    ],
+    tables: [
+      { id: 'tb-001', floor: 1, name: 'Mesa 1', status: 'Libre' },
+      { id: 'tb-002', floor: 1, name: 'Mesa 2', status: 'Libre' },
+      { id: 'tb-003', floor: 2, name: 'Mesa 3', status: 'Reservada' },
+      { id: 'tb-004', floor: 3, name: 'Mesa 4', status: 'Ocupada' },
+      { id: 'tb-005', floor: 3, name: 'Mesa 5', status: 'Libre' },
+      { id: 'tb-006', floor: 4, name: 'Mesa 6', status: 'Libre' }
+    ]
+  };
+
+  let ambientesData = [];
+  let mesasData = [];
+
+  function readTableMapConfig() {
+    try {
+      const stored = JSON.parse(localStorage.getItem(TABLE_MAP_STORAGE_KEY) || 'null');
+      return stored && Array.isArray(stored.tables) ? stored : defaultTableMap;
+    } catch (error) {
+      return defaultTableMap;
+    }
+  }
+
+  function normalizeMesaStatus(status) {
+    const statusMap = {
+      libre: 'libre',
+      reservada: 'proceso',
+      ocupada: 'ocupada'
+    };
+    return statusMap[String(status || '').toLowerCase()] || 'libre';
+  }
+
+  function refreshConfiguredTables() {
+    const tableMap = readTableMapConfig();
+    const maxFloor = tableMap.tables.reduce((max, table) => Math.max(max, Number(table.floor) || 1), 1);
+    const floors = Array.isArray(tableMap.floors) ? tableMap.floors : [];
+
+    ambientesData = Array.from({ length: Math.max(4, Number(tableMap.floorCount) || 0, maxFloor) }, (_, index) => {
+      const id = index + 1;
+      const configured = floors.find((floor) => Number(floor.id) === id);
+      const fallback = defaultTableMap.floors[index];
+      return {
+        id,
+        name: (configured && configured.name) || (fallback && fallback.name) || `Ambiente ${id}`
+      };
+    });
+
+    mesasData = tableMap.tables.map((table) => {
+      const ambienteId = Number(table.floor) || 1;
+      const ambiente = ambientesData.find((item) => item.id === ambienteId) || ambientesData[0];
+      return {
+        id: table.id,
+        name: table.name,
+        status: normalizeMesaStatus(table.status),
+        ambienteId,
+        ambienteName: ambiente ? ambiente.name : 'Ambiente 1',
+        capacity: table.capacity || 4,
+        reference: ambiente ? `${ambiente.name} - ${table.name}` : table.name
+      };
+    });
+  }
+
+  refreshConfiguredTables();
 
   const productosData = [
     { id: 'p1', name: 'Ceviche a lo Muki', price: 45, category: 'platos', description: 'Pescado fresco, leche de tigre, choclo y camote.' },
@@ -139,7 +200,11 @@ document.addEventListener('DOMContentLoaded', () => {
     writeRegisteredClients(storedClients);
   }
 
-  let selectedMesa = mesasData[0];
+  let selectedMesa = null;
+  let selectedAmbienteId = null;
+  let currentAmbienteName = '';
+  let currentMesaReference = '';
+  let currentWaiterName = '';
   let pedido = [];
   let selectedVentaId = null;
   let currentTotal = 0;
@@ -180,8 +245,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCerrarVenta = document.getElementById('btn-cerrar-venta');
 
   const mesasGrid = document.getElementById('mesas-grid');
+  const ambienteSelector = document.getElementById('ambiente-selector');
   const detailName = document.getElementById('detail-name');
   const detailStatus = document.getElementById('detail-status');
+  const detailWaiter = document.getElementById('detail-waiter');
   const btnIniciar = document.getElementById('btn-iniciar-pedido');
   const btnVolverHistorial = document.getElementById('btn-volver-historial');
   const btnVolverMesas = document.getElementById('btn-volver-mesas');
@@ -190,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const pedidoItems = document.getElementById('pedido-items');
   const pedidoTotal = document.getElementById('pedido-total-valor');
   const pedidoMesa = document.getElementById('pedido-mesa');
+  const pedidoMozo = document.getElementById('pedido-mozo');
   const searchInput = document.getElementById('search-producto');
   const filterCat = document.getElementById('filter-categoria');
   const btnLimpiar = document.getElementById('btn-limpiar');
@@ -242,15 +310,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCancelarCobro = document.getElementById('btn-cancelar-cobro');
 
   const billingModalOverlay = document.getElementById('billing-modal-overlay');
-  const billingType = document.getElementById('billing-type');
-  const billingDocument = document.getElementById('billing-document');
-  const btnBillingSearch = document.getElementById('btn-billing-search');
-  const billingName = document.getElementById('billing-name');
-  const billingDoc = document.getElementById('billing-doc');
-  const billingAddress = document.getElementById('billing-address');
+  const billingSplitLines = document.getElementById('billing-split-lines');
+  const btnAddBillingSplit = document.getElementById('btn-add-billing-split');
   const billingSubtotal = document.getElementById('billing-subtotal');
   const billingIgv = document.getElementById('billing-igv');
   const billingTotal = document.getElementById('billing-total');
+  const billingRemaining = document.getElementById('billing-remaining');
   const btnBillingConfirm = document.getElementById('btn-billing-confirm');
   const btnBillingCancel = document.getElementById('btn-billing-cancel');
   const closeCajaModalOverlay = document.getElementById('close-caja-modal-overlay');
@@ -270,6 +335,29 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/'/g, '&#39;');
   }
 
+  function getActiveWaiterName() {
+    const profile = typeof getCurrentUserProfile === 'function' ? getCurrentUserProfile() : {};
+    return profile.nombre || profile.usuario || 'Mozo de turno';
+  }
+
+  function getMesaActiveVenta(mesa) {
+    return ventasData.find((venta) => {
+      if (venta.estado !== 'En proceso' || venta.mesa === 'Para llevar') return false;
+      const sameMesa = venta.mesa === mesa.name || normalizeMesaCode(venta.mesa) === normalizeMesaCode(mesa.name);
+      const sameAmbiente = !venta.ambiente || venta.ambiente === mesa.ambienteName;
+      return sameMesa && sameAmbiente;
+    });
+  }
+
+  function getMesaWaiterName(mesa) {
+    const activeVenta = getMesaActiveVenta(mesa);
+    return activeVenta?.mozo || '';
+  }
+
+  function setWaiterLabel(element, waiterName) {
+    if (!element) return;
+    element.textContent = waiterName ? `Mozo: ${waiterName}` : 'Mozo: -';
+  }
   function getPedidoSubtotal(items = pedido) {
     return items.reduce((acc, item) => acc + (item.qty * item.price), 0);
   }
@@ -313,17 +401,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
     currentOrderMode = venta.mesa === 'Para llevar' ? 'llevar' : 'salon';
     currentTakeawayMode = venta.canal || 'Recojo en tienda';
+    currentAmbienteName = venta.ambiente || '';
+    currentMesaReference = venta.mesa || '';
+    currentWaiterName = venta.mozo || getActiveWaiterName();
     pedidoMesa.textContent = venta.mesa === 'Para llevar'
       ? `Pedido para llevar - ${currentTakeawayMode}`
-      : `Mesa ${venta.mesa}`;
+      : (venta.ambiente ? `${venta.ambiente} - ${venta.mesa}` : `Mesa ${venta.mesa}`);
     currentVentaId = venta.id;
+    setWaiterLabel(pedidoMozo, currentWaiterName);
     renderPedido();
   }
 
   function getPedidoReference() {
     return currentOrderMode === 'llevar'
       ? 'Para llevar'
-      : normalizeMesaCode(pedidoMesa.textContent);
+      : (currentMesaReference || normalizeMesaCode(pedidoMesa.textContent));
   }
 
   function syncVentaFromPedido() {
@@ -332,6 +424,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const ventaPayload = {
       mesa: getPedidoReference(),
       canal: currentOrderMode === 'llevar' ? currentTakeawayMode : 'Salon',
+      ambiente: currentOrderMode === 'llevar' ? '' : currentAmbienteName,
+      mozo: currentWaiterName || getActiveWaiterName(),
       total: subtotal,
       estado: 'En proceso',
       fecha: `${now.toLocaleDateString('es-PE')} ${now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}`,
@@ -435,19 +529,95 @@ document.addEventListener('DOMContentLoaded', () => {
     updatePaymentSummary();
   }
 
-  function fillBillingClient(cliente) {
-    billingName.textContent = cliente?.nombre || '-';
-    billingDoc.textContent = cliente?.documento || '-';
-    billingAddress.textContent = cliente?.direccion || '-';
+  function getBillingTypeOptions() {
+    return `
+      <option value="nota_venta">Nota de venta</option>
+      <option value="boleta">Boleta</option>
+      <option value="factura">Factura</option>
+    `;
   }
 
-  function openBillingModal() {
-    billingType.value = 'boleta';
-    billingDocument.value = '';
-    fillBillingClient(null);
+  function getBillingAssignedTotal() {
+    return Array.from(billingSplitLines.querySelectorAll('.billing-split__amount')).reduce((sum, input) => {
+      return sum + (parseFloat(input.value.replace(/[^0-9.]/g, '')) || 0);
+    }, 0);
+  }
+
+  function updateBillingSummary() {
+    const assigned = getBillingAssignedTotal();
+    const remaining = currentTotal - assigned;
     billingSubtotal.textContent = formatCurrency(currentSubtotal);
     billingIgv.textContent = formatCurrency(currentIgv);
     billingTotal.textContent = formatCurrency(currentTotal);
+    billingRemaining.textContent = formatCurrency(remaining);
+    btnBillingConfirm.disabled = currentTotal <= 0 || Math.abs(currentTotal - assigned) > 0.009;
+  }
+
+  function fillBillingLineClient(line, cliente, documento = '') {
+    line.dataset.clientName = cliente?.nombre || '';
+    line.dataset.clientDocument = cliente?.documento || documento;
+    line.dataset.clientAddress = cliente?.direccion || '';
+    line.querySelector('.billing-split__client').textContent = cliente?.nombre || (documento ? 'Cliente no encontrado' : 'Cliente: -');
+  }
+
+  function bindBillingSplitEvents(line) {
+    const documentInput = line.querySelector('.billing-split__document');
+    const amountInput = line.querySelector('.billing-split__amount');
+    const searchButton = line.querySelector('.billing-split__search');
+    const removeButton = line.querySelector('.billing-split__remove');
+
+    amountInput.addEventListener('input', updateBillingSummary);
+    documentInput.addEventListener('input', () => fillBillingLineClient(line, null, documentInput.value.trim()));
+    searchButton.addEventListener('click', () => {
+      const documento = documentInput.value.trim();
+      fillBillingLineClient(line, clientesFacturacion[documento] || null, documento);
+    });
+    removeButton.addEventListener('click', () => {
+      if (billingSplitLines.children.length === 1) {
+        line.querySelector('.billing-split__type').value = 'nota_venta';
+        documentInput.value = '';
+        amountInput.value = Number(currentTotal).toFixed(2);
+        fillBillingLineClient(line, null);
+      } else {
+        line.remove();
+      }
+      updateBillingSummary();
+    });
+  }
+
+  function addBillingSplitLine(amount = '') {
+    const line = document.createElement('div');
+    line.className = 'billing-split-line';
+    line.innerHTML = `
+      <select class="payment-line__method billing-split__type">${getBillingTypeOptions()}</select>
+      <input type="text" class="payment-input billing-split__document" placeholder="DNI / RUC">
+      <button type="button" class="btn-limpiar billing-split__search">Buscar</button>
+      <input type="text" class="payment-input billing-split__amount" placeholder="S/ 0.00" value="${amount}">
+      <span class="billing-split__client">Cliente: -</span>
+      <button type="button" class="btn-limpiar billing-split__remove">Quitar</button>
+    `;
+    billingSplitLines.appendChild(line);
+    bindBillingSplitEvents(line);
+    updateBillingSummary();
+  }
+
+  function getBillingSplitPayload() {
+    return Array.from(billingSplitLines.querySelectorAll('.billing-split-line')).map((line) => {
+      const documento = line.querySelector('.billing-split__document').value.trim();
+      return {
+        tipo: line.querySelector('.billing-split__type').value,
+        documento,
+        nombre: line.dataset.clientName || (documento ? 'Cliente facturado' : ''),
+        direccion: line.dataset.clientAddress || '',
+        monto: parseFloat(line.querySelector('.billing-split__amount').value.replace(/[^0-9.]/g, '')) || 0
+      };
+    }).filter((item) => item.monto > 0);
+  }
+
+  function openBillingModal() {
+    billingSplitLines.innerHTML = '';
+    addBillingSplitLine(Number(currentTotal).toFixed(2));
+    updateBillingSummary();
     billingModalOverlay.classList.remove('hidden');
   }
 
@@ -718,16 +888,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const status = historialStatus.value;
 
     return ventasData.filter((venta) => {
-      const matchesTerm = !term || venta.id.toLowerCase().includes(term) || venta.mesa.toLowerCase().includes(term);
+      const locationLabel = getVentaLocationLabel(venta).toLowerCase();
+      const matchesTerm = !term || venta.id.toLowerCase().includes(term) || locationLabel.includes(term);
       const matchesStatus = !status || venta.estado === status;
       return matchesTerm && matchesStatus;
     });
   }
 
+  function getVentaLocationLabel(venta) {
+    if (venta.mesa === 'Para llevar') return 'Para llevar';
+    return venta.ambiente ? `${venta.ambiente} - ${venta.mesa}` : venta.mesa;
+  }
+
   function renderVentaDetail(venta) {
     const subtotal = venta.items.reduce((acc, item) => acc + (item.cantidad * item.precio), 0);
     const isTakeaway = venta.mesa === 'Para llevar';
-    const headerLabel = isTakeaway ? 'Pedido para llevar' : `Mesa ${venta.mesa}`;
+    const locationLabel = getVentaLocationLabel(venta);
+    const headerLabel = isTakeaway ? 'Pedido para llevar' : locationLabel;
     const itemsHtml = venta.items.map((item) => `
       <div class="venta-detail__item">
         <div>
@@ -741,8 +918,9 @@ document.addEventListener('DOMContentLoaded', () => {
     ventaDetailContent.innerHTML = `
       <div class="venta-detail__summary">
         <h4>${venta.id} - ${headerLabel}</h4>
-        <p>${isTakeaway ? 'Tipo de pedido' : 'Mesa'}: ${isTakeaway ? 'Para llevar' : venta.mesa}</p>
+        <p>${isTakeaway ? 'Tipo de pedido' : 'Mesa'}: ${isTakeaway ? 'Para llevar' : locationLabel}</p>
         ${isTakeaway ? `<p>Canal: ${venta.canal || 'Recojo en tienda'}</p>` : ''}
+        ${venta.mozo ? `<p>Mozo: ${escapeHtml(venta.mozo)}</p>` : ''}
         <p>Comensales: ${venta.comensales}</p>
         <p>Estado: ${venta.estado}</p>
       </div>
@@ -767,8 +945,9 @@ document.addEventListener('DOMContentLoaded', () => {
       tr.className = `historial-row${selectedVentaId === venta.id ? ' selected' : ''}`;
       tr.innerHTML = `
         <td>${venta.id}</td>
-        <td>${venta.mesa}</td>
+        <td>${getVentaLocationLabel(venta)}</td>
         <td>${formatCurrency(venta.total)}</td>
+        <td>${escapeHtml(venta.mozo || '-')}</td>
         <td><span class="status-pill ${statusClass}">${venta.estado}</span></td>
         <td>${venta.fecha}</td>
       `;
@@ -782,7 +961,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!ventas.length) {
       const empty = document.createElement('tr');
-      empty.innerHTML = '<td colspan="5" class="historial-empty">No se encontraron ventas.</td>';
+      empty.innerHTML = '<td colspan="6" class="historial-empty">No se encontraron ventas.</td>';
       historialTbody.appendChild(empty);
     }
 
@@ -792,9 +971,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function resetMesaDetail(message = 'Selecciona un ambiente') {
+    selectedMesa = null;
+    detailName.textContent = message;
+    detailStatus.textContent = 'El mapa de mesas aparecera aqui.';
+    setWaiterLabel(detailWaiter, '');
+    btnIniciar.textContent = 'Iniciar pedido';
+    btnIniciar.disabled = true;
+  }
+
+  function renderAmbientes() {
+    ambienteSelector.innerHTML = '';
+    ambientesData.forEach((ambiente) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = `ambiente-option${selectedAmbienteId === ambiente.id ? ' active' : ''}`;
+      button.textContent = ambiente.name;
+      button.addEventListener('click', () => selectAmbiente(ambiente.id));
+      ambienteSelector.appendChild(button);
+    });
+  }
+
   function renderMesas() {
     mesasGrid.innerHTML = '';
-    mesasData.forEach((mesa) => {
+
+    if (!selectedAmbienteId) {
+      mesasGrid.innerHTML = '<div class="mesas-empty">Selecciona un ambiente para ver sus mesas.</div>';
+      resetMesaDetail('Selecciona un ambiente');
+      return;
+    }
+
+    const filteredMesas = mesasData.filter((mesa) => mesa.ambienteId === selectedAmbienteId);
+    filteredMesas.forEach((mesa) => {
       const card = document.createElement('button');
       card.type = 'button';
       card.className = `mesa-card mesa-card--square mesa-card--${mesa.status}${selectedMesa && selectedMesa.id === mesa.id ? ' selected' : ''}`;
@@ -802,16 +1010,37 @@ document.addEventListener('DOMContentLoaded', () => {
       card.addEventListener('click', () => selectMesa(mesa));
       mesasGrid.appendChild(card);
     });
+
+    if (!filteredMesas.length) {
+      mesasGrid.innerHTML = '<div class="mesas-empty">Este ambiente aun no tiene mesas configuradas.</div>';
+      resetMesaDetail('Sin mesas');
+      return;
+    }
+
+    if (!selectedMesa || selectedMesa.ambienteId !== selectedAmbienteId) {
+      selectMesa(filteredMesas[0], false);
+    }
   }
 
-  function selectMesa(mesa) {
+  function selectAmbiente(ambienteId) {
+    selectedAmbienteId = ambienteId;
+    selectedMesa = null;
+    renderAmbientes();
+    renderMesas();
+  }
+
+  function selectMesa(mesa, shouldRender = true) {
     selectedMesa = mesa;
-    detailName.textContent = mesa.name;
+    currentAmbienteName = mesa.ambienteName;
+    currentMesaReference = mesa.name;
+    detailName.textContent = `${mesa.ambienteName} - ${mesa.name}`;
     const statusMap = { libre: 'Libre', ocupada: 'Ocupada', proceso: 'Reservada' };
     detailStatus.innerHTML = `Estado: <span class="dot dot--${mesa.status}"></span> ${statusMap[mesa.status]}`;
+    const shouldShowWaiter = ['ocupada', 'proceso'].includes(mesa.status);
+    setWaiterLabel(detailWaiter, shouldShowWaiter ? getMesaWaiterName(mesa) : '');
     btnIniciar.textContent = mesa.status === 'ocupada' ? 'Mesa ocupada' : 'Iniciar pedido';
     btnIniciar.disabled = mesa.status === 'ocupada';
-    renderMesas();
+    if (shouldRender) renderMesas();
   }
 
   function openProductModal(producto) {
@@ -1002,9 +1231,17 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   btnNuevaVenta.addEventListener('click', () => {
+    refreshConfiguredTables();
     currentOrderMode = 'salon';
+    selectedAmbienteId = null;
+    selectedMesa = null;
+    currentAmbienteName = '';
+    currentMesaReference = '';
+    currentWaiterName = '';
     hideAllViews();
     viewMesas.classList.remove('hidden');
+    renderAmbientes();
+    renderMesas();
   });
 
   btnParaLlevar.addEventListener('click', () => {
@@ -1029,7 +1266,11 @@ document.addEventListener('DOMContentLoaded', () => {
   btnIniciar.addEventListener('click', () => {
     if (!selectedMesa || selectedMesa.status === 'ocupada') return;
     currentOrderMode = 'salon';
-    pedidoMesa.textContent = selectedMesa.name;
+    currentAmbienteName = selectedMesa.ambienteName;
+    currentMesaReference = selectedMesa.name;
+    currentWaiterName = getActiveWaiterName();
+    pedidoMesa.textContent = selectedMesa.reference;
+    setWaiterLabel(pedidoMozo, currentWaiterName);
     currentVentaId = null;
     pedido = [];
     renderPedido();
@@ -1068,9 +1309,11 @@ document.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', () => {
       currentOrderMode = 'llevar';
       currentTakeawayMode = button.dataset.mode || 'Recojo en tienda';
+      currentWaiterName = getActiveWaiterName();
       currentVentaId = null;
       pedido = [];
       pedidoMesa.textContent = `Pedido para llevar - ${currentTakeawayMode}`;
+      setWaiterLabel(pedidoMozo, currentWaiterName);
       searchInput.value = '';
       filterCat.value = '';
       renderPedido();
@@ -1125,15 +1368,11 @@ document.addEventListener('DOMContentLoaded', () => {
     openBillingModal();
   });
 
-  btnBillingSearch.addEventListener('click', () => {
-    const documento = billingDocument.value.trim();
-    const cliente = clientesFacturacion[documento];
-    fillBillingClient(cliente || {
-      nombre: 'Cliente no encontrado',
-      documento,
-      direccion: 'Sin datos en prototipo'
-    });
+  btnAddBillingSplit.addEventListener('click', () => {
+    const remaining = Math.max(0, currentTotal - getBillingAssignedTotal());
+    addBillingSplitLine(remaining ? remaining.toFixed(2) : '');
   });
+
 
   btnConfirmarCobro.addEventListener('click', () => {
     const venta = currentVentaId ? ventasData.find((item) => item.id === currentVentaId) : null;
@@ -1151,7 +1390,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tipo: 'venta',
         metodo: method,
         monto: amount,
-        descripcion: `Cobro de ${venta ? `${venta.id} - ${venta.mesa}` : 'venta'}`,
+        descripcion: `Cobro de ${venta ? `${venta.id} - ${getVentaLocationLabel(venta)}` : 'venta'}`,
         usuario: 'Juan Perez'
       });
     });
@@ -1162,7 +1401,7 @@ document.addEventListener('DOMContentLoaded', () => {
       venta.total = totalFinal;
       ventasCobradasCaja.push({
         id: venta.id,
-        mesa: venta.mesa,
+        mesa: getVentaLocationLabel(venta),
         total: venta.total,
         items: venta.items.map((item) => ({ ...item }))
       });
@@ -1170,6 +1409,9 @@ document.addEventListener('DOMContentLoaded', () => {
     paymentModalOverlay.classList.add('hidden');
     pedido = [];
     currentVentaId = null;
+    currentWaiterName = '';
+    currentAmbienteName = '';
+    currentMesaReference = '';
     renderPedido();
     renderHistorial();
     showHistorial();
@@ -1237,24 +1479,33 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   btnBillingConfirm.addEventListener('click', () => {
-    const tipoMap = {
-      boleta: 'Boleta generada',
-      factura: 'Factura generada',
-      nota_venta: 'Nota de venta generada'
-    };
-    const documento = billingDocument.value.trim();
-    const clienteFacturado = clientesFacturacion[documento] || (
-      documento ? {
-        nombre: billingName.textContent !== '-' ? billingName.textContent : 'Cliente facturado',
-        documento,
-        direccion: billingAddress.textContent !== '-' ? billingAddress.textContent : ''
-      } : null
-    );
+    const assigned = getBillingAssignedTotal();
+    if (Math.abs(currentTotal - assigned) > 0.009) return;
 
-    registerBilledClientVisit(billingType.value, clienteFacturado);
-    btnBillingConfirm.textContent = tipoMap[billingType.value] || 'Comprobante generado';
+    const comprobantes = getBillingSplitPayload();
+    const venta = currentVentaId ? ventasData.find((item) => item.id === currentVentaId) : null;
+    const now = new Date();
+
+    comprobantes.forEach((comprobante) => {
+      const clienteFacturado = comprobante.documento ? {
+        nombre: comprobante.nombre || 'Cliente facturado',
+        documento: comprobante.documento,
+        direccion: comprobante.direccion || ''
+      } : null;
+      registerBilledClientVisit(comprobante.tipo, clienteFacturado);
+    });
+
+    if (venta) {
+      venta.comprobantes = comprobantes.map((comprobante, index) => ({
+        ...comprobante,
+        numero: `${venta.id}-C${String(index + 1).padStart(2, '0')}`,
+        fecha: now.toISOString()
+      }));
+    }
+
+    btnBillingConfirm.textContent = comprobantes.length === 1 ? 'Comprobante generado' : `${comprobantes.length} comprobantes generados`;
     setTimeout(() => {
-      btnBillingConfirm.textContent = 'Generar comprobante';
+      btnBillingConfirm.textContent = 'Generar comprobantes';
       billingModalOverlay.classList.add('hidden');
     }, 1200);
   });
@@ -1365,8 +1616,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   renderHistorial();
+  renderAmbientes();
   renderMesas();
-  selectMesa(selectedMesa);
   renderPedido();
   showHistorial();
 });

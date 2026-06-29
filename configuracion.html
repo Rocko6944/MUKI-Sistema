@@ -167,17 +167,15 @@
 
       <section class="settings-pane hidden" id="settings-pane-mesas">
         <div class="settings-map-toolbar">
-          <div class="settings-toolbar__field">
-            <label for="settings-floor-count-display">Cantidad de pisos</label>
-            <input class="settings-input" id="settings-floor-count-display" type="text" value="1 piso" readonly>
-          </div>
+
           <div class="settings-toolbar__field settings-toolbar__field--wide">
-            <label>Pisos configurados</label>
+            <label>Ambientes configurados</label>
             <div class="settings-floor-tabs" id="settings-floor-tabs"></div>
           </div>
           <div class="settings-toolbar__actions">
-            <button class="btn-limpiar" type="button" id="settings-reset-map">Restablecer</button>
-            <button class="btn-limpiar" type="button" id="settings-add-floor">Agregar piso</button>
+            <button class="btn-limpiar" type="button" id="settings-add-floor">Agregar ambiente</button>
+            <button class="btn-limpiar" type="button" id="settings-edit-floor" disabled>Editar ambiente</button>
+            <button class="btn-limpiar" type="button" id="settings-delete-floor" disabled>Eliminar ambiente</button>
             <button class="btn-gold" type="button" id="settings-add-table">Agregar mesa</button>
           </div>
         </div>
@@ -186,7 +184,7 @@
           <section class="settings-card settings-map-card">
             <div class="settings-card__header">
               <h2>Distribucion del salon</h2>
-              <p>Arrastra las mesas para reubicarlas y deja definido el mapa real por piso.</p>
+              <p>Arrastra las mesas para reubicarlas y deja definido el mapa real por ambiente.</p>
             </div>
             <div class="settings-map-canvas" id="settings-map-canvas"></div>
           </section>
@@ -208,7 +206,7 @@
                 <input class="settings-input" id="settings-table-capacity" type="number" min="1" max="20" placeholder="4">
               </label>
               <label class="settings-field">
-                <span>Piso</span>
+                <span>Ambiente</span>
                 <select class="settings-select" id="settings-table-floor"></select>
               </label>
               <label class="settings-field">
@@ -320,6 +318,33 @@
     </section>
   </main>
 
+
+  <div class="settings-modal-overlay hidden" id="settings-environment-modal">
+    <div class="settings-modal-card">
+      <h3 class="settings-modal-title" id="settings-environment-modal-title">Agregar ambiente</h3>
+      <p class="settings-modal-subtitle" id="settings-environment-modal-subtitle">Ingresa el nombre del nuevo ambiente para agregarlo al mapa de mesas.</p>
+      <form class="settings-form" id="settings-environment-form">
+        <label class="settings-field">
+          <span>Nombre del ambiente</span>
+          <input class="settings-input" id="settings-environment-name" type="text" placeholder="Ej: Patio" required>
+        </label>
+        <div class="settings-form__actions">
+          <button class="btn-limpiar" type="button" id="settings-cancel-environment">Cancelar</button>
+          <button class="btn-gold" type="submit" id="settings-save-environment">Agregar ambiente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="settings-modal-overlay hidden" id="settings-delete-environment-modal">
+    <div class="settings-modal-card settings-modal-card--danger">
+      <h3 class="settings-modal-title">Eliminar ambiente</h3>
+      <p class="settings-modal-subtitle" id="settings-delete-environment-message">Confirma la eliminacion del ambiente seleccionado.</p>
+      <div class="settings-form__actions">
+        <button class="btn-limpiar" type="button" id="settings-cancel-delete-environment">Cancelar</button>
+        <button class="btn-danger" type="button" id="settings-confirm-delete-environment">Eliminar ambiente</button>
+      </div>
+    </div>
+  </div>
   <script src="auth.js"></script>
   <script src="configuracion.js"></script>
 </body>

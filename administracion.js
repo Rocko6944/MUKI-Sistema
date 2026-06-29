@@ -1,21 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
   const CLIENTS_STORAGE_KEY = 'muki_clientes_registrados';
   const salesTransactions = [
-    { ventaId: 'V001', fecha: '2026-04-10', producto: 'Ceviche a lo Muki', categoria: 'Plato', tipo: 'plato', cantidad: 2, total: 90, metodoPago: 'Efectivo' },
-    { ventaId: 'V001', fecha: '2026-04-10', producto: 'Pisco Sour', categoria: 'Bebida', tipo: 'bebida', cantidad: 3, total: 45, metodoPago: 'Efectivo' },
-    { ventaId: 'V002', fecha: '2026-04-10', producto: 'Lomo Saltado', categoria: 'Plato', tipo: 'plato', cantidad: 2, total: 78, metodoPago: 'Tarjeta' },
-    { ventaId: 'V003', fecha: '2026-04-11', producto: 'Aji de Gallina', categoria: 'Plato', tipo: 'plato', cantidad: 2, total: 60, metodoPago: 'Yape / Plin' },
-    { ventaId: 'V004', fecha: '2026-04-11', producto: 'Chicha morada', categoria: 'Bebida', tipo: 'bebida', cantidad: 4, total: 32, metodoPago: 'Efectivo' },
-    { ventaId: 'V005', fecha: '2026-04-12', producto: 'Chaufa a lo Muki', categoria: 'Plato', tipo: 'plato', cantidad: 3, total: 114, metodoPago: 'Tarjeta' },
-    { ventaId: 'V006', fecha: '2026-04-12', producto: 'Limonada de hierbabuena', categoria: 'Bebida', tipo: 'bebida', cantidad: 3, total: 30, metodoPago: 'Yape / Plin' },
-    { ventaId: 'V007', fecha: '2026-04-13', producto: 'Ceviche a lo Muki', categoria: 'Plato', tipo: 'plato', cantidad: 4, total: 180, metodoPago: 'Efectivo' },
-    { ventaId: 'V008', fecha: '2026-04-13', producto: 'Pisco Sour', categoria: 'Bebida', tipo: 'bebida', cantidad: 5, total: 75, metodoPago: 'Tarjeta' },
-    { ventaId: 'V009', fecha: '2026-04-14', producto: 'Pulpo a la parrilla', categoria: 'Plato', tipo: 'plato', cantidad: 2, total: 116, metodoPago: 'Transferencia' },
-    { ventaId: 'V010', fecha: '2026-04-14', producto: 'Cafe pasado', categoria: 'Bebida', tipo: 'bebida', cantidad: 6, total: 54, metodoPago: 'Yape / Plin' },
-    { ventaId: 'V011', fecha: '2026-04-15', producto: 'Lomo Saltado', categoria: 'Plato', tipo: 'plato', cantidad: 3, total: 117, metodoPago: 'Efectivo' },
-    { ventaId: 'V012', fecha: '2026-04-15', producto: 'Arroz con mariscos', categoria: 'Plato', tipo: 'plato', cantidad: 2, total: 84, metodoPago: 'Tarjeta' },
-    { ventaId: 'V013', fecha: '2026-04-16', producto: 'Ceviche a lo Muki', categoria: 'Plato', tipo: 'plato', cantidad: 3, total: 135, metodoPago: 'Yape / Plin' },
-    { ventaId: 'V013', fecha: '2026-04-16', producto: 'Pisco Sour', categoria: 'Bebida', tipo: 'bebida', cantidad: 2, total: 30, metodoPago: 'Yape / Plin' }
+    { ventaId: 'V001', fecha: '2026-04-10', producto: 'Ceviche a lo Muki', categoria: 'Plato', tipo: 'plato', cantidad: 2, total: 90, metodoPago: 'Efectivo', mozo: 'Juan Perez' },
+    { ventaId: 'V001', fecha: '2026-04-10', producto: 'Pisco Sour', categoria: 'Bebida', tipo: 'bebida', cantidad: 3, total: 45, metodoPago: 'Efectivo', mozo: 'Juan Perez' },
+    { ventaId: 'V002', fecha: '2026-04-10', producto: 'Lomo Saltado', categoria: 'Plato', tipo: 'plato', cantidad: 2, total: 78, metodoPago: 'Tarjeta', mozo: 'Camila Rojas' },
+    { ventaId: 'V003', fecha: '2026-04-11', producto: 'Aji de Gallina', categoria: 'Plato', tipo: 'plato', cantidad: 2, total: 60, metodoPago: 'Yape / Plin', mozo: 'Camila Rojas' },
+    { ventaId: 'V004', fecha: '2026-04-11', producto: 'Chicha morada', categoria: 'Bebida', tipo: 'bebida', cantidad: 4, total: 32, metodoPago: 'Efectivo', mozo: 'Juan Perez' },
+    { ventaId: 'V005', fecha: '2026-04-12', producto: 'Chaufa a lo Muki', categoria: 'Plato', tipo: 'plato', cantidad: 3, total: 114, metodoPago: 'Tarjeta', mozo: 'Pablo Gomez' },
+    { ventaId: 'V006', fecha: '2026-04-12', producto: 'Limonada de hierbabuena', categoria: 'Bebida', tipo: 'bebida', cantidad: 3, total: 30, metodoPago: 'Yape / Plin', mozo: 'Pablo Gomez' },
+    { ventaId: 'V007', fecha: '2026-04-13', producto: 'Ceviche a lo Muki', categoria: 'Plato', tipo: 'plato', cantidad: 4, total: 180, metodoPago: 'Efectivo', mozo: 'Juan Perez' },
+    { ventaId: 'V008', fecha: '2026-04-13', producto: 'Pisco Sour', categoria: 'Bebida', tipo: 'bebida', cantidad: 5, total: 75, metodoPago: 'Tarjeta', mozo: 'Camila Rojas' },
+    { ventaId: 'V009', fecha: '2026-04-14', producto: 'Pulpo a la parrilla', categoria: 'Plato', tipo: 'plato', cantidad: 2, total: 116, metodoPago: 'Transferencia', mozo: 'Pablo Gomez' },
+    { ventaId: 'V010', fecha: '2026-04-14', producto: 'Cafe pasado', categoria: 'Bebida', tipo: 'bebida', cantidad: 6, total: 54, metodoPago: 'Yape / Plin', mozo: 'Pablo Gomez' },
+    { ventaId: 'V011', fecha: '2026-04-15', producto: 'Lomo Saltado', categoria: 'Plato', tipo: 'plato', cantidad: 3, total: 117, metodoPago: 'Efectivo', mozo: 'Juan Perez' },
+    { ventaId: 'V012', fecha: '2026-04-15', producto: 'Arroz con mariscos', categoria: 'Plato', tipo: 'plato', cantidad: 2, total: 84, metodoPago: 'Tarjeta', mozo: 'Camila Rojas' },
+    { ventaId: 'V013', fecha: '2026-04-16', producto: 'Ceviche a lo Muki', categoria: 'Plato', tipo: 'plato', cantidad: 3, total: 135, metodoPago: 'Yape / Plin', mozo: 'Camila Rojas' },
+    { ventaId: 'V013', fecha: '2026-04-16', producto: 'Pisco Sour', categoria: 'Bebida', tipo: 'bebida', cantidad: 2, total: 30, metodoPago: 'Yape / Plin', mozo: 'Camila Rojas' }
   ];
   const cashMovements = [
     { id: 'C001', fecha: '2026-04-10', tipo: 'Venta', metodo: 'Efectivo', monto: 135, turno: 'Manana', usuario: 'Cajero 1' },
@@ -87,8 +87,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const salesDateFrom = document.getElementById('sales-date-from');
   const salesDateTo = document.getElementById('sales-date-to');
-  const salesTypeChips = document.getElementById('sales-type-chips');
-  const salesPaymentChips = document.getElementById('sales-payment-chips');
+  const salesTypeFilter = document.getElementById('sales-type-filter');
+  const salesWaiterFilter = document.getElementById('sales-waiter-filter');
+  const salesPaymentFilter = document.getElementById('sales-payment-filter');
   const btnApplySalesFilters = document.getElementById('btn-apply-sales-filters');
   const btnExportSalesReport = document.getElementById('btn-export-sales-report');
   const metricSalesTotal = document.getElementById('metric-sales-total');
@@ -118,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const exportModalOverlay = document.getElementById('export-modal-overlay');
   const exportSummaryRange = document.getElementById('export-summary-range');
   const exportSummaryType = document.getElementById('export-summary-type');
+  const exportSummaryWaiter = document.getElementById('export-summary-waiter');
   const exportSummaryPayment = document.getElementById('export-summary-payment');
   const exportFormatChips = document.getElementById('export-format-chips');
   const btnCancelExport = document.getElementById('btn-cancel-export');
@@ -218,8 +220,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const matchesFrom = !salesDateFrom.value || item.fecha >= salesDateFrom.value;
       const matchesTo = !salesDateTo.value || item.fecha <= salesDateTo.value;
       const matchesType = !selectedType || item.tipo === selectedType;
+      const matchesWaiter = !salesWaiterFilter.value || item.mozo === salesWaiterFilter.value;
       const matchesPayment = !selectedPayment || item.metodoPago === selectedPayment;
-      return matchesFrom && matchesTo && matchesType && matchesPayment;
+      return matchesFrom && matchesTo && matchesType && matchesWaiter && matchesPayment;
     });
   }
 
@@ -310,6 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${item.categoria}</td>
         <td>${item.cantidad}</td>
         <td>${formatCurrency(item.total)}</td>
+        <td>${item.mozo || '-'}</td>
         <td>${item.metodoPago}</td>
       </tr>
     `).join('');
@@ -317,7 +321,15 @@ document.addEventListener('DOMContentLoaded', () => {
     salesReportEmpty.classList.toggle('hidden', filtered.length > 0);
   }
 
+  function renderSalesWaiterOptions() {
+    const selectedWaiter = salesWaiterFilter.value;
+    const waiters = Array.from(new Set(salesTransactions.map((item) => item.mozo).filter(Boolean))).sort((a, b) => a.localeCompare(b));
+    salesWaiterFilter.innerHTML = '<option value="">Todos los mozos</option>' + waiters.map((waiter) => `<option value="${waiter}">${waiter}</option>`).join('');
+    salesWaiterFilter.value = waiters.includes(selectedWaiter) ? selectedWaiter : '';
+  }
+
   function renderSalesReport() {
+    renderSalesWaiterOptions();
     const filtered = getFilteredSales();
     renderSalesMetrics(filtered);
     renderSalesLineChart(filtered);
@@ -556,7 +568,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     purchasesReportEmpty.classList.toggle('hidden', filtered.length > 0);
   }
-
   function renderPurchasesReport() {
     const filtered = getFilteredPurchaseRecords();
     renderPurchasesMetrics(filtered);
@@ -637,6 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const to = salesDateTo.value ? formatShortDate(salesDateTo.value) : '-';
     exportSummaryRange.textContent = `${from} - ${to}`;
     exportSummaryType.textContent = selectedType ? (selectedType === 'plato' ? 'Platos' : 'Bebidas') : 'Todos';
+    exportSummaryWaiter.textContent = salesWaiterFilter.value || 'Todos';
     exportSummaryPayment.textContent = selectedPayment || 'Todos';
     selectedExportFormat = 'Excel';
     setActiveChip(exportFormatChips, selectedExportFormat, 'format');
@@ -738,20 +750,17 @@ document.addEventListener('DOMContentLoaded', () => {
     adminHub.classList.remove('hidden');
   });
 
-  salesTypeChips.addEventListener('click', (event) => {
-    const chip = event.target.closest('.admin-chip');
-    if (!chip) return;
-    selectedType = chip.dataset.type;
-    setActiveChip(salesTypeChips, selectedType, 'type');
+  salesTypeFilter.addEventListener('change', () => {
+    selectedType = salesTypeFilter.value;
+    renderSalesReport();
   });
 
-  salesPaymentChips.addEventListener('click', (event) => {
-    const chip = event.target.closest('.admin-chip');
-    if (!chip) return;
-    selectedPayment = chip.dataset.payment;
-    setActiveChip(salesPaymentChips, selectedPayment, 'payment');
+  salesPaymentFilter.addEventListener('change', () => {
+    selectedPayment = salesPaymentFilter.value;
+    renderSalesReport();
   });
 
+  salesWaiterFilter.addEventListener('change', renderSalesReport);
   btnApplySalesFilters.addEventListener('click', renderSalesReport);
 
   btnExportSalesReport.addEventListener('click', openExportModal);

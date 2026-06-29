@@ -375,7 +375,7 @@
 
 .status-pill--proceso::before,
 .dot--proceso {
-  background: #e4bd3b;
+  background: #FAF093;
 }
 
 .status-pill--cobrada {
@@ -388,11 +388,11 @@
 }
 
 .dot--libre {
-  background: #6fc48c;
+  background: #AFF0AF;
 }
 
 .dot--ocupada {
-  background: #ec8f8f;
+  background: #FF7A54;
 }
 
 .historial-empty {
@@ -481,6 +481,48 @@
   align-self: flex-start;
 }
 
+
+.ambiente-selector {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+  width: 100%;
+}
+
+.ambiente-option {
+  min-height: 44px;
+  min-width: 118px;
+  border: 1px solid #e4e4e4;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #252525;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.ambiente-option:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+.ambiente-option.active {
+  border-color: #d5af34;
+  background: #fffdfa;
+  box-shadow: 0 0 0 3px rgba(213, 175, 52, 0.14);
+}
+
+.mesas-empty {
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  color: #747474;
+  font-weight: 600;
+  text-align: center;
+}
 .mesa-legend {
   gap: 1rem;
   font-size: 0.82rem;
@@ -524,18 +566,18 @@
 }
 
 .mesa-card--libre {
-  border-color: #cde7d4;
-  background: #f5fbf7;
+  border-color: #8fd88f;
+  background: #AFF0AF;
 }
 
 .mesa-card--ocupada {
-  border-color: #f0cccc;
-  background: #fff3f3;
+  border-color: #e86744;
+  background: #FF7A54;
 }
 
 .mesa-card--proceso {
-  border-color: #ecd891;
-  background: #fffaf0;
+  border-color: #e4d36f;
+  background: #FAF093;
 }
 
 .mesa-card:hover {
@@ -559,6 +601,17 @@
 .mesa-detail__name {
   font-size: 1.2rem;
   margin-bottom: 0.75rem;
+}
+
+.mesa-detail__waiter,
+.caja-pedido__waiter {
+  color: #686868;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.mesa-detail__waiter {
+  margin-top: 0.55rem;
 }
 
 .mesa-detail__status {
@@ -716,6 +769,12 @@
 .caja-pedido__mesa {
   font-weight: 700;
   font-size: 1rem;
+  border-bottom: 1px solid #efefef;
+  padding-bottom: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.caja-pedido__waiter {
   border-bottom: 1px solid #efefef;
   padding-bottom: 0.8rem;
   margin-bottom: 0.8rem;
@@ -1262,6 +1321,41 @@
   color: #7a7a7a;
 }
 
+
+.billing-hint--split {
+  margin: 0 0 1rem;
+}
+
+.payment-split--billing {
+  margin-bottom: 1rem;
+}
+
+.billing-split-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.billing-split-line {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.9fr) minmax(120px, 1fr) auto minmax(110px, 0.8fr) minmax(140px, 1fr) auto;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.8rem;
+  border: 1px solid #eeeeee;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.billing-split__client {
+  min-width: 0;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #555555;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .billing-result {
   display: flex;
   flex-direction: column;

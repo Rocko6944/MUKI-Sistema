@@ -79,6 +79,7 @@
                 <th>ID</th>
                 <th>Mesa</th>
                 <th>Total</th>
+                <th>Mozo</th>
                 <th>Estado</th>
                 <th>Fecha</th>
               </tr>
@@ -101,7 +102,8 @@
     <div class="view hidden" id="view-mesas">
       <div class="view__header view__header--stacked">
         <button class="btn-back" id="btn-volver-historial">Volver al historial</button>
-        <h2 class="view__title">Seleccionar mesa</h2>
+        <h2 class="view__title">Seleccionar ambiente</h2>
+        <div class="ambiente-selector" id="ambiente-selector"></div>
         <div class="mesa-legend">
           <span class="mesa-legend__item"><span class="dot dot--libre"></span> Libre</span>
           <span class="mesa-legend__item"><span class="dot dot--ocupada"></span> Ocupada</span>
@@ -113,6 +115,7 @@
         <aside class="mesa-detail" id="mesa-detail">
           <h3 class="mesa-detail__name" id="detail-name">Mesa 1</h3>
           <p class="mesa-detail__status" id="detail-status">Estado: <span class="dot dot--libre"></span> Libre</p>
+          <p class="mesa-detail__waiter" id="detail-waiter">Mozo: -</p>
           <button class="btn-iniciar" id="btn-iniciar-pedido">Iniciar pedido</button>
         </aside>
       </div>
@@ -150,6 +153,7 @@
           <h3 class="caja-pedido__title">Pedido actual</h3>
           <p class="caja-pedido__hint">Actualizado en tiempo real</p>
           <p class="caja-pedido__mesa" id="pedido-mesa">Mesa 5</p>
+          <p class="caja-pedido__waiter" id="pedido-mozo">Mozo: -</p>
           <div class="pedido-items" id="pedido-items"></div>
           <div class="pedido-total">
             <span>Total</span>
@@ -392,39 +396,25 @@
   <div class="modal-overlay hidden" id="billing-modal-overlay">
     <div class="modal-card modal-card--payment">
       <h3 class="modal-card__title">Emitir comprobante</h3>
-      <div class="payment-summary">
-        <div class="payment-summary__row">
-          <label for="billing-type">Tipo de comprobante</label>
-          <select class="payment-line__method" id="billing-type">
-            <option value="boleta">Boleta</option>
-            <option value="factura">Factura</option>
-            <option value="nota_venta">Nota de venta</option>
-          </select>
-        </div>
-        <div class="payment-summary__row">
-          <label for="billing-document">DNI / RUC</label>
-          <div class="billing-lookup">
-            <input type="text" class="payment-input" id="billing-document" placeholder="Ingrese DNI o RUC">
-            <button class="btn-limpiar" id="btn-billing-search">Buscar</button>
-          </div>
-        </div>
-        <p class="billing-hint">Consulta SUNAT simulada para fines del prototipo.</p>
-      </div>
+      <p class="billing-hint billing-hint--split">Divide la cuenta en varios comprobantes cuando los clientes soliciten pagos separados.</p>
 
-      <div class="billing-result" id="billing-result">
-        <div class="payment-summary__row"><span>Cliente</span><span id="billing-name">-</span></div>
-        <div class="payment-summary__row"><span>Documento</span><span id="billing-doc">-</span></div>
-        <div class="payment-summary__row"><span>Direccion</span><span id="billing-address">-</span></div>
+      <div class="payment-split payment-split--billing">
+        <div class="payment-split__header">
+          <h4>Comprobantes separados</h4>
+          <button class="btn-limpiar" id="btn-add-billing-split">Agregar comprobante</button>
+        </div>
+        <div class="billing-split-lines" id="billing-split-lines"></div>
       </div>
 
       <div class="payment-summary payment-summary--compact">
         <div class="payment-summary__row"><span>Subtotal</span><span id="billing-subtotal">S/ 0.00</span></div>
         <div class="payment-summary__row"><span>IGV</span><span id="billing-igv">S/ 0.00</span></div>
         <div class="payment-summary__row payment-summary__row--total"><span>Total</span><span id="billing-total">S/ 0.00</span></div>
+        <div class="payment-summary__row payment-summary__row--remaining"><span>Pendiente por comprobante</span><span id="billing-remaining">S/ 0.00</span></div>
       </div>
 
       <div class="modal-actions">
-        <button class="apertura-btn" id="btn-billing-confirm">Generar comprobante</button>
+        <button class="apertura-btn" id="btn-billing-confirm">Generar comprobantes</button>
         <button class="btn-limpiar" id="btn-billing-cancel">Cancelar</button>
       </div>
     </div>

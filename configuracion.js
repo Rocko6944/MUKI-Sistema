@@ -11,7 +11,7 @@ const permissionCatalog = [
   { key: 'emitirComprobante', title: 'Emitir comprobante', description: 'Generar boletas, facturas o notas.' },
   { key: 'cerrarCaja', title: 'Cerrar caja', description: 'Permitir cierre y arqueo de caja.' },
   { key: 'gestionarUsuarios', title: 'Gestionar usuarios', description: 'Crear usuarios, editar datos y credenciales.' },
-  { key: 'configurarMesas', title: 'Configurar mesas', description: 'Editar pisos, layout y ubicacion del salon.' }
+  { key: 'configurarMesas', title: 'Configurar mesas', description: 'Editar ambientes, layout y ubicacion del salon.' }
 ];
 
 const rolePermissions = {
@@ -101,14 +101,24 @@ const categoriesSeed = [
   { id: 'cat-004', nombre: 'Carnes', tipo: 'Insumo', descripcion: 'Proteinas y cortes para produccion.', estado: 'Activa' }
 ];
 
+const defaultEnvironments = [
+  { id: 1, name: 'Balcon' },
+  { id: 2, name: 'Terraza' },
+  { id: 3, name: 'Salon 1' },
+  { id: 4, name: 'Salon 2' }
+];
+
 const tableMapSeed = {
-  floorCount: 1,
+  floorCount: defaultEnvironments.length,
   activeFloor: 1,
+  floors: defaultEnvironments.map((item) => ({ ...item })),
   tables: [
     { id: 'tb-001', floor: 1, name: 'Mesa 1', capacity: 4, status: 'Libre', x: 14, y: 18 },
     { id: 'tb-002', floor: 1, name: 'Mesa 2', capacity: 2, status: 'Libre', x: 38, y: 16 },
-    { id: 'tb-003', floor: 1, name: 'Mesa 3', capacity: 6, status: 'Reservada', x: 63, y: 20 },
-    { id: 'tb-004', floor: 1, name: 'Mesa 4', capacity: 4, status: 'Ocupada', x: 23, y: 52 }
+    { id: 'tb-003', floor: 2, name: 'Mesa 3', capacity: 6, status: 'Reservada', x: 18, y: 22 },
+    { id: 'tb-004', floor: 3, name: 'Mesa 4', capacity: 4, status: 'Ocupada', x: 23, y: 52 },
+    { id: 'tb-005', floor: 3, name: 'Mesa 5', capacity: 4, status: 'Libre', x: 56, y: 24 },
+    { id: 'tb-006', floor: 4, name: 'Mesa 6', capacity: 4, status: 'Libre', x: 30, y: 28 }
   ]
 };
 
@@ -138,16 +148,34 @@ function saveCategories(categories) {
   localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(categories));
 }
 
+function normalizeMap(map) {
+  const base = map && Array.isArray(map.tables) ? map : tableMapSeed;
+  const maxFloorFromTables = base.tables.reduce((max, table) => Math.max(max, Number(table.floor) || 1), 1);
+  const minimumCount = Math.max(defaultEnvironments.length, Number(base.floorCount) || 0, maxFloorFromTables);
+  const existingFloors = Array.isArray(base.floors) ? base.floors : [];
+  const floors = [];
+
+  for (let index = 0; index < minimumCount; index += 1) {
+    const id = index + 1;
+    const existing = existingFloors.find((floor) => Number(floor.id) === id);
+    const defaultEnvironment = defaultEnvironments[index];
+    floors.push({
+      id,
+      name: (existing && existing.name) || (defaultEnvironment && defaultEnvironment.name) || `Ambiente ${id}`
+    });
+  }
+
+  return {
+    floorCount: floors.length,
+    activeFloor: floors.some((floor) => floor.id === Number(base.activeFloor)) ? Number(base.activeFloor) : floors[0].id,
+    floors,
+    tables: base.tables.map((item) => ({ ...item, floor: Number(item.floor) || 1 }))
+  };
+}
+
 function loadMap() {
   const stored = safeParse(localStorage.getItem(TABLE_MAP_STORAGE_KEY), null);
-  if (stored && Array.isArray(stored.tables)) {
-    return stored;
-  }
-  return {
-    floorCount: tableMapSeed.floorCount,
-    activeFloor: tableMapSeed.activeFloor,
-    tables: tableMapSeed.tables.map((item) => ({ ...item }))
-  };
+  return normalizeMap(stored);
 }
 
 function saveMap(mapState) {
@@ -168,6 +196,7 @@ function setupSettingsPage() {
   let selectedTableId = '';
   let selectedCategoryId = '';
   let dragState = null;
+  let environmentModalMode = 'add';
 
   const userSearch = document.getElementById('settings-user-search');
   const roleFilter = document.getElementById('settings-role-filter');
@@ -186,12 +215,23 @@ function setupSettingsPage() {
     categorias: document.getElementById('settings-pane-categorias')
   };
 
-  const floorCountDisplay = document.getElementById('settings-floor-count-display');
   const floorTabs = document.getElementById('settings-floor-tabs');
+  const environmentNameInput = document.getElementById('settings-environment-name');
+  const environmentModalTitle = document.getElementById('settings-environment-modal-title');
+  const environmentModalSubtitle = document.getElementById('settings-environment-modal-subtitle');
+  const saveEnvironmentButton = document.getElementById('settings-save-environment');
+  const environmentModal = document.getElementById('settings-environment-modal');
+  const environmentForm = document.getElementById('settings-environment-form');
+  const cancelEnvironmentButton = document.getElementById('settings-cancel-environment');
+  const deleteEnvironmentModal = document.getElementById('settings-delete-environment-modal');
+  const deleteEnvironmentMessage = document.getElementById('settings-delete-environment-message');
+  const cancelDeleteEnvironmentButton = document.getElementById('settings-cancel-delete-environment');
+  const confirmDeleteEnvironmentButton = document.getElementById('settings-confirm-delete-environment');
   const mapCanvas = document.getElementById('settings-map-canvas');
   const addTableButton = document.getElementById('settings-add-table');
-  const resetMapButton = document.getElementById('settings-reset-map');
   const addFloorButton = document.getElementById('settings-add-floor');
+  const editFloorButton = document.getElementById('settings-edit-floor');
+  const deleteFloorButton = document.getElementById('settings-delete-floor');
   const tableForm = document.getElementById('settings-table-form');
 
   const categorySearch = document.getElementById('settings-category-search');
@@ -364,18 +404,29 @@ function setupSettingsPage() {
     fillUserForm(userPayload);
   }
 
+  function getEnvironmentName(environmentId) {
+    const environment = mapState.floors.find((floor) => floor.id === Number(environmentId));
+    return environment ? environment.name : `Ambiente ${environmentId}`;
+  }
+
+  function updateEnvironmentActions() {
+    const hasActiveEnvironment = mapState.floors.some((environment) => environment.id === mapState.activeFloor);
+    editFloorButton.disabled = !hasActiveEnvironment;
+    deleteFloorButton.disabled = !hasActiveEnvironment || mapState.floors.length <= 1;
+  }
+
   function renderFloorTabs() {
     floorTabs.innerHTML = '';
     tableFields.floor.innerHTML = '';
-    floorCountDisplay.value = `${mapState.floorCount} ${mapState.floorCount === 1 ? 'piso' : 'pisos'}`;
+    mapState.floorCount = mapState.floors.length;
 
-    for (let floor = 1; floor <= mapState.floorCount; floor += 1) {
+    mapState.floors.forEach((environment) => {
       const button = document.createElement('button');
       button.type = 'button';
-      button.className = `settings-floor-tab${mapState.activeFloor === floor ? ' active' : ''}`;
-      button.textContent = `Piso ${floor}`;
+      button.className = `settings-floor-tab${mapState.activeFloor === environment.id ? ' active' : ''}`;
+      button.textContent = environment.name;
       button.addEventListener('click', () => {
-        mapState.activeFloor = floor;
+        mapState.activeFloor = environment.id;
         saveMap(mapState);
         renderFloorTabs();
         renderMap();
@@ -384,10 +435,12 @@ function setupSettingsPage() {
       floorTabs.appendChild(button);
 
       const option = document.createElement('option');
-      option.value = String(floor);
-      option.textContent = `Piso ${floor}`;
+      option.value = String(environment.id);
+      option.textContent = environment.name;
       tableFields.floor.appendChild(option);
-    }
+    });
+
+    updateEnvironmentActions();
   }
 
   function getCurrentFloorTables() {
@@ -483,10 +536,109 @@ function setupSettingsPage() {
     return `tb-${Date.now()}`;
   }
 
-  function addFloor() {
-    mapState.floorCount += 1;
-    mapState.activeFloor = mapState.floorCount;
+  function getActiveEnvironment() {
+    return mapState.floors.find((item) => item.id === mapState.activeFloor) || null;
+  }
+
+  function openEnvironmentModal(mode = 'add') {
+    const environment = getActiveEnvironment();
+    environmentModalMode = mode;
+    environmentModalTitle.textContent = mode === 'edit' ? 'Editar ambiente' : 'Agregar ambiente';
+    environmentModalSubtitle.textContent = mode === 'edit'
+      ? 'Modifica el nombre del ambiente seleccionado.'
+      : 'Ingresa el nombre del nuevo ambiente para agregarlo al mapa de mesas.';
+    saveEnvironmentButton.textContent = mode === 'edit' ? 'Guardar cambios' : 'Agregar ambiente';
+    environmentNameInput.value = mode === 'edit' && environment ? environment.name : '';
+    environmentModal.classList.remove('hidden');
+    environmentNameInput.focus();
+    environmentNameInput.select();
+  }
+
+  function closeEnvironmentModal() {
+    environmentModal.classList.add('hidden');
+    environmentNameInput.value = '';
+    environmentModalMode = 'add';
+  }
+
+  function saveEnvironment(event) {
+    event.preventDefault();
+    const typedName = environmentNameInput.value.trim();
+
+    if (!typedName) {
+      environmentNameInput.focus();
+      return;
+    }
+
+    if (environmentModalMode === 'edit') {
+      const environment = getActiveEnvironment();
+      if (!environment) return;
+      environment.name = typedName;
+      saveMap(mapState);
+      closeEnvironmentModal();
+      renderFloorTabs();
+      renderMap();
+      fillTableForm(getCurrentFloorTables()[0] || null);
+      return;
+    }
+
+    const nextId = mapState.floors.reduce((max, floor) => Math.max(max, Number(floor.id) || 0), 0) + 1;
+    const newEnvironment = {
+      id: nextId,
+      name: typedName
+    };
+
+    mapState.floors.push(newEnvironment);
+    mapState.floorCount = mapState.floors.length;
+    mapState.activeFloor = newEnvironment.id;
     saveMap(mapState);
+    closeEnvironmentModal();
+    renderFloorTabs();
+    renderMap();
+    fillTableForm(getCurrentFloorTables()[0] || null);
+  }
+
+  function reindexEnvironments() {
+    const idMap = new Map();
+    mapState.floors = mapState.floors.map((environment, index) => {
+      const newId = index + 1;
+      idMap.set(environment.id, newId);
+      return { ...environment, id: newId };
+    });
+    mapState.tables = mapState.tables.map((table) => ({
+      ...table,
+      floor: idMap.get(table.floor) || table.floor
+    }));
+  }
+
+  function openDeleteEnvironmentModal() {
+    const environment = mapState.floors.find((item) => item.id === mapState.activeFloor);
+    if (!environment || mapState.floors.length <= 1) {
+      return;
+    }
+
+    deleteEnvironmentMessage.textContent = `Estas por eliminar "${environment.name}". Tambien se eliminaran las mesas configuradas en este ambiente.`;
+    deleteEnvironmentModal.classList.remove('hidden');
+  }
+
+  function closeDeleteEnvironmentModal() {
+    deleteEnvironmentModal.classList.add('hidden');
+  }
+
+  function deleteFloor() {
+    const environment = mapState.floors.find((item) => item.id === mapState.activeFloor);
+    if (!environment || mapState.floors.length <= 1) {
+      closeDeleteEnvironmentModal();
+      return;
+    }
+
+    mapState.tables = mapState.tables.filter((table) => table.floor !== environment.id);
+    mapState.floors = mapState.floors.filter((item) => item.id !== environment.id);
+    reindexEnvironments();
+    mapState.floorCount = mapState.floors.length;
+    mapState.activeFloor = mapState.floors[0].id;
+    selectedTableId = '';
+    saveMap(mapState);
+    closeDeleteEnvironmentModal();
     renderFloorTabs();
     renderMap();
     fillTableForm(getCurrentFloorTables()[0] || null);
@@ -546,17 +698,6 @@ function setupSettingsPage() {
     fillTableForm(getCurrentFloorTables()[0] || null);
   }
 
-  function resetMap() {
-    mapState = {
-      floorCount: tableMapSeed.floorCount,
-      activeFloor: tableMapSeed.activeFloor,
-      tables: tableMapSeed.tables.map((item) => ({ ...item }))
-    };
-    saveMap(mapState);
-    renderFloorTabs();
-    renderMap();
-    fillTableForm(getCurrentFloorTables()[0] || null);
-  }
 
   function resetCategoryForm() {
     selectedCategoryId = '';
@@ -694,9 +835,20 @@ function setupSettingsPage() {
   resetCategoryButton.addEventListener('click', resetCategoryForm);
   categoryForm.addEventListener('submit', saveCategory);
 
-  addFloorButton.addEventListener('click', addFloor);
+  addFloorButton.addEventListener('click', () => openEnvironmentModal('add'));
+  editFloorButton.addEventListener('click', () => openEnvironmentModal('edit'));
+  cancelEnvironmentButton.addEventListener('click', closeEnvironmentModal);
+  environmentForm.addEventListener('submit', saveEnvironment);
+  environmentModal.addEventListener('click', (event) => {
+    if (event.target === environmentModal) closeEnvironmentModal();
+  });
+  deleteFloorButton.addEventListener('click', openDeleteEnvironmentModal);
+  cancelDeleteEnvironmentButton.addEventListener('click', closeDeleteEnvironmentModal);
+  confirmDeleteEnvironmentButton.addEventListener('click', deleteFloor);
+  deleteEnvironmentModal.addEventListener('click', (event) => {
+    if (event.target === deleteEnvironmentModal) closeDeleteEnvironmentModal();
+  });
   addTableButton.addEventListener('click', addTable);
-  resetMapButton.addEventListener('click', resetMap);
   tableForm.addEventListener('submit', saveTable);
   tableFields.deleteButton.addEventListener('click', deleteTable);
 }

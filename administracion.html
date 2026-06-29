@@ -108,25 +108,30 @@
                 <input type="date" class="admin-input" id="sales-date-to">
               </div>
             </div>
-
             <div class="admin-filter-group">
-              <label>Tipo</label>
-              <div class="admin-chip-group" id="sales-type-chips">
-                <button class="admin-chip active" type="button" data-type="">Todos</button>
-                <button class="admin-chip" type="button" data-type="plato">Platos</button>
-                <button class="admin-chip" type="button" data-type="bebida">Bebidas</button>
-              </div>
+              <label for="sales-type-filter">Tipo</label>
+              <select class="admin-input" id="sales-type-filter">
+                <option value="">Todos</option>
+                <option value="plato">Platos</option>
+                <option value="bebida">Bebidas</option>
+              </select>
+            </div>
+            <div class="admin-filter-group">
+              <label for="sales-waiter-filter">Mozo</label>
+              <select class="admin-input" id="sales-waiter-filter">
+                <option value="">Todos los mozos</option>
+              </select>
             </div>
 
             <div class="admin-filter-group">
-              <label>Metodo de pago</label>
-              <div class="admin-chip-group" id="sales-payment-chips">
-                <button class="admin-chip active" type="button" data-payment="">Todos</button>
-                <button class="admin-chip" type="button" data-payment="Efectivo">Efectivo</button>
-                <button class="admin-chip" type="button" data-payment="Tarjeta">Tarjeta</button>
-                <button class="admin-chip" type="button" data-payment="Yape / Plin">Yape / Plin</button>
-                <button class="admin-chip" type="button" data-payment="Transferencia">Transferencia</button>
-              </div>
+              <label for="sales-payment-filter">Metodo de pago</label>
+              <select class="admin-input" id="sales-payment-filter">
+                <option value="">Todos</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="Yape / Plin">Yape / Plin</option>
+                <option value="Transferencia">Transferencia</option>
+              </select>
             </div>
 
             <div class="admin-filter-actions">
@@ -174,6 +179,7 @@
                   <th>Categoria</th>
                   <th>Cantidad</th>
                   <th>Total</th>
+                  <th>Mozo</th>
                   <th>Metodo de pago</th>
                 </tr>
               </thead>
@@ -546,6 +552,7 @@
       <div class="admin-export-summary">
         <div class="admin-export-row"><span>Rango de fechas</span><strong id="export-summary-range">-</strong></div>
         <div class="admin-export-row"><span>Tipo</span><strong id="export-summary-type">Todos</strong></div>
+        <div class="admin-export-row"><span>Mozo</span><strong id="export-summary-waiter">Todos</strong></div>
         <div class="admin-export-row"><span>Metodo de pago</span><strong id="export-summary-payment">Todos</strong></div>
       </div>
 
