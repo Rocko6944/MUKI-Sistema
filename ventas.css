@@ -1093,13 +1093,29 @@
   margin-bottom: 1rem;
 }
 
+.caja-summary-card {
+  min-height: 76px;
+  border-color: #d5af34;
+  padding: 1rem 1.2rem;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.caja-summary-card__info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
 .caja-summary-card__label {
-  font-size: 0.82rem;
+  font-size: 0.95rem;
   color: #747474;
 }
 
 .caja-summary-card__value {
-  font-size: 1rem;
+  font-size: 1.08rem;
   font-weight: 700;
   color: #202020;
 }
@@ -1179,7 +1195,7 @@
   inset: 0;
   background: rgba(15, 23, 42, 0.32);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   z-index: 200;
   padding: 1rem;
@@ -1190,9 +1206,13 @@
 }
 
 .modal-card {
-  width: min(420px, 100%);
+  width: min(520px, 100%);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
   border-radius: 20px;
-  padding: 1.4rem;
+  padding: 1.2rem 1.4rem;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 
 .modal-card--product {
@@ -1205,26 +1225,41 @@
 
 .modal-card__title {
   font-size: 1.15rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
 }
 
 .modal-field {
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.65rem;
 }
 
+
+.modal-egreso-field.hidden {
+  display: none;
+}
+
+#egreso-product-unit:disabled {
+  background: #f6f6f6;
+  color: #555555;
+  cursor: not-allowed;
+}
 .modal-product-name {
   font-weight: 700;
   color: #242424;
 }
 
 .modal-textarea {
-  min-height: 100px;
+  min-height: 76px;
   resize: vertical;
 }
 
 .modal-actions {
   gap: 0.7rem;
-  margin-top: 1rem;
+  margin-top: 0.85rem;
+  position: sticky;
+  bottom: 0;
+  padding-top: 0.75rem;
+  padding-bottom: 0.05rem;
+  background: #ffffff;
 }
 
 .modal-actions .apertura-btn,
@@ -1338,16 +1373,47 @@
 
 .billing-split-line {
   display: grid;
-  grid-template-columns: minmax(130px, 0.9fr) minmax(120px, 1fr) auto minmax(110px, 0.8fr) minmax(140px, 1fr) auto;
+  grid-template-columns: minmax(120px, 0.9fr) minmax(110px, 1fr) auto minmax(118px, 0.85fr) minmax(86px, 0.7fr) minmax(92px, 0.75fr) minmax(130px, 1fr) minmax(82px, 0.65fr) auto;
   gap: 0.7rem;
-  align-items: center;
+  align-items: flex-start;
   padding: 0.8rem;
   border: 1px solid #eeeeee;
   border-radius: 14px;
   background: #ffffff;
+  cursor: pointer;
 }
 
-.billing-split__client {
+.billing-split-line.selected {
+  border-color: #d5af34;
+  box-shadow: 0 0 0 3px rgba(213, 175, 52, 0.12);
+}
+
+.billing-split-line.generated {
+  background: #fbfbfb;
+  border-color: #d8ead8;
+}
+
+.billing-split__detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.billing-split__detail span,
+.billing-split__status {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #777777;
+}
+
+.billing-split__detail strong {
+  font-size: 0.88rem;
+  color: #202020;
+}
+
+.billing-split__client,
+.billing-split__status {
   min-width: 0;
   font-size: 0.84rem;
   font-weight: 700;
@@ -1355,6 +1421,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.billing-split-line.generated .billing-split__status {
+  color: #2f7d32;
 }
 .billing-result {
   display: flex;
@@ -1490,6 +1560,7 @@
 
   .payment-summary__row,
   .payment-line,
+  .billing-split-line,
   .payment-split__header,
   .billing-lookup,
   .report-options {
@@ -1500,5 +1571,14 @@
 
   .payment-summary__row .payment-input {
     max-width: none;
+  }
+
+  .modal-overlay {
+    padding: 0.7rem;
+  }
+
+  .modal-card {
+    max-height: calc(100dvh - 1.4rem);
+    padding: 1rem;
   }
 }

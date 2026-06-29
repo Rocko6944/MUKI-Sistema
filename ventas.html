@@ -91,7 +91,7 @@
         <aside class="venta-detail hidden" id="venta-detail">
           <div class="venta-detail__header">
             <h3>Detalle de venta</h3>
-            <button type="button" class="venta-detail__close" id="venta-detail-close" aria-label="Cerrar detalle">×</button>
+            <button type="button" class="venta-detail__close" id="venta-detail-close" aria-label="Cerrar detalle">&times;</button>
           </div>
           <div class="venta-detail__content" id="venta-detail-content"></div>
           <button class="btn-gold btn-gold--full" id="btn-cerrar-venta">Cerrar venta</button>
@@ -273,7 +273,7 @@
         <h3 class="movimientos-card__title">Movimientos</h3>
         <table class="movimientos-table" id="movimientos-table">
           <thead>
-            <tr><th>Hora</th><th>Tipo</th><th>Metodo</th><th>Monto</th><th>Usuario</th></tr>
+            <tr><th>Hora</th><th>Tipo</th><th>Metodo</th><th>Monto</th><th>Detalle</th><th>Usuario</th></tr>
           </thead>
           <tbody id="movimientos-tbody"></tbody>
         </table>
@@ -295,6 +295,37 @@
       <div class="modal-field">
         <label>Monto</label>
         <input type="text" class="apertura-input apertura-input--gold" id="modal-monto" placeholder="S/ 0.00">
+      </div>
+      <div class="modal-field modal-egreso-field hidden" id="egreso-product-mode-field">
+        <label for="egreso-product-mode">Producto</label>
+        <select class="apertura-input" id="egreso-product-mode">
+          <option value="inventario">Buscar en inventario</option>
+          <option value="otros">Otros</option>
+        </select>
+      </div>
+      <div class="modal-field modal-egreso-field hidden" id="egreso-inventory-field">
+        <label for="egreso-product-search">Buscar producto</label>
+        <input type="text" class="apertura-input" id="egreso-product-search" list="egreso-product-list" placeholder="Buscar insumo del inventario">
+        <datalist id="egreso-product-list"></datalist>
+      </div>
+      <div class="modal-field modal-egreso-field hidden" id="egreso-manual-field">
+        <label for="egreso-product-manual">Otros</label>
+        <input type="text" class="apertura-input" id="egreso-product-manual" placeholder="Nombre del producto o concepto">
+      </div>
+      <div class="modal-field modal-egreso-field hidden">
+        <label for="egreso-product-unit">Unidad de medida</label>
+        <select class="apertura-input" id="egreso-product-unit">
+          <option value="kg">kg</option>
+          <option value="L">L</option>
+          <option value="unid">unid</option>
+          <option value="paq">paq</option>
+          <option value="caja">caja</option>
+          <option value="servicio">servicio</option>
+        </select>
+      </div>
+      <div class="modal-field modal-egreso-field hidden">
+        <label for="egreso-product-quantity">Cantidad</label>
+        <input type="number" min="0" step="0.01" class="apertura-input" id="egreso-product-quantity" placeholder="0.00">
       </div>
       <div class="modal-field">
         <label>Descripcion</label>
@@ -407,14 +438,15 @@
       </div>
 
       <div class="payment-summary payment-summary--compact">
-        <div class="payment-summary__row"><span>Subtotal</span><span id="billing-subtotal">S/ 0.00</span></div>
-        <div class="payment-summary__row"><span>IGV</span><span id="billing-igv">S/ 0.00</span></div>
-        <div class="payment-summary__row payment-summary__row--total"><span>Total</span><span id="billing-total">S/ 0.00</span></div>
-        <div class="payment-summary__row payment-summary__row--remaining"><span>Pendiente por comprobante</span><span id="billing-remaining">S/ 0.00</span></div>
+        <div class="payment-summary__row"><span>Subtotal general</span><span id="billing-subtotal">S/ 0.00</span></div>
+        <div class="payment-summary__row"><span>IGV general</span><span id="billing-igv">S/ 0.00</span></div>
+        <div class="payment-summary__row payment-summary__row--total"><span>Total general</span><span id="billing-total">S/ 0.00</span></div>
+        <div class="payment-summary__row payment-summary__row--remaining"><span>Pendiente por asignar</span><span id="billing-remaining">S/ 0.00</span></div>
+        <div class="payment-summary__row payment-summary__row--remaining"><span>Falta para cerrar mesa</span><span id="billing-close-remaining">S/ 0.00</span></div>
       </div>
 
       <div class="modal-actions">
-        <button class="apertura-btn" id="btn-billing-confirm">Generar comprobantes</button>
+        <button class="apertura-btn" id="btn-billing-confirm">Generar seleccionado</button>
         <button class="btn-limpiar" id="btn-billing-cancel">Cancelar</button>
       </div>
     </div>

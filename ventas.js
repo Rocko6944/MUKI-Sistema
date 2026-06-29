@@ -1,5 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
   const CLIENTS_STORAGE_KEY = 'muki_clientes_registrados';
+  const cajaInventoryItems = [
+    { id: 1, nombre: 'Tomate', categoria: 'Verduras', unidad: 'kg' },
+    { id: 2, nombre: 'Aceite vegetal', categoria: 'Secos', unidad: 'L' },
+    { id: 3, nombre: 'Pollo', categoria: 'Carnes', unidad: 'kg' },
+    { id: 4, nombre: 'Pimiento rojo', categoria: 'Verduras', unidad: 'kg' },
+    { id: 5, nombre: 'Chicha morada', categoria: 'Bebidas', unidad: 'L' },
+    { id: 6, nombre: 'Detergente cocina', categoria: 'Limpieza', unidad: 'unid' },
+    { id: 7, nombre: 'Arroz', categoria: 'Secos', unidad: 'kg' },
+    { id: 8, nombre: 'Limon', categoria: 'Verduras', unidad: 'kg' }
+  ];
   const TABLE_MAP_STORAGE_KEY = 'mukiSettingsTableMap';
   const ventasData = [
     {
@@ -210,6 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentTotal = 0;
   let currentSubtotal = 0;
   let currentIgv = 0;
+  let selectedBillingLineId = '';
   let selectedPayment = 'efectivo';
   let cajaAbierta = false;
   let montoInicialCaja = 0;
@@ -279,6 +290,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalTitle = document.getElementById('modal-title');
   const modalMonto = document.getElementById('modal-monto');
   const modalDesc = document.getElementById('modal-desc');
+  const egresoProductMode = document.getElementById('egreso-product-mode');
+  const egresoProductSearch = document.getElementById('egreso-product-search');
+  const egresoProductList = document.getElementById('egreso-product-list');
+  const egresoProductManual = document.getElementById('egreso-product-manual');
+  const egresoProductUnit = document.getElementById('egreso-product-unit');
+  const egresoProductQuantity = document.getElementById('egreso-product-quantity');
+  const egresoInventoryField = document.getElementById('egreso-inventory-field');
+  const egresoManualField = document.getElementById('egreso-manual-field');
+  const egresoFields = Array.from(document.querySelectorAll('.modal-egreso-field'));
   const modalConfirm = document.getElementById('modal-confirm');
   const modalCancel = document.getElementById('modal-cancel');
 
@@ -316,6 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const billingIgv = document.getElementById('billing-igv');
   const billingTotal = document.getElementById('billing-total');
   const billingRemaining = document.getElementById('billing-remaining');
+  const billingCloseRemaining = document.getElementById('billing-close-remaining');
   const btnBillingConfirm = document.getElementById('btn-billing-confirm');
   const btnBillingCancel = document.getElementById('btn-billing-cancel');
   const closeCajaModalOverlay = document.getElementById('close-caja-modal-overlay');
@@ -335,6 +356,73 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/'/g, '&#39;');
   }
 
+
+  function populateEgresoProductList() {
+    egresoProductList.innerHTML = cajaInventoryItems.map((item) => (
+      `<option value="${item.nombre}"></option>`
+    )).join('');
+  }
+
+  function getSelectedEgresoInventoryItem() {
+    const term = egresoProductSearch.value.trim().toLowerCase();
+    return cajaInventoryItems.find((item) => item.nombre.toLowerCase() === term) || null;
+  }
+
+  function updateEgresoProductMode() {
+    const isOther = egresoProductMode.value === 'otros';
+    egresoInventoryField.classList.toggle('hidden', isOther);
+    egresoManualField.classList.toggle('hidden', !isOther);
+    egresoProductSearch.required = !isOther;
+    egresoProductManual.required = isOther;
+
+    if (isOther) {
+      egresoProductUnit.disabled = false;
+      egresoProductSearch.value = '';
+      return;
+    }
+
+    egresoProductManual.value = '';
+    const selectedItem = getSelectedEgresoInventoryItem();
+    egresoProductUnit.disabled = true;
+    egresoProductUnit.value = selectedItem ? selectedItem.unidad : 'kg';
+  }
+
+  function resetMovimientoModal(type) {
+    modalMonto.value = '';
+    modalDesc.value = '';
+    egresoProductMode.value = 'inventario';
+    egresoProductSearch.value = '';
+    egresoProductManual.value = '';
+    egresoProductUnit.value = 'kg';
+    egresoProductQuantity.value = '';
+    egresoFields.forEach((field) => field.classList.toggle('hidden', type !== 'egreso'));
+    if (type === 'egreso') updateEgresoProductMode();
+  }
+
+  function getEgresoProductPayload() {
+    if (modalType !== 'egreso') return null;
+    const isOther = egresoProductMode.value === 'otros';
+    const inventoryItem = isOther ? null : getSelectedEgresoInventoryItem();
+    const productName = isOther ? egresoProductManual.value.trim() : (inventoryItem ? inventoryItem.nombre : egresoProductSearch.value.trim());
+    const unit = egresoProductUnit.value;
+    const quantity = parseFloat(egresoProductQuantity.value) || 0;
+
+    return {
+      source: isOther ? 'otros' : 'inventario',
+      inventoryId: inventoryItem ? inventoryItem.id : null,
+      productName,
+      unit,
+      quantity
+    };
+  }
+
+  function buildEgresoDescription(product) {
+    if (!product || !product.productName) return modalDesc.value.trim() || 'Egreso registrado';
+    const quantityLabel = product.quantity > 0 ? ` - ${product.quantity} ${product.unit}` : ` - ${product.unit}`;
+    const base = `${product.productName}${quantityLabel}`;
+    const description = modalDesc.value.trim();
+    return [base, description].filter(Boolean).join(' | ');
+  }
   function getActiveWaiterName() {
     const profile = typeof getCurrentUserProfile === 'function' ? getCurrentUserProfile() : {};
     return profile.nombre || profile.usuario || 'Mozo de turno';
@@ -537,20 +625,67 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
+  function getBillingIgvRate() {
+    return currentSubtotal > 0 ? currentIgv / currentSubtotal : 0;
+  }
+
+  function parseMoneyInput(input) {
+    return parseFloat(input.value.replace(/[^0-9.]/g, '')) || 0;
+  }
+
+  function getBillingLineValues(line) {
+    const subtotal = parseMoneyInput(line.querySelector('.billing-split__subtotal'));
+    const igv = subtotal * getBillingIgvRate();
+    const total = subtotal + igv;
+    return { subtotal, igv, total };
+  }
+
   function getBillingAssignedTotal() {
-    return Array.from(billingSplitLines.querySelectorAll('.billing-split__amount')).reduce((sum, input) => {
-      return sum + (parseFloat(input.value.replace(/[^0-9.]/g, '')) || 0);
+    return Array.from(billingSplitLines.querySelectorAll('.billing-split-line')).reduce((sum, line) => {
+      return sum + getBillingLineValues(line).total;
     }, 0);
   }
 
+  function getBillingGeneratedTotal() {
+    return Array.from(billingSplitLines.querySelectorAll('.billing-split-line.generated')).reduce((sum, line) => {
+      return sum + (parseFloat(line.dataset.generatedTotal) || 0);
+    }, 0);
+  }
+
+  function getSelectedBillingLine() {
+    return selectedBillingLineId ? billingSplitLines.querySelector(`[data-billing-line-id="${selectedBillingLineId}"]`) : null;
+  }
+
+  function updateBillingLineDetails(line) {
+    const values = getBillingLineValues(line);
+    line.querySelector('.billing-split__igv').textContent = formatCurrency(values.igv);
+    line.querySelector('.billing-split__total').textContent = formatCurrency(values.total);
+    line.dataset.total = values.total.toFixed(2);
+  }
+
   function updateBillingSummary() {
+    Array.from(billingSplitLines.querySelectorAll('.billing-split-line')).forEach(updateBillingLineDetails);
     const assigned = getBillingAssignedTotal();
+    const generated = getBillingGeneratedTotal();
+    const selectedLine = getSelectedBillingLine();
+    const selectedValues = selectedLine ? getBillingLineValues(selectedLine) : { total: 0 };
     const remaining = currentTotal - assigned;
+    const closeRemaining = Math.max(0, currentTotal - generated);
+
     billingSubtotal.textContent = formatCurrency(currentSubtotal);
     billingIgv.textContent = formatCurrency(currentIgv);
     billingTotal.textContent = formatCurrency(currentTotal);
     billingRemaining.textContent = formatCurrency(remaining);
-    btnBillingConfirm.disabled = currentTotal <= 0 || Math.abs(currentTotal - assigned) > 0.009;
+    billingCloseRemaining.textContent = formatCurrency(closeRemaining);
+    btnBillingConfirm.disabled = !selectedLine || selectedLine.classList.contains('generated') || selectedValues.total <= 0;
+  }
+
+  function selectBillingLine(line) {
+    selectedBillingLineId = line.dataset.billingLineId;
+    Array.from(billingSplitLines.querySelectorAll('.billing-split-line')).forEach((item) => {
+      item.classList.toggle('selected', item === line);
+    });
+    updateBillingSummary();
   }
 
   function fillBillingLineClient(line, cliente, documento = '') {
@@ -562,65 +697,83 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function bindBillingSplitEvents(line) {
     const documentInput = line.querySelector('.billing-split__document');
-    const amountInput = line.querySelector('.billing-split__amount');
+    const subtotalInput = line.querySelector('.billing-split__subtotal');
     const searchButton = line.querySelector('.billing-split__search');
     const removeButton = line.querySelector('.billing-split__remove');
 
-    amountInput.addEventListener('input', updateBillingSummary);
+    line.addEventListener('click', (event) => {
+      if (event.target.closest('.billing-split__remove')) return;
+      selectBillingLine(line);
+    });
+    subtotalInput.addEventListener('input', updateBillingSummary);
     documentInput.addEventListener('input', () => fillBillingLineClient(line, null, documentInput.value.trim()));
     searchButton.addEventListener('click', () => {
       const documento = documentInput.value.trim();
       fillBillingLineClient(line, clientesFacturacion[documento] || null, documento);
+      selectBillingLine(line);
     });
     removeButton.addEventListener('click', () => {
+      if (line.classList.contains('generated')) return;
       if (billingSplitLines.children.length === 1) {
         line.querySelector('.billing-split__type').value = 'nota_venta';
         documentInput.value = '';
-        amountInput.value = Number(currentTotal).toFixed(2);
+        subtotalInput.value = Number(currentSubtotal).toFixed(2);
         fillBillingLineClient(line, null);
+        selectBillingLine(line);
       } else {
+        const wasSelected = selectedBillingLineId === line.dataset.billingLineId;
         line.remove();
+        if (wasSelected) {
+          const nextLine = billingSplitLines.querySelector('.billing-split-line:not(.generated)') || billingSplitLines.querySelector('.billing-split-line');
+          if (nextLine) selectBillingLine(nextLine);
+        }
       }
       updateBillingSummary();
     });
   }
 
-  function addBillingSplitLine(amount = '') {
+  function addBillingSplitLine(subtotal = '') {
     const line = document.createElement('div');
     line.className = 'billing-split-line';
+    line.dataset.billingLineId = `billing-${Date.now()}-${billingSplitLines.children.length}`;
     line.innerHTML = `
       <select class="payment-line__method billing-split__type">${getBillingTypeOptions()}</select>
       <input type="text" class="payment-input billing-split__document" placeholder="DNI / RUC">
       <button type="button" class="btn-limpiar billing-split__search">Buscar</button>
-      <input type="text" class="payment-input billing-split__amount" placeholder="S/ 0.00" value="${amount}">
+      <input type="text" class="payment-input billing-split__subtotal" placeholder="Consumo sin IGV" value="${subtotal}">
+      <div class="billing-split__detail"><span>IGV</span><strong class="billing-split__igv">S/ 0.00</strong></div>
+      <div class="billing-split__detail"><span>Total</span><strong class="billing-split__total">S/ 0.00</strong></div>
       <span class="billing-split__client">Cliente: -</span>
+      <span class="billing-split__status">Pendiente</span>
       <button type="button" class="btn-limpiar billing-split__remove">Quitar</button>
     `;
     billingSplitLines.appendChild(line);
     bindBillingSplitEvents(line);
+    selectBillingLine(line);
     updateBillingSummary();
   }
 
-  function getBillingSplitPayload() {
-    return Array.from(billingSplitLines.querySelectorAll('.billing-split-line')).map((line) => {
-      const documento = line.querySelector('.billing-split__document').value.trim();
-      return {
-        tipo: line.querySelector('.billing-split__type').value,
-        documento,
-        nombre: line.dataset.clientName || (documento ? 'Cliente facturado' : ''),
-        direccion: line.dataset.clientAddress || '',
-        monto: parseFloat(line.querySelector('.billing-split__amount').value.replace(/[^0-9.]/g, '')) || 0
-      };
-    }).filter((item) => item.monto > 0);
+  function getBillingLinePayload(line) {
+    const documento = line.querySelector('.billing-split__document').value.trim();
+    const values = getBillingLineValues(line);
+    return {
+      tipo: line.querySelector('.billing-split__type').value,
+      documento,
+      nombre: line.dataset.clientName || (documento ? 'Cliente facturado' : ''),
+      direccion: line.dataset.clientAddress || '',
+      subtotal: values.subtotal,
+      igv: values.igv,
+      monto: values.total
+    };
   }
 
   function openBillingModal() {
+    selectedBillingLineId = '';
     billingSplitLines.innerHTML = '';
-    addBillingSplitLine(Number(currentTotal).toFixed(2));
+    addBillingSplitLine(Number(currentSubtotal).toFixed(2));
     updateBillingSummary();
     billingModalOverlay.classList.remove('hidden');
   }
-
   function getCajaMetrics() {
     let totalVendido = 0;
     let totalEfectivo = 0;
@@ -1206,6 +1359,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <td><span class="badge ${badgeClass}">${movimiento.tipo}</span></td>
         <td>${movimiento.metodo}</td>
         <td>${formatCurrency(Math.abs(movimiento.monto))}</td>
+        <td>${escapeHtml(movimiento.descripcion || '-')}</td>
         <td>${movimiento.usuario}</td>
       `;
       tbody.appendChild(tr);
@@ -1369,8 +1523,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   btnAddBillingSplit.addEventListener('click', () => {
-    const remaining = Math.max(0, currentTotal - getBillingAssignedTotal());
-    addBillingSplitLine(remaining ? remaining.toFixed(2) : '');
+    const assignedSubtotal = Array.from(billingSplitLines.querySelectorAll('.billing-split-line')).reduce((sum, line) => {
+      return sum + parseMoneyInput(line.querySelector('.billing-split__subtotal'));
+    }, 0);
+    const remainingSubtotal = Math.max(0, currentSubtotal - assignedSubtotal);
+    addBillingSplitLine(remainingSubtotal ? remainingSubtotal.toFixed(2) : '');
   });
 
 
@@ -1479,34 +1636,47 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   btnBillingConfirm.addEventListener('click', () => {
-    const assigned = getBillingAssignedTotal();
-    if (Math.abs(currentTotal - assigned) > 0.009) return;
+    const selectedLine = getSelectedBillingLine();
+    if (!selectedLine || selectedLine.classList.contains('generated')) return;
 
-    const comprobantes = getBillingSplitPayload();
+    const comprobante = getBillingLinePayload(selectedLine);
+    if (comprobante.monto <= 0) return;
+
     const venta = currentVentaId ? ventasData.find((item) => item.id === currentVentaId) : null;
     const now = new Date();
+    const clienteFacturado = comprobante.documento ? {
+      nombre: comprobante.nombre || 'Cliente facturado',
+      documento: comprobante.documento,
+      direccion: comprobante.direccion || ''
+    } : null;
 
-    comprobantes.forEach((comprobante) => {
-      const clienteFacturado = comprobante.documento ? {
-        nombre: comprobante.nombre || 'Cliente facturado',
-        documento: comprobante.documento,
-        direccion: comprobante.direccion || ''
-      } : null;
-      registerBilledClientVisit(comprobante.tipo, clienteFacturado);
-    });
+    registerBilledClientVisit(comprobante.tipo, clienteFacturado);
 
     if (venta) {
-      venta.comprobantes = comprobantes.map((comprobante, index) => ({
+      venta.comprobantes = Array.isArray(venta.comprobantes) ? venta.comprobantes : [];
+      venta.comprobantes.push({
         ...comprobante,
-        numero: `${venta.id}-C${String(index + 1).padStart(2, '0')}`,
+        numero: `${venta.id}-C${String(venta.comprobantes.length + 1).padStart(2, '0')}`,
         fecha: now.toISOString()
-      }));
+      });
+      venta.facturacionPendiente = Math.max(0, currentTotal - (venta.comprobantes || []).reduce((sum, item) => sum + (item.monto || 0), 0));
+      venta.facturacionEstado = venta.facturacionPendiente <= 0.009 ? 'Completada' : 'Parcial';
     }
 
-    btnBillingConfirm.textContent = comprobantes.length === 1 ? 'Comprobante generado' : `${comprobantes.length} comprobantes generados`;
+    selectedLine.classList.add('generated');
+    selectedLine.dataset.generatedTotal = comprobante.monto.toFixed(2);
+    selectedLine.querySelector('.billing-split__status').textContent = 'Emitido';
+    selectedLine.querySelectorAll('input, select, button').forEach((control) => {
+      if (!control.classList.contains('billing-split__remove')) control.disabled = true;
+    });
+
+    const nextLine = billingSplitLines.querySelector('.billing-split-line:not(.generated)');
+    if (nextLine) selectBillingLine(nextLine);
+    updateBillingSummary();
+
+    btnBillingConfirm.textContent = 'Comprobante generado';
     setTimeout(() => {
-      btnBillingConfirm.textContent = 'Generar comprobantes';
-      billingModalOverlay.classList.add('hidden');
+      btnBillingConfirm.textContent = 'Generar seleccionado';
     }, 1200);
   });
 
@@ -1548,19 +1718,20 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-registrar-ingreso').addEventListener('click', () => {
     modalType = 'ingreso';
     modalTitle.textContent = 'Registrar ingreso';
-    modalMonto.value = '';
-    modalDesc.value = '';
+    resetMovimientoModal('ingreso');
     modalOverlay.classList.remove('hidden');
   });
 
   document.getElementById('btn-registrar-egreso').addEventListener('click', () => {
     modalType = 'egreso';
     modalTitle.textContent = 'Registrar egreso';
-    modalMonto.value = '';
-    modalDesc.value = '';
+    populateEgresoProductList();
+    resetMovimientoModal('egreso');
     modalOverlay.classList.remove('hidden');
   });
 
+  egresoProductMode.addEventListener('change', updateEgresoProductMode);
+  egresoProductSearch.addEventListener('input', updateEgresoProductMode);
   modalCancel.addEventListener('click', () => {
     modalOverlay.classList.add('hidden');
   });
@@ -1570,13 +1741,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const monto = parseFloat(raw) || 0;
     if (monto <= 0) return;
 
+    const egresoProduct = getEgresoProductPayload();
+    if (modalType === 'egreso' && (!egresoProduct || !egresoProduct.productName || (egresoProduct.source === 'inventario' && !egresoProduct.inventoryId))) {
+      const target = egresoProductMode.value === 'otros' ? egresoProductManual : egresoProductSearch;
+      target.focus();
+      return;
+    }
+
     const now = new Date();
     movimientos.push({
       hora: now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' }),
       tipo: modalType,
       metodo: modalType === 'ingreso' ? 'Ingreso' : 'Egreso',
       monto: modalType === 'egreso' ? -monto : monto,
-      descripcion: modalDesc.value.trim() || 'Sin descripcion',
+      descripcion: modalType === 'egreso' ? buildEgresoDescription(egresoProduct) : (modalDesc.value.trim() || 'Sin descripcion'),
+      producto: egresoProduct,
       usuario: 'Juan Perez'
     });
 

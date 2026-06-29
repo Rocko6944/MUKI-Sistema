@@ -4,6 +4,65 @@
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // --------- Landing Menu from Administration ---------
+  const landingMenuTarget = document.getElementById('landing-menu-grid') || document.querySelector('[data-landing-menu]');
+  const defaultLandingMenu = [
+    { categoria: 'Platos marinos', nombre: 'Ceviche a lo Muki', precio: 45, fotografia: 'Images/logoSinFondo.png', descripcion: 'Pesca fresca, leche de tigre de la casa, camote y cancha.', insumos: 'pescado, limon, cebolla, camote, cancha' },
+    { categoria: 'Fondos', nombre: 'Lomo Saltado', precio: 39, fotografia: 'Images/logoSinFondo.png', descripcion: 'Lomo salteado al wok con papas doradas y arroz.', insumos: 'lomo, cebolla, tomate, papa, arroz' },
+    { categoria: 'Bebidas', nombre: 'Pisco Sour', precio: 23, fotografia: 'Images/logoSinFondo.png', descripcion: 'Coctel clasico preparado al momento.', insumos: 'pisco, limon, jarabe de goma, clara de huevo' }
+  ];
+
+  const escapeLandingHtml = (value) => String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+  const readLandingMenu = () => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('muki_carta_landing') || 'null');
+      return Array.isArray(stored) && stored.length ? stored : defaultLandingMenu;
+    } catch (error) {
+      return defaultLandingMenu;
+    }
+  };
+
+  const renderLandingMenu = () => {
+    if (!landingMenuTarget) return;
+    const grouped = readLandingMenu().reduce((acc, item) => {
+      const category = item.categoria || 'Carta';
+      acc[category] = acc[category] || [];
+      acc[category].push(item);
+      return acc;
+    }, {});
+
+    landingMenuTarget.innerHTML = Object.entries(grouped).map(([category, items]) => `
+      <section class="landing-menu-category">
+        <h3>${escapeLandingHtml(category)}</h3>
+        <div class="landing-menu-category__items">
+          ${items.map((item) => `
+            <article class="landing-menu-card">
+              ${item.fotografia ? `<img src="${escapeLandingHtml(item.fotografia)}" alt="${escapeLandingHtml(item.nombre)}">` : ''}
+              <div class="landing-menu-card__body">
+                <div class="landing-menu-card__top">
+                  <h4>${escapeLandingHtml(item.nombre)}</h4>
+                  <strong>S/ ${(Number(item.precio) || 0).toFixed(2)}</strong>
+                </div>
+                <p>${escapeLandingHtml(item.descripcion || '')}</p>
+                <small>${escapeLandingHtml(item.insumos || '')}</small>
+              </div>
+            </article>
+          `).join('')}
+        </div>
+      </section>
+    `).join('');
+  };
+
+  renderLandingMenu();
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'muki_carta_landing') renderLandingMenu();
+  });
 
   // --------- Header Scroll Effect ---------
   const header = document.getElementById('header');

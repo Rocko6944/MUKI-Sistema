@@ -1,5 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
   const CLIENTS_STORAGE_KEY = 'muki_clientes_registrados';
+  const MENU_STORAGE_KEY = 'muki_carta_landing';
+  const defaultMenuItems = [
+    { id: 'menu-001', categoria: 'Platos marinos', nombre: 'Ceviche a lo Muki', precio: 45, fotografia: 'Images/logoSinFondo.png', descripcion: 'Pesca fresca, leche de tigre de la casa, camote y cancha.', insumos: 'pescado, limon, cebolla, camote, cancha' },
+    { id: 'menu-002', categoria: 'Fondos', nombre: 'Lomo Saltado', precio: 39, fotografia: 'Images/logoSinFondo.png', descripcion: 'Lomo salteado al wok con papas doradas y arroz.', insumos: 'lomo, cebolla, tomate, papa, arroz' },
+    { id: 'menu-003', categoria: 'Fondos', nombre: 'Chaufa a lo Muki', precio: 38, fotografia: 'Images/logoSinFondo.png', descripcion: 'Arroz chaufa con toque de la casa y verduras salteadas.', insumos: 'arroz, pollo, huevo, cebolla china, sillao' },
+    { id: 'menu-004', categoria: 'Bebidas', nombre: 'Pisco Sour', precio: 23, fotografia: 'Images/logoSinFondo.png', descripcion: 'Coctel clasico preparado al momento.', insumos: 'pisco, limon, jarabe de goma, clara de huevo' },
+    { id: 'menu-005', categoria: 'Bebidas', nombre: 'Chicha morada', precio: 8, fotografia: 'Images/logoSinFondo.png', descripcion: 'Refresco natural de maiz morado y especias.', insumos: 'maiz morado, pina, canela, clavo' }
+  ];
   const salesTransactions = [
     { ventaId: 'V001', fecha: '2026-04-10', producto: 'Ceviche a lo Muki', categoria: 'Plato', tipo: 'plato', cantidad: 2, total: 90, metodoPago: 'Efectivo', mozo: 'Juan Perez' },
     { ventaId: 'V001', fecha: '2026-04-10', producto: 'Pisco Sour', categoria: 'Bebida', tipo: 'bebida', cantidad: 3, total: 45, metodoPago: 'Efectivo', mozo: 'Juan Perez' },
@@ -60,7 +68,9 @@ document.addEventListener('DOMContentLoaded', () => {
     { id: 'P005', fecha: '2026-04-28', proveedor: 'Abarrotes del Sur', total: 980, metodoPago: 'Transferencia', usuario: 'Carlos Ruiz' },
     { id: 'P006', fecha: '2026-04-27', proveedor: 'Distribuidora Sol', total: 3400, metodoPago: 'Transferencia', usuario: 'Maria Lopez' },
     { id: 'P007', fecha: '2026-04-26', proveedor: 'Mercado Central', total: 1180, metodoPago: 'Efectivo', usuario: 'Carlos Ruiz' },
-    { id: 'P008', fecha: '2026-04-25', proveedor: 'Carnes del Sur', total: 2040, metodoPago: 'Tarjeta de Credito', usuario: 'Pedro Gomez' }
+    { id: 'P008', fecha: '2026-04-25', proveedor: 'Carnes del Sur', total: 2040, metodoPago: 'Tarjeta de Credito', usuario: 'Pedro Gomez' },
+    { id: 'P009', fecha: '2026-04-12', proveedor: 'Mercado Central', total: 460, metodoPago: 'Efectivo', usuario: 'Pedro Gomez' },
+    { id: 'P010', fecha: '2026-04-15', proveedor: 'Bebidas SA', total: 320, metodoPago: 'Transferencia', usuario: 'Maria Lopez' }
   ];
 
   function readStoredClients() {
@@ -92,8 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const salesPaymentFilter = document.getElementById('sales-payment-filter');
   const btnApplySalesFilters = document.getElementById('btn-apply-sales-filters');
   const btnExportSalesReport = document.getElementById('btn-export-sales-report');
-  const metricSalesTotal = document.getElementById('metric-sales-total');
-  const metricSalesIncome = document.getElementById('metric-sales-income');
+
   const salesLineChart = document.getElementById('sales-line-chart');
   const salesLineLabels = document.getElementById('sales-line-labels');
   const salesBestDay = document.getElementById('sales-best-day');
@@ -101,6 +110,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const salesBars = document.getElementById('sales-bars');
   const salesReportTbody = document.getElementById('sales-report-tbody');
   const salesReportEmpty = document.getElementById('sales-report-empty');
+    const metricBalanceIncomeCash = document.getElementById('metric-balance-income-cash');
+  const metricBalanceIncomeCard = document.getElementById('metric-balance-income-card');
+  const metricBalanceIncomeYape = document.getElementById('metric-balance-income-yape');
+  const metricBalanceIncomeTransfer = document.getElementById('metric-balance-income-transfer');
+  const metricBalanceExpenseCash = document.getElementById('metric-balance-expense-cash');
+  const metricBalanceExpenseCard = document.getElementById('metric-balance-expense-card');
+  const metricBalanceExpenseYape = document.getElementById('metric-balance-expense-yape');
+  const metricBalanceExpenseTransfer = document.getElementById('metric-balance-expense-transfer');
+  const metricBalanceIncome = document.getElementById('metric-balance-income');
+  const metricBalanceExpenses = document.getElementById('metric-balance-expenses');
+  const metricBalanceProfit = document.getElementById('metric-balance-profit');
   const cashDateFrom = document.getElementById('cash-date-from');
   const cashDateTo = document.getElementById('cash-date-to');
   const cashShiftChips = document.getElementById('cash-shift-chips');
@@ -191,6 +211,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const clientsExportFormatChips = document.getElementById('clients-export-format-chips');
   const btnCancelClientsExport = document.getElementById('btn-cancel-clients-export');
   const btnConfirmClientsExport = document.getElementById('btn-confirm-clients-export');
+  const menuCategoryChips = document.getElementById('menu-category-chips');
+  const menuManagerList = document.getElementById('menu-manager-list');
+  const menuManagerEmpty = document.getElementById('menu-manager-empty');
+  const btnAddMenuItem = document.getElementById('btn-add-menu-item');
+  const menuItemModalOverlay = document.getElementById('menu-item-modal-overlay');
+  const menuItemModalTitle = document.getElementById('menu-item-modal-title');
+  const menuItemForm = document.getElementById('menu-item-form');
+  const menuItemId = document.getElementById('menu-item-id');
+  const menuItemCategory = document.getElementById('menu-item-category');
+  const menuItemName = document.getElementById('menu-item-name');
+  const menuItemPrice = document.getElementById('menu-item-price');
+  const menuItemPhoto = document.getElementById('menu-item-photo');
+  const menuItemDescription = document.getElementById('menu-item-description');
+  const menuItemIngredients = document.getElementById('menu-item-ingredients');
+  const menuCategoryList = document.getElementById('menu-category-list');
+  const btnCancelMenuItem = document.getElementById('btn-cancel-menu-item');
 
   let currentAdminTab = 'ventas';
   let selectedType = '';
@@ -204,8 +240,31 @@ document.addEventListener('DOMContentLoaded', () => {
   let selectedPurchasesExportFormat = 'Excel';
   let selectedClientsCategory = '';
   let selectedClientsReward = '';
+  let selectedMenuCategory = '';
   let selectedClientsExportFormat = 'Excel';
+  let menuItems = readMenuItems();
 
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function readMenuItems() {
+    try {
+      const stored = JSON.parse(localStorage.getItem(MENU_STORAGE_KEY) || 'null');
+      return Array.isArray(stored) && stored.length ? stored : [...defaultMenuItems];
+    } catch (error) {
+      return [...defaultMenuItems];
+    }
+  }
+
+  function saveMenuItems() {
+    localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(menuItems));
+  }
   function formatCurrency(value) {
     return `S/ ${value.toFixed(2)}`;
   }
@@ -224,14 +283,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const matchesPayment = !selectedPayment || item.metodoPago === selectedPayment;
       return matchesFrom && matchesTo && matchesType && matchesWaiter && matchesPayment;
     });
-  }
-
-  function renderSalesMetrics(filtered) {
-    const ventasTotal = filtered.reduce((sum, item) => sum + item.cantidad, 0);
-    const ingresosTotales = filtered.reduce((sum, item) => sum + item.total, 0);
-
-    metricSalesTotal.textContent = `${ventasTotal}`;
-    metricSalesIncome.textContent = formatCurrency(ingresosTotales);
   }
 
   function renderSalesLineChart(filtered) {
@@ -305,6 +356,79 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
+  function isWithinSalesDateRange(item) {
+    const matchesFrom = !salesDateFrom.value || item.fecha >= salesDateFrom.value;
+    const matchesTo = !salesDateTo.value || item.fecha <= salesDateTo.value;
+    return matchesFrom && matchesTo;
+  }
+
+  function getBalanceSales() {
+    return salesTransactions.filter(isWithinSalesDateRange);
+  }
+
+  function getBalancePurchases() {
+    return purchaseRecords.filter(isWithinSalesDateRange);
+  }
+
+  function normalizePaymentMethod(method) {
+    if (method === 'Tarjeta de Credito') return 'Tarjeta';
+    if (method === 'Yape' || method === 'Plin') return 'Yape / Plin';
+    return method;
+  }
+
+  function groupAmountsByMethod(items) {
+    return items.reduce((acc, item) => {
+      const method = normalizePaymentMethod(item.metodoPago);
+      acc[method] = (acc[method] || 0) + item.total;
+      return acc;
+    }, {});
+  }
+
+  function getBalanceMetrics() {
+    const sales = getBalanceSales();
+    const purchases = getBalancePurchases();
+    const incomeByMethod = groupAmountsByMethod(sales);
+    const expensesByMethod = groupAmountsByMethod(purchases);
+    const incomeTotal = sales.reduce((sum, item) => sum + item.total, 0);
+    const expensesTotal = purchases.reduce((sum, item) => sum + item.total, 0);
+
+    return {
+      income: {
+        cash: incomeByMethod.Efectivo || 0,
+        card: incomeByMethod.Tarjeta || 0,
+        yape: incomeByMethod['Yape / Plin'] || 0,
+        transfer: incomeByMethod.Transferencia || 0,
+        total: incomeTotal
+      },
+      expenses: {
+        cash: expensesByMethod.Efectivo || 0,
+        card: expensesByMethod.Tarjeta || 0,
+        yape: expensesByMethod['Yape / Plin'] || 0,
+        transfer: expensesByMethod.Transferencia || 0,
+        total: expensesTotal
+      },
+      profit: incomeTotal - expensesTotal,
+      purchases
+    };
+  }
+
+  function renderSalesBalanceReport() {
+    const metrics = getBalanceMetrics();
+    metricBalanceIncomeCash.textContent = formatCurrency(metrics.income.cash);
+    metricBalanceIncomeCard.textContent = formatCurrency(metrics.income.card);
+    metricBalanceIncomeYape.textContent = formatCurrency(metrics.income.yape);
+    metricBalanceIncomeTransfer.textContent = formatCurrency(metrics.income.transfer);
+    metricBalanceExpenseCash.textContent = formatCurrency(metrics.expenses.cash);
+    metricBalanceExpenseCard.textContent = formatCurrency(metrics.expenses.card);
+    metricBalanceExpenseYape.textContent = formatCurrency(metrics.expenses.yape);
+    metricBalanceExpenseTransfer.textContent = formatCurrency(metrics.expenses.transfer);
+    metricBalanceIncome.textContent = formatCurrency(metrics.income.total);
+    metricBalanceExpenses.textContent = formatCurrency(metrics.expenses.total);
+    metricBalanceProfit.textContent = formatCurrency(metrics.profit);
+    metricBalanceProfit.classList.toggle('admin-metric__value--red', metrics.profit < 0);
+    metricBalanceProfit.classList.toggle('admin-metric__value--green', metrics.profit >= 0);
+  }
+
   function renderSalesTable(filtered) {
     salesReportTbody.innerHTML = filtered.map((item) => `
       <tr>
@@ -331,10 +455,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderSalesReport() {
     renderSalesWaiterOptions();
     const filtered = getFilteredSales();
-    renderSalesMetrics(filtered);
     renderSalesLineChart(filtered);
     renderSalesBars(filtered);
     renderSalesTable(filtered);
+    renderSalesBalanceReport();
   }
 
   function getFilteredCashMovements() {
@@ -637,6 +761,118 @@ document.addEventListener('DOMContentLoaded', () => {
     renderClientsSummary(filtered);
   }
 
+  function getMenuCategories() {
+    return [...new Set(menuItems.map((item) => item.categoria).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  }
+
+  function renderMenuCategoryControls() {
+    const categories = getMenuCategories();
+    menuCategoryChips.innerHTML = '<button class="admin-chip" type="button" data-category="">Todas</button>' + categories.map((category) => (
+      `<button class="admin-chip" type="button" data-category="${escapeHtml(category)}">${escapeHtml(category)}</button>`
+    )).join('');
+    menuCategoryList.innerHTML = categories.map((category) => `<option value="${escapeHtml(category)}"></option>`).join('');
+    setActiveChip(menuCategoryChips, selectedMenuCategory, 'category');
+  }
+
+  function getFilteredMenuItems() {
+    return menuItems.filter((item) => !selectedMenuCategory || item.categoria === selectedMenuCategory);
+  }
+
+  function renderMenuManager() {
+    renderMenuCategoryControls();
+    const filtered = getFilteredMenuItems();
+    menuManagerEmpty.classList.toggle('hidden', filtered.length > 0);
+
+    if (!filtered.length) {
+      menuManagerList.innerHTML = '';
+      return;
+    }
+
+    const grouped = filtered.reduce((acc, item) => {
+      const category = item.categoria || 'Sin categoria';
+      acc[category] = acc[category] || [];
+      acc[category].push(item);
+      return acc;
+    }, {});
+
+    menuManagerList.innerHTML = Object.entries(grouped).map(([category, items]) => `
+      <article class="admin-menu-category">
+        <div class="admin-menu-category__header">
+          <h3>${escapeHtml(category)}</h3>
+          <span>${items.length} productos</span>
+        </div>
+        <div class="admin-menu-items">
+          ${items.map((item) => `
+            <div class="admin-menu-item">
+              <div class="admin-menu-item__photo">
+                ${item.fotografia ? `<img src="${escapeHtml(item.fotografia)}" alt="${escapeHtml(item.nombre)}">` : '<span>Sin foto</span>'}
+              </div>
+              <div class="admin-menu-item__body">
+                <div class="admin-menu-item__top">
+                  <strong>${escapeHtml(item.nombre)}</strong>
+                  <span>${formatCurrency(Number(item.precio) || 0)}</span>
+                </div>
+                <p>${escapeHtml(item.descripcion || 'Sin descripcion')}</p>
+                <small>Insumos: ${escapeHtml(item.insumos || '-')}</small>
+              </div>
+              <button class="btn-limpiar admin-menu-item__edit" type="button" data-menu-id="${escapeHtml(item.id)}">Editar</button>
+            </div>
+          `).join('')}
+        </div>
+      </article>
+    `).join('');
+  }
+
+  function openMenuItemModal(item = null) {
+    const isEditing = Boolean(item);
+    menuItemModalTitle.textContent = isEditing ? 'Editar producto' : 'Agregar producto';
+    menuItemId.value = item?.id || '';
+    menuItemCategory.value = item?.categoria || selectedMenuCategory || '';
+    menuItemName.value = item?.nombre || '';
+    menuItemPrice.value = item?.precio ?? '';
+    menuItemPhoto.value = item?.fotografia || '';
+    menuItemDescription.value = item?.descripcion || '';
+    menuItemIngredients.value = item?.insumos || '';
+    renderMenuCategoryControls();
+    menuItemModalOverlay.classList.remove('hidden');
+    menuItemName.focus();
+  }
+
+  function closeMenuItemModal() {
+    menuItemModalOverlay.classList.add('hidden');
+    menuItemForm.reset();
+    menuItemId.value = '';
+  }
+
+  function saveMenuItemFromForm() {
+    const id = menuItemId.value || `menu-${Date.now()}`;
+    const payload = {
+      id,
+      categoria: menuItemCategory.value.trim() || 'Sin categoria',
+      nombre: menuItemName.value.trim(),
+      precio: parseFloat(menuItemPrice.value) || 0,
+      fotografia: menuItemPhoto.value.trim(),
+      descripcion: menuItemDescription.value.trim(),
+      insumos: menuItemIngredients.value.trim()
+    };
+
+    if (!payload.nombre) {
+      menuItemName.focus();
+      return;
+    }
+
+    const index = menuItems.findIndex((item) => item.id === id);
+    if (index >= 0) {
+      menuItems[index] = payload;
+    } else {
+      menuItems.push(payload);
+    }
+
+    saveMenuItems();
+    selectedMenuCategory = payload.categoria;
+    renderMenuManager();
+    closeMenuItemModal();
+  }
   function setActiveChip(group, value, attr) {
     Array.from(group.querySelectorAll('.admin-chip')).forEach((chip) => {
       chip.classList.toggle('active', chip.dataset[attr] === value);
@@ -731,6 +967,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (tabName === 'clientes') {
       renderClientsReport();
     }
+
+    if (tabName === 'carta') {
+      renderMenuManager();
+    }
   }
 
   moduleButtons.forEach((button) => {
@@ -809,6 +1049,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   btnApplyClientsFilters.addEventListener('click', renderClientsReport);
   btnExportClientsReport.addEventListener('click', openClientsExportModal);
+
+  menuCategoryChips.addEventListener('click', (event) => {
+    const chip = event.target.closest('.admin-chip');
+    if (!chip) return;
+    selectedMenuCategory = chip.dataset.category;
+    renderMenuManager();
+  });
+
+  menuManagerList.addEventListener('click', (event) => {
+    const editButton = event.target.closest('[data-menu-id]');
+    if (!editButton) return;
+    const item = menuItems.find((menuItem) => menuItem.id === editButton.dataset.menuId);
+    if (item) openMenuItemModal(item);
+  });
+
+  btnAddMenuItem.addEventListener('click', () => openMenuItemModal());
+  btnCancelMenuItem.addEventListener('click', closeMenuItemModal);
+  menuItemForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    saveMenuItemFromForm();
+  });
 
   exportFormatChips.addEventListener('click', (event) => {
     const chip = event.target.closest('.admin-chip');
@@ -905,4 +1166,5 @@ document.addEventListener('DOMContentLoaded', () => {
   renderInventoryReport();
   renderPurchasesReport();
   renderClientsReport();
+  renderMenuManager();
 });

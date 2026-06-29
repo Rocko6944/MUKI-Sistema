@@ -38,18 +38,18 @@
         </div>
 
         <div class="admin-grid">
-          <section class="admin-card admin-card--wide">
+          <section class="admin-card">
             <div class="admin-card__content">
               <h2 class="admin-card__title">Ventas</h2>
-              <p class="admin-card__desc">Analisis de ventas por dia, mes, producto y estado de atencion para tomar mejores decisiones comerciales.</p>
+              <p class="admin-card__desc">Ventas por fecha, producto, estado y mozo.</p>
             </div>
             <button class="admin-card__btn" data-module="ventas">Ver reportes</button>
           </section>
 
-          <section class="admin-card admin-card--wide">
+          <section class="admin-card">
             <div class="admin-card__content">
               <h2 class="admin-card__title">Caja</h2>
-              <p class="admin-card__desc">Revision de ingresos, egresos, cierres de caja y comportamiento de los distintos medios de cobro.</p>
+              <p class="admin-card__desc">Ingresos, egresos, cierres y medios de cobro.</p>
             </div>
             <button class="admin-card__btn" data-module="caja">Ver reportes</button>
           </section>
@@ -57,7 +57,7 @@
           <section class="admin-card">
             <div class="admin-card__content">
               <h2 class="admin-card__title">Inventario</h2>
-              <p class="admin-card__desc">Stock, consumo, productos criticos y movimientos que impactan la operacion diaria.</p>
+              <p class="admin-card__desc">Stock, consumo y productos criticos.</p>
             </div>
             <button class="admin-card__btn" data-module="inventario">Ver reportes</button>
           </section>
@@ -65,7 +65,7 @@
           <section class="admin-card">
             <div class="admin-card__content">
               <h2 class="admin-card__title">Compras</h2>
-              <p class="admin-card__desc">Historial de compras, proveedores, pagos y evolucion del gasto operativo del negocio.</p>
+              <p class="admin-card__desc">Compras, proveedores y gasto operativo.</p>
             </div>
             <button class="admin-card__btn" data-module="compras">Ver reportes</button>
           </section>
@@ -73,9 +73,16 @@
           <section class="admin-card">
             <div class="admin-card__content">
               <h2 class="admin-card__title">Clientes</h2>
-              <p class="admin-card__desc">Frecuencia de visita, clientes recurrentes, recompensas y comportamiento de fidelizacion.</p>
+              <p class="admin-card__desc">Clientes frecuentes, visitas y recompensas.</p>
             </div>
             <button class="admin-card__btn" data-module="clientes">Ver reportes</button>
+          </section>
+          <section class="admin-card">
+            <div class="admin-card__content">
+              <h2 class="admin-card__title">Gesti&oacute;n de carta</h2>
+              <p class="admin-card__desc">Carta de la landing por categorias.</p>
+            </div>
+            <button class="admin-card__btn" data-module="carta">Gestionar carta</button>
           </section>
         </div>
       </section>
@@ -89,6 +96,7 @@
             <button class="admin-tab" data-tab="inventario">Inventario</button>
             <button class="admin-tab" data-tab="compras">Compras</button>
             <button class="admin-tab" data-tab="clientes">Clientes</button>
+            <button class="admin-tab" data-tab="carta">Carta</button>
           </div>
         </div>
 
@@ -140,17 +148,47 @@
             </div>
           </div>
 
-          <div class="admin-metrics">
-            <article class="admin-metric">
-              <span class="admin-metric__label">Total ventas</span>
-              <strong class="admin-metric__value" id="metric-sales-total">0</strong>
-            </article>
-            <article class="admin-metric">
-              <span class="admin-metric__label">Ingresos totales</span>
-              <strong class="admin-metric__value admin-metric__value--gold" id="metric-sales-income">S/ 0.00</strong>
-            </article>
-          </div>
+          <section class="admin-balance-card">
+            <div class="admin-chart-card__header">
+              <div>
+                <h3>Balance general</h3>
+              </div>
+            </div>
+            <div class="admin-balance-grid">
+              <article class="admin-balance-block admin-balance-block--income">
+                <div class="admin-balance-block__header">
+                  <span>Ingresos</span>
+                  <strong id="metric-balance-income">S/ 0.00</strong>
+                </div>
+                <div class="admin-balance-methods">
+                  <div><span>Efectivo</span><strong id="metric-balance-income-cash">S/ 0.00</strong></div>
+                  <div><span>Tarjeta</span><strong id="metric-balance-income-card">S/ 0.00</strong></div>
+                  <div><span>Yape / Plin</span><strong id="metric-balance-income-yape">S/ 0.00</strong></div>
+                  <div><span>Transferencia</span><strong id="metric-balance-income-transfer">S/ 0.00</strong></div>
+                </div>
+              </article>
 
+              <article class="admin-balance-block admin-balance-block--expense">
+                <div class="admin-balance-block__header">
+                  <span>Egresos</span>
+                  <strong id="metric-balance-expenses">S/ 0.00</strong>
+                </div>
+                <div class="admin-balance-methods">
+                  <div><span>Efectivo</span><strong id="metric-balance-expense-cash">S/ 0.00</strong></div>
+                  <div><span>Tarjeta</span><strong id="metric-balance-expense-card">S/ 0.00</strong></div>
+                  <div><span>Yape / Plin</span><strong id="metric-balance-expense-yape">S/ 0.00</strong></div>
+                  <div><span>Transferencia</span><strong id="metric-balance-expense-transfer">S/ 0.00</strong></div>
+                </div>
+              </article>
+
+              <article class="admin-balance-block admin-balance-block--profit">
+                <div class="admin-balance-block__header">
+                  <span>Ganancias</span>
+                  <strong id="metric-balance-profit">S/ 0.00</strong>
+                </div>
+              </article>
+            </div>
+          </section>
           <div class="admin-charts">
             <section class="admin-chart-card">
               <div class="admin-chart-card__header">
@@ -537,6 +575,28 @@
           <div class="admin-empty hidden" id="clients-report-empty">No se encontraron clientes con los filtros seleccionados.</div>
           <p class="admin-report-footnote" id="clients-report-summary">Top clientes: -</p>
         </div>
+
+        <div class="admin-pane hidden" id="pane-carta">
+          <div class="admin-report-header admin-report-header--action">
+            <div>
+              <h2 class="admin-report-title">Gesti&oacute;n de carta</h2>
+              <p class="admin-report-subtitle">Administra los productos que se muestran en la landing, agrupados por categoria.</p>
+            </div>
+            <button class="btn-gold" id="btn-add-menu-item">Agregar producto</button>
+          </div>
+
+          <div class="admin-filters admin-filters--menu">
+            <div class="admin-filter-group">
+              <label>Categoria</label>
+              <div class="admin-chip-group" id="menu-category-chips">
+                <button class="admin-chip active" type="button" data-category="">Todas</button>
+              </div>
+            </div>
+          </div>
+
+          <section class="admin-menu-manager" id="menu-manager-list"></section>
+          <div class="admin-empty hidden" id="menu-manager-empty">No hay productos registrados para esta categoria.</div>
+        </div>
       </section>
     </div>
   </main>
@@ -672,6 +732,51 @@
         <button class="btn-limpiar" id="btn-cancel-clients-export">Cancelar</button>
         <button class="btn-gold" id="btn-confirm-clients-export">Generar archivo</button>
       </div>
+    </div>
+  </div>
+
+  <div class="admin-modal-overlay hidden" id="menu-item-modal-overlay">
+    <div class="admin-modal-card admin-modal-card--menu">
+      <h3 class="admin-modal-title" id="menu-item-modal-title">Editar producto</h3>
+      <p class="admin-modal-subtitle">Estos datos alimentan la carta visible en la landing.</p>
+
+      <form class="admin-menu-form" id="menu-item-form">
+        <input type="hidden" id="menu-item-id">
+        <div class="admin-menu-form__grid">
+          <div class="admin-filter-group">
+            <label for="menu-item-category">Categoria</label>
+            <input type="text" class="admin-input" id="menu-item-category" list="menu-category-list" placeholder="Ejemplo: Platos marinos" required>
+            <datalist id="menu-category-list"></datalist>
+          </div>
+          <div class="admin-filter-group">
+            <label for="menu-item-name">Nombre</label>
+            <input type="text" class="admin-input" id="menu-item-name" placeholder="Nombre del producto" required>
+          </div>
+          <div class="admin-filter-group">
+            <label for="menu-item-price">Precio</label>
+            <input type="number" class="admin-input" id="menu-item-price" min="0" step="0.01" placeholder="0.00" required>
+          </div>
+          <div class="admin-filter-group">
+            <label for="menu-item-photo">Fotografia</label>
+            <input type="text" class="admin-input" id="menu-item-photo" placeholder="URL o ruta de imagen">
+          </div>
+        </div>
+
+        <div class="admin-filter-group">
+          <label for="menu-item-description">Descripcion</label>
+          <textarea class="admin-input admin-textarea" id="menu-item-description" placeholder="Descripcion breve para la landing"></textarea>
+        </div>
+
+        <div class="admin-filter-group">
+          <label for="menu-item-ingredients">Insumos</label>
+          <textarea class="admin-input admin-textarea" id="menu-item-ingredients" placeholder="Ejemplo: pescado, limon, camote, cancha"></textarea>
+        </div>
+
+        <div class="clients-modal-actions">
+          <button class="btn-limpiar" type="button" id="btn-cancel-menu-item">Cancelar</button>
+          <button class="btn-gold" type="submit" id="btn-save-menu-item">Guardar producto</button>
+        </div>
+      </form>
     </div>
   </div>
 </body>
