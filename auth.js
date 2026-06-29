@@ -173,6 +173,87 @@ function setupGlobalNavigation() {
   });
 }
 
+function setupMobileNavigation() {
+  const protectedPage = document.body.dataset.requiresAuth === 'true';
+  if (!protectedPage || document.querySelector('.mobile-bottom-nav')) {
+    return;
+  }
+
+  const currentPage = window.location.pathname.split('/').pop() || 'modulos.html';
+  const moduleLinks = [
+    { page: 'ventas.html', label: 'Ventas', icon: 'Images/iconoVentas.png' },
+    { page: 'operaciones.html', label: 'Operaciones', icon: 'Images/iconoOperaciones.png' },
+    { page: 'clientes.html', label: 'Clientes', icon: 'Images/IconoClientes.png' },
+    { page: 'administracion.html', label: 'Admin', icon: 'Images/iconoAdministracion.png' }
+  ];
+  const profileLinks = [
+    { page: 'configuracion.html', label: 'Configuracion', icon: 'Images/iconoConfiguraciones.png', nav: 'settings' },
+    { page: 'notificaciones.html', label: 'Notificaciones', icon: 'Images/IconoNotificaciones.png', nav: 'notifications' },
+    { page: 'ayuda.html', label: 'Ayuda', icon: 'Images/iconoAyuda.png', nav: 'help' },
+    { page: 'index.html', label: 'Cerrar sesion', icon: 'Images/iconoCerrarSesion.png', logout: true }
+  ];
+  const profilePages = profileLinks.map((link) => link.page);
+
+  const bottomNav = document.createElement('nav');
+  bottomNav.className = 'mobile-bottom-nav';
+  bottomNav.setAttribute('aria-label', 'Menu principal movil');
+  bottomNav.innerHTML = `
+    <div class="mobile-bottom-nav__items">
+      ${moduleLinks.map((link) => `
+        <a class="mobile-bottom-nav__item${currentPage === link.page ? ' active' : ''}" href="${link.page}">
+          <img src="${link.icon}" alt="">
+          <span>${link.label}</span>
+        </a>
+      `).join('')}
+      <div class="mobile-bottom-nav__profile">
+        <button class="mobile-bottom-nav__item mobile-bottom-nav__profile-btn${profilePages.includes(currentPage) ? ' active' : ''}" id="mobile-profile-btn" type="button" aria-label="Abrir perfil" aria-expanded="false">
+          <img src="Images/IconoUsuario.png" alt="">
+          <span>Perfil</span>
+        </button>
+        <div class="mobile-profile-menu hidden" id="mobile-profile-menu">
+          ${profileLinks.map((link) => `
+            <a href="${link.page}" class="mobile-profile-menu__link${currentPage === link.page ? ' active' : ''}"${link.nav ? ` data-nav="${link.nav}"` : ''}${link.logout ? ' data-logout="true"' : ''}>
+              <img src="${link.icon}" alt="">
+              <span>${link.label}</span>
+            </a>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(bottomNav);
+
+  const profileButton = document.getElementById('mobile-profile-btn');
+  const profileMenu = document.getElementById('mobile-profile-menu');
+  if (!profileButton || !profileMenu) {
+    return;
+  }
+
+  function closeProfileMenu() {
+    profileMenu.classList.add('hidden');
+    profileButton.setAttribute('aria-expanded', 'false');
+  }
+
+  profileButton.addEventListener('click', (event) => {
+    event.stopPropagation();
+    const willOpen = profileMenu.classList.contains('hidden');
+    profileMenu.classList.toggle('hidden', !willOpen);
+    profileButton.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+  });
+
+  profileMenu.addEventListener('click', (event) => {
+    event.stopPropagation();
+  });
+
+  document.addEventListener('click', closeProfileMenu);
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeProfileMenu();
+    }
+  });
+}
+
 function setupTopbarUserCard() {
   const trigger = document.getElementById('topbar-user-btn');
   const card = document.getElementById('topbar-user-card');
@@ -216,6 +297,7 @@ function setupTopbarUserCard() {
 document.addEventListener('DOMContentLoaded', () => {
   requireAuth();
   setupLogin();
+  setupMobileNavigation();
   setupLogout();
   setupGlobalNavigation();
   setupTopbarUserCard();

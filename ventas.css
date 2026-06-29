@@ -1625,3 +1625,227 @@
     padding: 1rem;
   }
 }
+
+/* Mobile layout shared by ERP pages */
+@media (max-width: 760px) {
+  .erp-body {
+    display: block;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .erp-main {
+    margin-left: 0;
+    min-height: auto;
+  }
+
+  .erp-topbar {
+    padding: 0.85rem 1rem;
+  }
+
+  .erp-topbar__tabs {
+    gap: 0.6rem;
+    overflow-x: auto;
+    padding-bottom: 0.15rem;
+  }
+
+  .erp-tab {
+    flex: 0 0 auto;
+    padding: 0.58rem 1.1rem;
+    white-space: nowrap;
+  }
+}
+
+/* Mobile fixed order sheet */
+.caja-pedido__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.caja-pedido__top > div {
+  min-width: 0;
+}
+
+.caja-pedido__toggle {
+  display: none;
+  flex-shrink: 0;
+  min-height: 36px;
+  border: 1px solid #d5af34;
+  border-radius: 999px;
+  background: #fffdfa;
+  color: #7c5f08;
+  padding: 0.55rem 0.85rem;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+@media (max-width: 760px) {
+  #view-caja {
+    padding-bottom: calc(270px + 86px + env(safe-area-inset-bottom));
+  }
+
+  #view-caja.pedido-sheet-collapsed {
+    padding-bottom: calc(78px + 86px + env(safe-area-inset-bottom));
+  }
+
+  .caja-layout {
+    display: block;
+  }
+
+  .caja-productos {
+    padding: 1rem;
+  }
+
+  .caja-pedido {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(74px + env(safe-area-inset-bottom));
+    z-index: 690;
+    max-height: min(42dvh, 320px);
+    overflow: hidden;
+    border-radius: 16px 16px 0 0;
+    padding: 0.85rem 1rem;
+    box-shadow: 0 -16px 38px rgba(15, 23, 42, 0.18);
+  }
+
+  .caja-pedido__top {
+    align-items: center;
+    padding-bottom: 0.65rem;
+    border-bottom: 1px solid #efefef;
+  }
+
+  .caja-pedido__title {
+    margin-bottom: 0;
+    font-size: 0.98rem;
+  }
+
+  .caja-pedido__hint {
+    display: none;
+  }
+
+  .caja-pedido__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .caja-pedido__body {
+    max-height: calc(min(42dvh, 320px) - 58px);
+    overflow-y: auto;
+    padding-top: 0.8rem;
+    overscroll-behavior: contain;
+  }
+
+  .caja-pedido.is-collapsed {
+    max-height: none;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .caja-pedido.is-collapsed .caja-pedido__top {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .caja-pedido.is-collapsed .caja-pedido__body {
+    display: none;
+  }
+
+  .caja-pedido__mesa,
+  .caja-pedido__waiter {
+    padding-bottom: 0.65rem;
+    margin-bottom: 0.65rem;
+    font-size: 0.86rem;
+  }
+
+  .pedido-items {
+    min-height: 64px;
+    max-height: 108px;
+    overflow-y: auto;
+    padding-right: 0.15rem;
+  }
+
+  .pedido-item__footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.55rem;
+  }
+
+  .pedido-item__actions {
+    justify-content: space-between;
+  }
+
+  .pedido-item__actions button {
+    flex: 1;
+  }
+}
+
+/* Mobile side tab for current order */
+@media (max-width: 760px) {
+  #view-caja,
+  #view-caja.pedido-sheet-collapsed {
+    padding-bottom: calc(86px + env(safe-area-inset-bottom));
+  }
+
+  .caja-pedido {
+    position: fixed;
+    left: 50%;
+    right: auto;
+    top: 50%;
+    bottom: auto;
+    width: min(420px, calc(100vw - 2rem));
+    max-height: min(72dvh, 520px);
+    z-index: 190;
+    overflow: hidden;
+    border-radius: 18px;
+    padding: 1rem;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.22);
+  }
+
+  .caja-pedido__body {
+    max-height: calc(min(72dvh, 520px) - 62px);
+  }
+
+  .caja-pedido.is-collapsed {
+    left: auto;
+    right: 0;
+    top: 45%;
+    bottom: auto;
+    width: auto;
+    max-height: none;
+    padding: 0.45rem;
+    border-radius: 14px 0 0 14px;
+    transform: translateY(-50%);
+  }
+
+  .caja-pedido.is-collapsed .caja-pedido__top {
+    padding: 0;
+    border-bottom: 0;
+  }
+
+  .caja-pedido.is-collapsed .caja-pedido__top > div,
+  .caja-pedido.is-collapsed .caja-pedido__body {
+    display: none;
+  }
+
+  .caja-pedido.is-collapsed .caja-pedido__toggle {
+    min-width: 44px;
+    min-height: 108px;
+    border-radius: 12px 0 0 12px;
+    border-color: #d5af34;
+    background: #d5af34;
+    color: #111111;
+    padding: 0.75rem 0.45rem;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+}

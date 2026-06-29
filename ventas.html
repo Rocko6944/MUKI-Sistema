@@ -44,7 +44,7 @@
             <label for="historial-search">Buscador de ventas</label>
             <div class="historial-search">
               <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-              <input type="text" id="historial-search" placeholder="Buscar por mesa o ID">
+              <input type="text" id="historial-search" placeholder="Buscar por ambiente o mesa">
             </div>
           </div>
           <div class="historial-filter historial-filter--small">
@@ -76,7 +76,7 @@
           <table class="historial-table">
             <thead>
               <tr>
-                <th>ID</th>
+                <th>Ambiente</th>
                 <th>Mesa</th>
                 <th>Total</th>
                 <th>Mozo</th>
@@ -149,17 +149,24 @@
           <p class="caja-productos__subtitle" id="productos-subtitle">Todos los productos disponibles</p>
           <div class="productos-grid" id="productos-grid"></div>
         </section>
-        <aside class="caja-pedido">
-          <h3 class="caja-pedido__title">Pedido actual</h3>
-          <p class="caja-pedido__hint">Actualizado en tiempo real</p>
-          <p class="caja-pedido__mesa" id="pedido-mesa">Mesa 5</p>
-          <p class="caja-pedido__waiter" id="pedido-mozo">Mozo: -</p>
-          <div class="pedido-items" id="pedido-items"></div>
-          <div class="pedido-total">
-            <span>Total</span>
-            <span id="pedido-total-valor">S/ 0.00</span>
+        <aside class="caja-pedido" id="caja-pedido-panel">
+          <div class="caja-pedido__top">
+            <div>
+              <h3 class="caja-pedido__title">Pedido actual</h3>
+              <p class="caja-pedido__hint">Actualizado en tiempo real</p>
+            </div>
+            <button class="caja-pedido__toggle" id="pedido-toggle" type="button" aria-expanded="true">Ocultar</button>
           </div>
-          <button class="btn-enviar" id="btn-enviar-cocina">Enviar pedido</button>
+          <div class="caja-pedido__body" id="pedido-body">
+            <p class="caja-pedido__mesa" id="pedido-mesa">Mesa 5</p>
+            <p class="caja-pedido__waiter" id="pedido-mozo">Mozo: -</p>
+            <div class="pedido-items" id="pedido-items"></div>
+            <div class="pedido-total">
+              <span>Total</span>
+              <span id="pedido-total-valor">S/ 0.00</span>
+            </div>
+            <button class="btn-enviar" id="btn-enviar-cocina">Enviar pedido</button>
+          </div>
         </aside>
       </div>
     </div>

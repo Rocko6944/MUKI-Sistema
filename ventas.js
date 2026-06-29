@@ -232,6 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentVentaId = null;
   let currentOrderMode = 'salon';
   let currentTakeawayMode = 'Recojo en tienda';
+  let pedidoSheetCollapsed = window.matchMedia('(max-width: 760px)').matches;
 
   const viewHistorial = document.getElementById('view-historial');
   const viewMesas = document.getElementById('view-mesas');
@@ -267,6 +268,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const productosGrid = document.getElementById('productos-grid');
   const pedidoItems = document.getElementById('pedido-items');
   const pedidoTotal = document.getElementById('pedido-total-valor');
+  const pedidoPanel = document.getElementById('caja-pedido-panel');
+  const pedidoToggle = document.getElementById('pedido-toggle');
   const pedidoMesa = document.getElementById('pedido-mesa');
   const pedidoMozo = document.getElementById('pedido-mozo');
   const searchInput = document.getElementById('search-producto');
@@ -1038,15 +1041,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     return ventasData.filter((venta) => {
       const locationLabel = getVentaLocationLabel(venta).toLowerCase();
-      const matchesTerm = !term || venta.id.toLowerCase().includes(term) || locationLabel.includes(term);
+      const ambienteLabel = getVentaAmbienteLabel(venta).toLowerCase();
+      const mesaLabel = getVentaMesaLabel(venta).toLowerCase();
+      const matchesTerm = !term || locationLabel.includes(term) || ambienteLabel.includes(term) || mesaLabel.includes(term);
       const matchesStatus = !status || venta.estado === status;
       return matchesTerm && matchesStatus;
     });
   }
 
-  function getVentaLocationLabel(venta) {
+  function getVentaAmbienteLabel(venta) {
     if (venta.mesa === 'Para llevar') return 'Para llevar';
-    return venta.ambiente ? `${venta.ambiente} - ${venta.mesa}` : venta.mesa;
+    return venta.ambiente || 'Sin ambiente';
+  }
+
+  function getVentaMesaLabel(venta) {
+    if (venta.mesa === 'Para llevar') return venta.canal || 'Orden para llevar';
+    return venta.mesa || '-';
+  }
+
+  function getVentaLocationLabel(venta) {
+    if (venta.mesa === 'Para llevar') return getVentaMesaLabel(venta);
+    return venta.ambiente ? `${venta.ambiente} - ${venta.mesa}` : getVentaMesaLabel(venta);
   }
 
   function renderVentaDetail(venta) {
@@ -1093,8 +1108,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const statusClass = venta.estado === 'En proceso' ? 'status-pill--proceso' : 'status-pill--cobrada';
       tr.className = `historial-row${selectedVentaId === venta.id ? ' selected' : ''}`;
       tr.innerHTML = `
-        <td>${venta.id}</td>
-        <td>${getVentaLocationLabel(venta)}</td>
+        <td>${escapeHtml(getVentaAmbienteLabel(venta))}</td>
+        <td>${escapeHtml(getVentaMesaLabel(venta))}</td>
         <td>${formatCurrency(venta.total)}</td>
         <td>${escapeHtml(venta.mozo || '-')}</td>
         <td><span class="status-pill ${statusClass}">${venta.estado}</span></td>
@@ -1193,6 +1208,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function openProductModal(producto) {
+    if (window.matchMedia('(max-width: 760px)').matches) {
+      pedidoSheetCollapsed = true;
+      updatePedidoSheetState();
+    }
     selectedProduct = producto;
     productModalName.textContent = `${producto.name} - ${formatCurrency(producto.price)}`;
     productModalQuantity.value = '1';
@@ -1252,6 +1271,14 @@ document.addEventListener('DOMContentLoaded', () => {
     renderPedido();
   }
 
+  function updatePedidoSheetState() {
+    if (!pedidoPanel || !pedidoToggle) return;
+    const totalItems = pedido.reduce((sum, item) => sum + item.qty, 0);
+    pedidoPanel.classList.toggle('is-collapsed', pedidoSheetCollapsed);
+    viewCaja?.classList.toggle('pedido-sheet-collapsed', pedidoSheetCollapsed);
+    pedidoToggle.textContent = pedidoSheetCollapsed ? `Pedido (${totalItems})` : 'Ocultar';
+    pedidoToggle.setAttribute('aria-expanded', pedidoSheetCollapsed ? 'false' : 'true');
+  }
   function renderPedido() {
     pedidoItems.innerHTML = '';
     let total = 0;
@@ -1281,6 +1308,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     pedidoTotal.textContent = formatCurrency(total);
+    updatePedidoSheetState();
 
     if (currentVentaId && pedido.length) {
       const venta = syncVentaFromPedido();
@@ -1483,6 +1511,12 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedProduct = null;
   });
 
+  pedidoToggle?.addEventListener('click', () => {
+    pedidoSheetCollapsed = !pedidoSheetCollapsed;
+    updatePedidoSheetState();
+  });
+
+  window.matchMedia('(max-width: 760px)').addEventListener('change', updatePedidoSheetState);
   btnEnviar.addEventListener('click', () => {
     if (!pedido.length) return;
     const venta = syncVentaFromPedido();
